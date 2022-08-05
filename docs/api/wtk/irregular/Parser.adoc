@@ -1,0 +1,50 @@
+[#api_irregular_Parser]
+= IRRegular Parser API
+:toc:
+:source-highlighter: pygments
+:source-language: c++
+:source_subs: attributes,specialchars,macros
+ifndef::xref-rel-dir[]
+:xref-rel-dir: ../../
+endif::[]
+
+Include this API as
+
+----
+#include <wtk/irregular/Parser.h>
+----
+
+Members of this API live in the following namespaces
+
+----
+namespace wtk { namespace irregular { ...
+----
+
+The Parser API is parameterized on a `Number_T` template.
+`Number_T` should be integer-like enough to be parsed from a string.
+This API is abstract and implemented by parsers for various IR formats.
+
+[#struct_irregular_Parser]
+== `template<typename Number_T> struct Parser`
+The `wtk::irregular::Parser<Number_T>` implements the xref:{xref-rel-dir}api/wtk/Parser.adoc#struct_Parser[`wtk::Parser<Number_T>`].
+It parses text but does not produce line numbering.
+It is designed to minimize memory usage while maximizing parser speed.
+It is capable of stream-parsing, although it does require some buffering.
+
+[#irregular_Parser_constructor_string]
+=== `Parser(std::string& f_name)`
+Constructor via opening the file named by `f_name`.
+Undefined behavior occurs if the file does not exist.
+
+----
+Parser(std::string& f_name);
+----
+
+[#irregular_Parser_constructor_file]
+=== `Parser(FILE* f)`
+Constructor which uses a `FILE*`.
+Undefined behavior occurs if `f` is `nullptr` or `f` is not opened to an existing file (e.g. not a directory).
+
+----
+Parser(FILE* f);
+----

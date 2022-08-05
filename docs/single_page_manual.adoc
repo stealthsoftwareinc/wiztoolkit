@@ -1,0 +1,51 @@
+= WizToolKit Manual
+:toc: left
+:source-highlighter: pygments
+:source-language: c++
+:xref-rel-dir:
+
+:leveloffset: +1
+
+include::../readme.adoc[]
+
+include::install.adoc[]
+
+include::commandline.adoc[]
+
+include::parsers.adoc[]
+
+include::backends.adoc[]
+
+:leveloffset: -1
+
+== Appendix A: API Documentation
+
+:leveloffset: +2
+
+include::api/wtk/Parser.adoc[]
+
+include::api/wtk/IRTree.adoc[]
+
+include::api/wtk/IRParameters.adoc[]
+
+include::api/wtk/ArithmeticStreamHandler.adoc[]
+
+include::api/wtk/BooleanStreamHandler.adoc[]
+
+include::api/wtk/antlr/Parser.adoc[]
+
+include::api/wtk/irregular/Parser.adoc[]
+
+include::api/wtk/flatbuffer/Parser.adoc[]
+
+include::api/wtk/bolt/Builder.adoc[]
+
+include::api/wtk/bolt/Evaluator.adoc[]
+
+include::api/wtk/bolt/Backend.adoc[]
+
+include::api/wtk/bolt/PLASMASnooze.adoc[]
+
+include::api/wtk/bolt/ArithmeticPLASMASnoozeHandler.adoc[]
+
+include::api/wtk/bolt/BooleanPLASMASnoozeHandler.adoc[]

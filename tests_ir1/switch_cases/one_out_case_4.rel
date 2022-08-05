@@ -1,0 +1,25 @@
+version 1.0.0;
+field characteristic 65327 degree 1;
+relation
+gate_set:arithmetic;
+features:@for,@function,@switch;
+@begin
+  $0 <- @short_witness;
+  $1 <- @switch($0)
+    @case <0>: @anon_call(@instance: 0, @short_witness: 0)
+      $0 <- <0>;
+    @end
+    @case <1>: @anon_call(@instance: 0, @short_witness: 0)
+      $0 <- <1>;
+    @end
+    @case <2>: @anon_call(@instance: 0, @short_witness: 0)
+      $0 <- <2>;
+    @end
+    @case <3>: @anon_call(@instance: 0, @short_witness: 0)
+      $0 <- <3>;
+    @end
+  @end
+  $2 <- @mulc($0, <65326>);
+  $3 <- @add($1, $2);
+  @assert_zero($3);
+@end

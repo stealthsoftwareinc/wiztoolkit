@@ -1,0 +1,95 @@
+version 1.0.0;
+field characteristic 2 degree 1;
+relation
+gate_set: boolean;
+features: @function, @for, @switch;
+@begin
+  @function(bit_adder, @out: 2, @in: 3, @instance: 0, @short_witness: 0)
+    // $0 is sum
+    // $1 is carry out
+    // $2 is a
+    // $3 is b
+    // $4 is carry out
+
+    // This is a 1-bit adder.
+    $5 <- @xor($2, $3);
+    $6 <- @xor($2, $4);
+    $7 <- @and($5, $6);
+    $1 <- @xor($7, $2);
+    $0 <- @xor($5, $4);
+  @end
+
+  // Lets fill the calculator ins/outs as follows
+  // $0 ... $31 will be the sum, Least-Significant-Bit (LSB) first, sign last
+
+  // $32 ... $63 input A, LSB-first, sign-last
+  $32 ... $63 <- @for i @first 0 @last 31
+    $(32 + i) <- @anon_call(@instance: 0, @short_witness: 1)
+      $0 <- @short_witness;
+    @end
+  @end
+
+  // $64 ... $95 input B, LSB-first, sign-last
+  $64 ... $95 <- @for i @first 0 @last 31
+    $(64 + i) <- @anon_call(@instance: 0, @short_witness: 1)
+      $0 <- @short_witness;
+    @end
+  @end
+
+  // $96 operation, 0 for add or 1 for subtract.
+  $96 <- @short_witness;
+
+  // $97 ... $28 are the adjusted input B
+  $97 ... $128 <- @switch($96)
+    @case <0>: @anon_call($64 ... $95, @instance: 0, @short_witness: 0)
+      // addition, don't adjust.
+      // $0 ... is the case's output mapping
+      // $32 ... is the case's input mapping
+      $0 ... $31 <- @for i @first 0 @last 31
+        $i <- @anon_call($(i + 32), @instance: 0, @short_witness: 0)
+          $0 <- $1;
+        @end
+      @end
+    @end
+    @case <1>: @anon_call($64 ... $95, @instance: 0, @short_witness: 0)
+     // subtraction, adjust by negating bits.
+      // $0 ... is the case's output mapping
+      // $32 ... is the case's input mapping
+      $0 ... $31 <- @for i @first 0 @last 31
+        $i <- @anon_call($(i + 32), @instance: 0, @short_witness: 0)
+          // don't adjust for addition.
+          $0 <- @not($1);
+        @end
+      @end
+    @end
+  @end
+
+  // Lets add it up now.
+  // $129 ... $160 can be carry bits.
+
+  // Carry in the operation (0=add, 1=sub) to finish the compliment.
+  $0, $129 <- @call(bit_adder, $32, $97, $96);
+
+  $1 ... $31, $130 ... $160 <- @for i @first 1 @last 31
+    $i, $(129 + i) <- @call(bit_adder, $(32 + i), $(97 + i), $(128 + i));
+  @end
+
+  // clean up the extra wires for adjusting and carry bits.
+  @delete($97, $128);
+  @delete($129, $159);
+
+  // And finally lets just assert that there was no overflow.
+  // (invert the overflow bit during subtraction)
+  $161 <- @xor($160, $96);
+  @assert_zero($161);
+
+  // And assert that the sum is as expected by the instance.
+  @for i @first 0 @last 31
+    @anon_call($i, @instance: 1, @short_witness: 0)
+      // $0: bit in sum
+      $1 <- @instance;
+      $2 <- @xor($0, $1);
+      @assert_zero($2);
+    @end
+  @end
+@end

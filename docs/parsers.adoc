@@ -1,0 +1,337 @@
+[#parsers]
+= Parsing the IR
+:toc:
+:source-highlighter: pygments
+:source-language: c++
+:source_subs: attributes,specialchars,macros
+
+WizToolKit has a simple unified API for parsing both forms of the IR.
+This page will start with number representations in the IR, then explain the options available for parsing, and finally a deeper dive into common paths for parsing.
+
+== Numbers in the IR
+The SIEVE IR has two distint categories of numbers
+
+Wire indexes:: These are represented with `wtk::index_t`, a typedef of `uint64_t`.
+Field element literals:: These are numbers mod the relations `characteristic`, which may be arbitrarily large. For maximal flexibility, WizToolKit uses a `Number_T` template parameter, which should be integer-like (e.g. implement operators for `+`, `*`, `<<`, etc. Enough to implement string-to-int conversions).
+
+== Parsing Options
+WizToolKit has three parser implementations, however all implement a common interface through the `wtk::Parser<Number_T>` abstract class (xref:api/wtk/Parser.adoc#api_Parser[`#include <wtk/Parser.h>`]).
+It is responsible for parsing the IR's front matter, returning control for the user to decide how to parse the IR body, and then delegating the body to a helper, also with a common interface.
+
+As an abstract class, `wtk::Parser<Number_T>` must be instantiated as one of its concrete implementations. WizToolKit offers three such implementations.
+
+- `wtk::antlr::Parser<Number_T>` (from xref:api/wtk/antlr/Parser.adoc#api_antlr_Parser[`#include <wtk/antlr/Parser.h>`])
+- `wtk::irregular::Parser<Number_T>` (from xref:api/wtk/irregular/Parser.adoc#api_irregular_Parser[`#include <wtk/irregular/Parser.h>`])
+- `wtk::flatbuffer::Parser<Number_T>` (from xref:api/wtk/flatbuffer/Parser.adoc#api_flatbuffer_Parser[`#include <wtk/flatbuffer/Parser.h>`])
+
+All have a constructor which takes a `std::string` naming the file to open.
+Some have additional constructors.
+
+Before going any further, it is worth thinking about the context for parsing the IR.
+Is just a relation being parsed? Are all three of relation, instance, and short witness being parsed?
+When parsing all three, we have found it easiest to expect them listed in a defined order and fail if they deviate rather than attempting to reorder them on the fly.
+Later in this page we will show the expected order approach.
+
+
+Here is the creation of an IRRegular parser with `unsigned long` as its `Number_T` (field-literal type).
+
+----
+std::string relation_name = /* ... */;
+
+wtk::irregular::Parser<unsigned long> parser(relation_name);
+----
+
+Once the parser is created, the front matter is easy to parse.
+xref:api/wtk/Parser.adoc#Parser_parseHdrResParams[`parser.parseHdrResParams()`] returns `true` on success, and sets public attributes of the `parser` for front matter attributes.
+To check that it is a relation, the parser has a `resource` attribute.
+
+----
+if(!parser.parseHdrResParams()
+    || parser.resource != wtk::Resource::relation)
+{
+  /* handle errors */
+}
+----
+
+Here is a summary of the front matter attributes.
+
+* xref:api/wtk/Parser.adoc#Parser_version[`parser.version`] is the IR version number. Its a triplet of `major`, `minor`, and `patch`.
+
+WARNING: WizToolKit makes little attempt to handle older IR releases.
+
+* xref:api/wtk/Parser.adoc#Parser_characteristic[`parser.characteristic`] (`Number_T`) and xref:api/wtk/Parser.adoc#Parser_degree[`parser.degree`] (`size_t`) form the field.
+* xref:api/wtk/Parser.adoc#Parser_resource[`parser.resource`] is the resource type. xref:api/wtk/IRParameters.adoc#enum_Resource[`wtk::Resource`] is an enum with the following values
+** `wtk::Resource::relation`
+** `wtk::Resource::instance`
+** `wtk::Resource::shortWitness`
+* xref:api/wtk/Parser.adoc#Parser_gateSet[`parser.gateSet`] and xref:api/wtk/Parser.adoc#Parser_featureToggles[`parser.featureToggles`] are structs with indicators for which gates and which IR features are used by this relation. See xref:api/wtk/IRParameters.adoc#struct_GateSet[`struct GateSet`] and xref:api/wtk/IRParameters.adoc#struct_FeatureToggles[`struct FeatureToggles`]
+
+CAUTION: The xref:api/wtk/Parser.adoc#Parser_gateSet[`parser.gateSet`] and xref:api/wtk/Parser.adoc#Parser_featureToggles[`parser.featureToggles`] attributes are assigned only for the relation, not for the instance or short witness.
+
+Now the user may check the front matter for acceptability.
+For example, that the characteristic is prime, or from a specific family of primes.
+The user may also want to error here if the _Gate Set_ or a _Feature Toggle_ is unsupported.
+
+Next, the user must choose how to parse the body, the instance, and the short witness.
+The headers of the instance and short witness can be parsed similarly to the relation's.
+However, the instance and short_witness do not have _Gate Set_ or _Feature Toggles_, and must defer to the _relation_.
+
+A critical decision is whether the _Gate Set_ is xref:api/wtk/Parser.adoc#struct_BooleanParser[_Boolean_] or xref:api/wtk/Parser.adoc#struct_ArithmeticParser[_arithmetic_].
+This is because the parsing API splits on these boundaries.
+Another potential decision is whether or not the relation is IR-__Simple__.
+WizToolKit's parsers have a streaming API for IR-Simple, which may improve performance for some relations.
+However, the streaming API cannot handle non-simple relations.
+
+[subs="{source_subs}"]
+----
+std::string instance_name = /* ... */;
+std::string short_witness_name = /* ... */;
+wtk::irregular::Parser<unsigned long> instance_parser(instance_name);
+wtk::irregular::Parser<unsigned long> short_witness_parser(short_witness_name);
+
+if(!instance_parser.parseHdrResParams()
+    || !short_witness_parser.parseHdrResParams()
+    || parser.characteristic != instance_parser.characteristic
+    || parser.characteristic != short_witness_parser.characteristic)
+{
+  /* handle error */
+}
+
+if(parser.resource == wtk::Resource::relation)
+  && parser.gateSet.gateSet == wtk::GateSet::arithmetic)
+{
+  // Parse arithmetic relation
+  wtk::AritmeticParser<unsigned long>* arith_parser = parser.arithmetic();
+
+  if(parser.featureToggles.simple()) // select the streaming API
+  {
+    // See xref:#Streaming-API[Streaming API]
+  }
+  else
+  {
+    // See xref:#Syntax-Tree-API[Syntax Tree API]
+  }
+}
+else if(parser.resource == wtk::Resource::relation)
+  && parser.gateSet.gateSet == wtk::GateSet::boolean)
+{
+  // Parse boolean relation, Note that the template is dropped,
+  // because Boolean literals are always given as uint8_t.
+  wtk::BooleanParser* bool_parser = parser.arithmetic();
+  /* Omitted... */
+}
+----
+
+== Parsing the Instance and Short Witness
+Both the instance and short-witness are abstracted as streams in the SIEVE IR.
+WizToolKit handles these streams through the xref:api/wtk/Parser.adoc#struct_InputStream[`wtk::InputStream<Number_T>`] API.
+
+The `wtk::InputStream<Number_T>` objects are obtained through the parser after specializing to xref:api/wtk/Parser.adoc#ArithmeticParser_instance[arithmetic] or xref:api/wtk/Parser.adoc#BooleanParser_shortWitness[boolean].
+
+----
+// Get an arithmetic parser for an instance
+wtk::ArithmeticParser<unsigned long>* a_ins_parser = instance_parser.arithmetic();
+wtk::InputStream<unsigned long>* a_ins = a_ins_parser->instance();
+
+// Similarly, for Boolean short witness (as an example; instance and short
+// witness should have the same type).
+wtk::BooleanParser* b_wit_parser = short_witness_parser.arithmetic();
+wtk::InputStream<uint8_t>* b_wit = b_wit_parser->shortWitness();
+----
+
+Once a stream is obtained, its xref:api/wtk/Parser.adoc#InputStream_next[`next(...)`] method may be called repeatedly for each element of the stream.
+The return type of `next(...)` will indicate if it succeeded, failed, or reached the end of the stream. It has a return-by-pointer argument for the stream element.
+
+----
+unsigned long ins_val = 0;
+wtk::StreamStatus status = a_ins->next(&ins_val);
+if(status == wtk::StreamStatus::end) { /* End of stream */ }
+else if(status == wtk::StreamStatus::error) { /* mid-stream parser error */ }
+----
+
+Some of the parsers (namely xref:api/wtk/antlr/Parser.adoc#api_antlr_Parser[ANTLR] and xref:api/wtk/antlr/Parser.adoc#api_flatbuffer_Parser[FlatBuffer]) will parse the entire stream up front, in which case a parser error is indicated on the first element, regardless of its place in the stream.
+Other parsers (namely xref:api/wtk/irregular/Parser.adoc#api_irregular_Parser[IRRegular]) work in a more true stream-wise fashion, reporting the error as it occurs.
+
+[#Streaming-API]
+== Streaming API for Relations
+The Streaming API, IR-__Simple__ relations are parsed one gate at a time and reported immediately.
+This only works for IR-__Simple__ because these relations have no nested scopes or repetition.
+
+To report gates, the user must implement the xref:api/wtk/ArithmeticStreamHandler.adoc#api_ArithmeticStreamHandler[`wtk::ArithmeticStreamHandler<Number_T>`] or xref:api/wtk/BooleanStreamHandler.adoc#api_BooleanStreamHandler[`wtk::BooleanStreamHandler`] abstract class (depending on _Gate Set_, obviously).
+A brief example for Arithmetic is shown here.
+
+----
+class UserArithmeticStreamHandler : public wtk::ArithmeticStreamHandler<unsigned long>
+{
+  void handleAdd(wtk::index_t const out, // output wire-number
+      wtk::index_t const left_in,        // left input wire-number
+      wtk::index_t const right_in)       // right input wire-number
+    override
+  {
+    /* omitted */
+  }
+
+  void handleMul(wtk::index_t const out, // output wire-number
+      wtk::index_t const left_in,        // left input wire-number
+      wtk::index_t const right_in)       // right input wire-number
+    override
+  {
+    /* omitted */
+  }
+
+  /* Remaining methods omitted... */
+};
+----
+
+Invocation for the streaming API is through the xref:api/wtk/Parser.adoc#ArithmeticParser_parseStream[`wtk::ArithmeticParser<Number_T>` method `parseStream(...)`] or xref:api/wtk/Parser.adoc#BooleanParser_parseStream[`wtk::BooleanParser` method `parseStream(...)`].
+
+----
+// For an arithmetic simple relation
+UserArithmeticStreamHandler handler;
+if(!arith_parser->parseStream(&handler)) { /* Parse Error */ }
+
+// For a Boolean simple relation
+UserBooleanStreamHandler handler;
+if(!bool_parser->parseStream(&handler)) { /* Parse Error */ }
+----
+
+[#Syntax-Tree-API]
+== Syntax Tree API for Relations
+The Syntax Tree API can handle any relation, regardless of its feature set.
+However, it must parse the entire relation ahead of time, and allocate a syntax tree, which for very long relations can consume a lot of memory.
+
+The syntax tree is defined by xref:api/wtk/IRTree.adoc#api_IRTree[#include <wtk/IRTree.h>].
+At a top-level it is defined by the xref:api/wtk/IRTree.adoc#struct_IRTree[`wtk::IRTree<Number_T>`], which aggregates function definitions and the relation's main body.
+Each scope is a xref:api/wtk/IRTree.adoc#struct_DirectiveList[`wtk::DirectiveList<Number_T>`] with the ability to retrieve gates such as xref:api/wtk/IRTree.adoc#struct_BinaryGate[`wtk::BinaryGate`] (binary referring to its cardinality) or xref:api/wtk/IRTree.adoc#struct_Input[`wtk::Input`] (for the instance or short-witness).
+
+The Tree is again retrieved through the xref:api/wtk/Parser.adoc#ArithmeticParser_parseTree[`wtk::ArithmeticParser<Number_T>`] or xref:api/wtk/Parser.adoc#BooleanParser_parseTree[`wtk::BooleanParser`] `parseTree()` method (only Arithmetic shown).
+
+----
+wtk::IRTree<unsigned long>* ir_tree = arith_parser->parseTree();
+if(ir_tree == nullptr) { /* Parser error */ }
+
+// To be implemented by the user.
+process_ir_tree(ir_tree);
+----
+
+To process the relation, the user must do a tree traversal.
+At a top level, the xref:api/wtk/IRTree.adoc#struct_IRTree[`wtk::IRTree<Number_T>`] holds a list of function declarations (we'll get to these later), and the relation's main body.
+The main body is just a xref:api/wtk/IRTree.adoc#struct_DirectiveList[`wtk::DirectiveList<Number_T>`], which is an indirectly-recursive type, defining much of the syntax tree.
+
+[subs="{source_subs}"]
+----
+void process_ir_tree(wtk::IRTree<unsigned long>* tree)
+{
+  // See xref:#Syntax-Tree-Functions[Syntax Tree API for Functions] for function-declarations.
+
+  // The circuit's entry point is its body.
+  process_directive_list(tree->body());
+}
+----
+
+Processing the xref:api/wtk/IRTree.adoc#struct_DirectiveList[`wtk::DirectiveList<Number-T>`] is a simple matter of traversing each directive in the scope, and switching on its xref:api/wtk/IRTree.adoc#DirectiveList_enum_Type[type].
+Here is an example.
+
+----
+void process_directive_list(wtk::DirectiveList<unsigned long>* dir_list)
+{
+  // The DirectiveList is a tree type, leaf-nodes are typically gates
+  // (@and/@xor/@mul/etc.) with other nodes taking the form of higher
+  // level features.
+
+  for(size_t i = 0; i < dir_list->size(); i++)
+  {
+    switch(dir_list->type(i))
+    {
+    case wtk::DirectiveList<unsigned long>::BINARY_GATE:
+    {
+      // the "binary" (in signature, not value) gate describes
+      // @and/@xor/@mul/@add gates.
+      wtk::BinaryGate* gate = dir_list->binaryGate(i);
+      // these are the input and output wire numbers of the gate
+      wtk::index_t left_input_wire = gate->leftWire();
+      wtk::index_t right_input_wire = gate->rightWire();
+      wtk::index_t output_wire = gate->outputWire();
+
+      // The gate's calculation is an enum
+      switch(gate->calculation())
+      {
+      case wtk::BinaryGate::AND: { break; }
+      case wtk::BinaryGate::XOR: { break; }
+      case wtk::BinaryGate::ADD: { break; }
+      case wtk::BinaryGate::MUL: { break; }
+      }
+
+      break;
+    }
+    /* other gate-types omitted for brevity */
+    case wtk::DirectiveList<unsigned long>::ANON_FUNCTION:
+    {
+      wtk::AnonFunction<unsigned long>* anon_func = dir_list->anonFunction(i);
+      // The signature of the function, along with its inputs/outputs
+      // is easily retrievable.
+      wtk::WireList* output_wires = anon_func->outputList();
+      wtk::WireList* input_wires = anon_func->inputList();
+      wtk::index_t num_instance_vals = anon_func->instanceCount();
+      wtk::index_t num_witness_vals = anon_func->shortWitnessCount();
+
+      // To process the body of the anonymous function, use recursion.
+      process_directive_list(anon_func->body());
+      break;
+    }
+    /* Other feature-types omitted for brevity */
+    }
+  }
+}
+----
+
+[#Syntax-Tree-Functions]
+=== Syntax Tree API for Functions
+For IR named-functions, the body of a function and its invocation are split.
+All function-declarations are listed at the top of a relation.
+Correspondingly, the xref:api/wtk/IRTree.adoc#struct_IRTree[`wtk::IRTree<Number_T>`] has a xref:api/wtk/IRTree.adoc#IRTree_functionDeclare[`functionDeclare(i)`] method for retrieval, and xref:api/wtk/IRTree.adoc#IRTree_size[`size()`] indicating how many may be retrieved.
+
+For easy access, we suggest entering the function declarations into a `std::map` or `std::unordered_map`.
+
+----
+// declare a map to hold them
+std::map<std::string, wtk::FunctionDeclare<unsigned long>*> functions_map;
+
+  // enter each function-declaration into the map
+  for(size_t i = 0; i < tree->size(); i++)
+  {
+    wtk::FunctionDeclare<unsigned long>* function = tree->functionDeclare(i);
+
+    // function->name() is a char* while std::map works only with std::strings
+    // with c++17, it should be okay to use std::string_view so long as
+    // *tree outlives functions_map
+    std::string name(function->name());
+
+    // check that the function wasn't previously declared
+    auto finder = functions_map.find(name);
+    if(finder != functions_map.end()) { /* Error */ }
+
+    functions_map[name] = function;
+  }
+----
+
+When a function is invoked (with a xref:api/wtk/IRTree.adoc#struct_FunctionInvoke[`wtk::FunctionInvoke`] directive), its is now just a matter of looking up its name in the map.
+
+----
+    case wtk::DirectiveList<unsigned long>::FUNCTION_INVOKE:
+    {
+      wtk::FunctionInvoke* invoke = dir_list->functionInvoke(i);
+
+      std::string name(invoke->name());
+      auto finder = functions_map.find(name);
+      if(finder == functions_map.end()) { /* Error */ }
+
+      wtk::FunctionDeclare<unsigned long>* declaration = finder->second;
+
+      // To process the body of the function, use recursion.
+      process_directive_list(declaration->body());
+      break;
+    }
+----
+
+For more information about the IR Syntax Tree, See xref:api/wtk/IRTree.adoc#api_IRTree[`#include <wtk/IRTree.h>`].

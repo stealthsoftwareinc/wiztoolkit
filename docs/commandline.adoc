@@ -1,0 +1,14 @@
+[#commandline]
+= WizToolKit on the Command-Line
+
+:leveloffset: +1
+
+include::tools/wtk-firealarm.adoc[]
+
+include::tools/wtk-press.adoc[]
+
+include::tools/wtk-viz.adoc[]
+
+include::tools/wtk-bolt.adoc[]
+
+:leveloffset: -1

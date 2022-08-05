@@ -1,0 +1,15 @@
+version 1.0.0;
+field characteristic 127 degree 1;
+short_witness
+@begin
+  <0>;
+  <0>;
+  <0>;
+  <0>;
+  <0>;
+  <0>;
+  <0>;
+  <0>;
+  <0>;
+  <0>;
+@end

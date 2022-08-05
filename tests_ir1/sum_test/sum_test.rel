@@ -1,0 +1,38 @@
+version 1.0.0;
+field characteristic 97 degree 1;
+relation
+gate_set: arithmetic;
+features: @function, @for;
+@begin
+
+@function(sum, @out: 1, @in: 10, @instance: 0, @short_witness: 0)
+  // out: $0
+  // in: $1 ... $10
+  $11 <- @add($1, $2);
+  $12 ... $18 <- @for i @first 2 @last 8
+    $(i + 10) <- @anon_call($(1 + i), $(9 + i), @instance: 0, @short_witness: 0)
+      $0 <- @add($1, $2);
+    @end
+  @end
+  $0 <- @add($10, $18);
+@end
+
+$0 <- @short_witness;
+$1 <- @short_witness;
+$2 <- @short_witness;
+$3 <- @short_witness;
+$4 <- @short_witness;
+$5 <- @short_witness;
+$6 <- @short_witness;
+$7 <- @short_witness;
+$8 <- @short_witness;
+$9 <- @short_witness;
+
+$10 <- @call(sum, $0 ... $9);
+
+$11 <- @instance;
+$12 <- @mulc($10, < 96 >);
+$13 <- @add($11, $12);
+@assert_zero($13);
+
+@end

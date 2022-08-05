@@ -1,0 +1,51 @@
+[#api_bolt_ArithmeticPLASMASnoozeHandler]
+= Arithmetic PLASMASnooze Streaming API
+:toc:
+:source-highlighter: pygments
+:source-language: c++
+:source_subs: attributes,specialchars,macros
+ifndef::xref-rel-dir[]
+:xref-rel-dir: ../../../
+endif::[]
+
+Include this API as
+
+----
+#include <wtk/bolt/ArithmeticPLASMASnoozeHandler.h>
+----
+
+Members of this API live in the following namespace
+
+----
+namespace wtk { namespace bolt { ...
+----
+
+The BOLT API is parameterized on two templates.
+
+`Number_T`:: This template is the same integer-like template which the xref:{xref-rel-dir}api/wtk/Parser.adoc#api_Parser[Parser API] uses for numeric literals.
+`Wire_T`:: This template is an opaque structure supplied by the Backend for encapsulating data related to a wire.
+PLASMASnooze requires it to be default constructible/destructible, and mutable/overwritable.
+
+[#class_ArithmeticPLASMASnoozeHandler]
+== `template<template Wire_T, typename Number_T> class ArithmeticPLASMASnoozeHandler`
+The `wtk::bolt::ArithmeticPLASMASnoozeHandler<Wire_T, Number_T>` implements the xref:{xref-rel-dir}api/wtk/ArithmeticStreamHandler.adoc#api_ArithmeticStreamHandler[`wtk::ArithmeticStreamHandler<Number_T>` abstract class] with callbacks for interpreting wire-numbers and making calls to the xref:{xref-rel-dir}api/wtk/bolt/Backend.adoc#api_bolt_Backend[`wtk::bolt::Backend<Wire_T, Number_T>`] callback API.
+
+[#ArithmeticPLASMASnoozeHandler_constructor]
+=== `ArithmeticPLASMASnoozeHandler(wtk::bolt::Backend<Wire_T, Number_T>* const b, wtk::InputStream<Number_T>* const ins, wtk::InputStream<Number_T>* const wit)`
+The constructor requires a xref:{xref-rel-dir}api/wtk/bolt/Backend.adoc#api_bolt_Backend[`wtk::bolt::Backend<Wire_T, Number_T>*`] for ZK callbacks, as well as two xref:{xref-rel-dir}api/wtk/Parser.adoc#struct_InputStream[`wtk::InputStream<Number_T>*`] parameters for the instance and short witness.
+The second input stream (short witness) may be `nullptr`, as may be necessary for verifier implementations.
+
+----
+ArithmeticPLASMASnoozeHandler(
+    wtk::bolt::Backend<Wire_T, Number_T>* const b,
+    wtk::InputStream<Number_T>* const ins,
+    wtk::InputStream<Number_T>* const wit);
+----
+
+[#ArithmeticPLASMASnoozeHandler_check]
+=== `wtk::Bolt::PLASMASnoozeStatus check()`
+After stream parsing/processing the `check()` method retrieves a status (xref:{xref-rel-dir}api/wtk/bolt/PLASMASnooze.adoc#enum_PLASMASnoozeStatus[`wtk::PLASMASnoozeStatus`]).
+
+----
+wtk::bolt::PLASMASnoozeStatus check();
+----

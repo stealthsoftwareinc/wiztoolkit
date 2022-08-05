@@ -1,0 +1,28 @@
+version 1.0.0;
+field characteristic 97 degree 1;
+relation
+gate_set: arithmetic;
+features: simple;
+@begin
+  $0 <- @instance;
+  $2 <- @short_witness;
+  $1 <- @instance;
+  $3 <- @short_witness;
+
+  $7 <- @mul($3,$3);    
+  $11 <- @mul($7,$1);   //LHS
+
+  $4 <- @mul($2,$2);    //x^2
+  $10<- @mul($4,$2);    //x^3
+
+  $6 <- @mul($0,$4);    //Ax^2
+  $8 <- @add($10,$6);
+  $9 <- @add($8,$2);    //RHS
+  $5 <- @mulc($9,<96>); //-RHS
+  $12<- @add($11,$5);
+
+  @delete($0);
+  @delete($1, $11);
+  @assert_zero($12);
+  @delete($12);
+@end

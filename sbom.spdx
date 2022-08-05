@@ -1,0 +1,251 @@
+SPDXVersion: SPDX-2.2
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentNamespace: https://stealthsoftwareinc.com/stealth/wiztoolkit/9f598386-9e95-4057-b526-0e5b23a38d04
+DocumentName: WizToolKit SBOM
+Creator: Organization: Stealth Software Technologies, Inc. ()
+Created: 2022-04-29T00:00:00Z
+
+# Self: WizToolKit
+
+PackageName: WizToolKit
+SPDXID: SPDXRef-WTK
+PackageVersion: 0.1.1
+PackageSupplier: Organization: Stealth Software Technologies, Inc ()
+PackageOriginator: Organization: Stealth Software Technologies, Inc ()
+PackageDownloadLocation: git+ssh://github.mit.edu/sieve-all/wiztoolkit.git
+PackageHomePage: https://github.mit.edu/sieve-all/wiztoolkit/
+PackageLicenseDeclared: (MIT OR LicenseRef-SIEVE-USE) AND LicenseRef-DARPA-Ack
+PackageLicenseConcluded: (MIT OR LicenseRef-SIEVE-USE) AND LicenseRef-DARPA-Ack
+PackageCopyrightText: Copyright (C) 2019-2022 Stealth Software Technologies, Inc.
+FilesAnalyzed: false
+
+# Dependencies
+
+PackageName: SST::BigNum
+SPDXID: SPDXRef-SSTBN
+PackageVersion: NOASSERTION
+PackageSupplier: Organization: Stealth Software Technologies, Inc ()
+PackageOriginator: Organization: Stealth Software Technologies, Inc ()
+PackageDownloadLocation: https://github.com/stealthsoftwareinc/sst/raw/
+PackageHomePage: https://www.stealthsoftwareinc.io/sst/manual/
+PackageLicenseConcluded: GPL-3.0-or-later OR GPL-3.0-only
+PackageLicenseDeclared: GPL-3.0-or-later OR GPL-3.0-only
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Used only by the WizToolKit command-line tools, for unlimited precision integers.</text>
+FilesAnalyzed: false
+
+PackageName: OpenSSL LibCrypto
+SPDXID: SPDXRef-SSL
+PackageVersion: NOASSERTION
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: OpenSSL
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text> Used transitively through SST::BigNum, only by the command-line tools. Uses the openssl/bn.h unlimited precision integer implementation.</text>
+FilesAnalyzed: false
+
+PackageName: Stealth Logging
+SPDXID: SPDXRef-Stealth-Logging
+PackageVersion: NOASSERTION
+PackageSupplier: Organization: Stealth Software Technologies, Inc ()
+PackageOriginator: Organization: Stealth Software Technologies, Inc ()
+PackageDownloadLocation: git+ssh://github.mit.edu/kmodel/stealth_logging.git
+PackageHomePage: https://github.mit.edu/kmodel/stealth_logging.git
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: Copyright Stealth Software Technologies, Inc.
+PackageSummary: <text>Used by WizToolKit for logging and error reporting/formatting</text>
+FilesAnalyzed: false
+
+PackageName: ANTLR4
+SPDXID: SPDXRef-ANTLR4
+PackageVersion: 4.8
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: https://www.antlr.org/download/antlr-4.8-complete.jar
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Used by WizToolKit for "obviously" correct text parser. Disabled with USE_ANTLR=0</text>
+FilesAnalyzed: false
+
+PackageName: libuuid
+SPDXID: SPDXRef-libuuid
+PackageVersion: NOASSERTION
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageComment: <text>Required by ANTLR4 and expected to be provided by OS. Both the library and headers are necessary</text>
+FilesAnalyzed: false
+
+PackageName: FlatBuffer
+SPDXID: SPDXRef-FlatBuffer
+PackageVersion: 2.0.0
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: https://github.com/google/flatbuffers/archive/refs/tags/v2.0.0.tar.gz
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: Apache-2.0
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Used by WizToolKit for binary parser. Disabled with USE_FLATBUFFER=0</text>
+FilesAnalyzed: false
+
+# Build Dependencies
+
+PackageName: CMake
+SPDXID: SPDXRef-CMake
+PackageVersion: 3.0+
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Build Dependency</text>
+FilesAnalyzed: false
+
+PackageName: GNU Make
+SPDXID: SPDXRef-GNU-Make
+PackageVersion: NOASSERTION
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Build Dependency</text>
+FilesAnalyzed: false
+
+PackageName: C++
+SPDXID: SPDXRef-CXX
+PackageVersion: c++-11
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Build Dependency. Tested against GCC/G++ 4.8.5, 7.5.0, and 8.5.0; and Clang/Clang++ 3.4.2, 6.0.0, and 12.0.1</text>
+FilesAnalyzed: false
+
+PackageName: wget
+SPDXID: SPDXRef-wget
+PackageVersion: NOASSERTION
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Build Dependency.</text>
+FilesAnalyzed: false
+
+PackageName: Python 3
+SPDXID: SPDXRef-Python
+PackageVersion: 3.6+
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Build Dependency.</text>
+FilesAnalyzed: false
+
+PackageName: Java 1.8.0
+SPDXID: SPDXRef-Java
+PackageVersion: 1.8.0+
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Build Dependency.</text>
+FilesAnalyzed: false
+
+PackageName: pkg-config
+SPDXID: SPDXRef-pkg-config
+PackageVersion: NOASSERTION
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: NOASSERTION
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Build Dependency.</text>
+FilesAnalyzed: false
+
+# Test Dependencies
+
+PackageName: Google Test
+SPDXID: SPDXRef-GTest
+PackageVersion: 1.10.0
+PackageSupplier: NOASSERTION
+PackageOriginator: NOASSERTION
+PackageDownloadLocation: https://github.com/google/googletest/archive/release-1.10.0.tar.gz
+PackageHomePage: NOASSERTION
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSummary: <text>Test Dependency.</text>
+FilesAnalyzed: false
+
+# Relationships
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-WTK
+Relationship: SPDXRef-SSTBN DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-SSL PROVIDED_DEPENDENCY_OF SPDXRef-SSTBN
+Relationship: SPDXRef-Stealth-Logging DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-ANTLR4 OPTIONAL_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-libuuid PROVIDED_DEPENDENCY_OF SPDXRef-ANTLR4
+Relationship: SPDXRef-FlatBuffer OPTIONAL_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-CMake BUILD_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-CMake PROVIDED_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-GNU-Make BUILD_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-GNU-Make PROVIDED_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-CXX BUILD_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-CXX PROVIDED_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-wget BUILD_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-wget PROVIDED_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-Python BUILD_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-Python PROVIDED_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-Java BUILD_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-Java PROVIDED_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-Java OPTIONAL_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-pkg-config BUILD_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-pkg-config PROVIDED_DEPENDENCY_OF SPDXRef-WTK
+Relationship: SPDXRef-GTest TEST_DEPENDENCY_OF SPDXRef-WTK
+
+# Non-standard Licenses for WTK
+
+LicenseID: LicenseRef-SIEVE-USE
+ExtractedText: <text>
+The source code and other substantial material in this directory is Copyright (C) 2020-2022 Stealth Software Technologies, Inc.
+
+This copy of WizToolKit is for SIEVE PROGRAM USE ONLY! Performers on the SIEVE program may use this code for its intended purpose ONLY for the SIEVE Program.
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+</text>
+LicenseName: NOASSERTION
+
+LicenseID: LicenseRef-DARPA-Ack
+ExtractedText: <text>
+This material is based upon work supported by DARPA under Contract No. HR001120C0087.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of DARPA.
+</text>
+LicenseName: NOASSERTION

@@ -1,0 +1,243 @@
+[#backends]
+= WizToolKit for Backends
+:source-highlighter: pygments
+:source-language: c++
+
+WizToolKit's BOLT and PLASMASnooze IR interpreters share a common Backend API.
+The advantage of this is it allows the backend to focus on proofs and reuse IR semantics from WizToolKit.
+BOLT is a "two-pass" interpreter and is most ideally suited for relations which rely heavily on loops.
+PLASMASnooze is a "single-pass" interpreter and picks up the slack when very few gates are reused.
+
+The following includes are required.
+
+xref:api/wtk/bolt/Builder.adoc#api_bolt_Builder[`#include <wtk/bolt/Builder.h>`]:: the _build_ phase of the BOLT interpreter.
+xref:api/wtk/bolt/Evaluator.adoc#api_bolt_Evaluator[`#include <wtk/bolt/Evaluator.h>`]:: the _evaluate_ phase of BOLT interpreter.
+xref:api/wtk/bolt/PLASMASnooze.adoc#api_bolt_PLASMASnooze[`#include <wtk/bolt/PLASMASnooze.h>`]:: the PLASMASnooze interpreter.
+xref:api/wtk/bolt/ArithmeticPLASMASnoozeHandler.adoc#api_bolt_ArithmeticPLASMASnoozeHandler[`#include <wtk/bolt/ArithmeticPLASMASnoozeHandler.h>`], and xref:api/wtk/bolt/BooleanPLASMASnoozeHandler.adoc#api_bolt_BooleanPLASMASnoozeHandler[`#include <wtk/bolt/BooleanPLASMASnoozeHandler.h>`]:: the PLASMASnooze interpreter, adapted to the xref:parsers.adoc#Streaming-API[Streaming Parser API].
+xref:api/wtk/bolt/Backend.adoc#api_bolt_Backend[`#include <wtk/bolt/Backend.h>`]:: the interface which a backend implementor must implement.
+
+For those who are curious about the naming scheme of these, BOLT is short for **B**etter **O**ptimization via **L**ookup-reuse and **T**wo-pass.
+PLASMASnooze is an improvement over xref:tools/wtk-firealarm.adoc#tools_firealarm[FIREALARM] in the sense of performance and of plugability with ZK Backends.
+However, it is also a disprovement in the sense that it relaxes certain IR semantics, for example, it allows reassignment to a wire, after the wire was ``@delete``d.
+Thus PLASMA is an improvement upon FIRE, and Snooze is the opposite of ALARM.
+PLASMASnooze stands for **P**ractical **L**ocal **A**cceleration for **S**ingle-pass with **M**alleable **A**ssumtions **Snooze**.
+
+== Numeric Representations
+In this API there are generally three numeric representation types.
+
+Wire numbers:: A `typedef` named `wtk::index_t` defines the 64-bit unsigned integers (with wraparound) required by the IR specification for indices in the wire numbering system.
+These are almost entirely hidden from the backend.
+Wire values:: A template parameter which is typically referred to as `Wire_T` must be specified by the backend to carry the value across each wire.
+Parser literals:: A template parameter which is typically referred to as `Number_T` must be the same numeric type as parameterizing the parser.
+
+== The Backend API
+The xref:api/wtk/bolt/Backend.adoc#class_Backend[`wtk::bolt::Backend<Wire_T, Number_T>`] is a simple abstract class which must be implemented by the backend.
+It declares a number of methods which must be overridden by the backend.
+Each method handles a simple gate, such as `@mul` or `@xor`.
+WizToolKit guarantees that it will only call methods of one _Gate Set_.
+If an implementor can only handle one _Gate Set_ it is acceptable to have empty or failing implementations for the other _Gate Set_.
+
+----
+typedef MyWire /* something that is default-constructible */;
+
+struct MyBackend : public wtk::bolt::Backend<MyWire, uint64_t>
+{
+  void addGate(MyWire* const out, MyWire const* const left, MyWire const* const right) override
+  {
+    /* implementation */
+  }
+
+  void mulGate(MyWire* const out, MyWire const* const left, MyWire const* const right) override
+  {
+    /* implementation */
+  }
+
+  /* remaining methods omitted for brevity */
+};
+----
+
+=== Assert Zero
+The `@assert_zero` directive indicates that the proof would fail if its input were non-zero.
+The Backend API expects the implementor to cache assertions and check them at the end.
+This is done with a pair of xref:api/wtk/bolt/Backend.adoc#Backend_assertZero[`assertZero(...)`] and xref:api/wtk/bolt/Backend.adoc#Backend_check[`check()`] methods.
+Here is an example.
+
+----
+  bool failureCache = false;
+
+  void assertZero(MyWire const* const wire) override
+  {
+    this->failureCache = (MyWire != 0) || this->failureCache;
+  }
+
+  bool check() override
+  {
+    return this->failureCache;
+  }
+----
+
+The top-level caller may call xref:api/wtk/bolt/Backend.adoc#Backend_check[`check()`] at the top-level to check for failures.
+If shutdown code is necessary, it may be written in either the the xref:api/wtk/bolt/Backend.adoc#Backend_finish[`finish()`] method or the destructor.
+The top-level caller must call `finish()` at the top level scope.
+
+=== Replacing Exponentiation in Switch-Statements
+By default, WizToolKit uses exponentiation (and https://en.wikipedia.org/wiki/Fermat\'s_little_theorem[Fermat's Little Theorem]) to test which case is selected in an arithmetic switch-statement.
+This means that there are `n log(P)` many additional multiplications per switch statement (`n` being number of cases and `P` being the prime).
+If an implementor's ZK system can improve upon this, they may override the `caseSelect(...)` function.
+The `selected_bit` output wire must be assigned `1` or `0` when the `select_wire` input wire is or is not equal to the `case_number` field-literal.
+
+----
+  void caseSelect(MyWire* const selected_bit,
+      uint64_t const case_number, MyWire const* const select_wire) override
+  {
+    // Implement this
+  }
+----
+
+== Invoking BOLT
+BOLT has two phases of invocation.
+First xref:api/wtk/bolt/Builder.adoc#api_bolt_Builder[_build_] translates the IR syntax tree to a more accelerated form, then xref:api/wtk/bolt/Builder.adoc#api_bolt_Evaluator[_evaluate_] processes the relation, invoking methods of the backend as necessary.
+Here is an example.
+
+----
+// Collect these from the parser
+uint64_t characteristic = /* ... */;
+bool is_boolean = /* ... */;
+wtk::IRTree<uint64_t>* relation = /* ... */;
+wtk::InputStream<uint64_t>* instance = /* ... */;
+wtk::InputStream<uint64_t>* witness = /* ... */;
+
+// Build the relation. *bolt_relation has the same lifetime as builder
+wtk::bolt::Builder<MyWire, uint64_t> builder(characteristic);
+wtk::bolt::Bolt<MyWire, uint64_t>* bolt_relation = builder.build(relation);
+
+// Check that build succeeded and then evaluate.
+if(bolt_relation != nullptr)
+{
+  // Evaluate the relation
+  MyBackend backend(characteristic, is_boolean, /* ... */);
+  wtk::bolt::Evaluator<MyWire, uint64_t> evaluator(&backend);
+
+  if(!evaluator.evaluate(bolt_relation, instance, witness))
+  {
+    /* Instance or witness is poorly formed */
+  }
+  else if(!backend.check())
+  {
+    /* an assert zero failed, or other things happened to invalidate the proof */
+  }
+  else
+  {
+    /* success */
+  }
+
+  backend.finish();
+}
+----
+
+At invocation time, it may be nonsensical for the a verifier to have a witness stream.
+To handle this, xref:api/wtk/bolt/Evaluator.adoc#Evaluator_evaluate[`evaluate(...)`] may be called with a `nullptr`.
+In this case, the evaluator will feed the backend zeroes in place of the witness.
+
+----
+  if(!evaluator.evaluate(bolt_relation, instance, nullptr))
+----
+
+== Invoking PLASMASnooze
+xref:api/wtk/bolt/PLASMASnooze.adoc#api_bolt_PLASMASnooze[PLASMASnooze] has just a single phase of execution.
+Instead of returning true/false for success or failure, it returns an xref:api/wtk/bolt/PLASMASnooze.adoc#enum_PLASMASnoozeStatus[enumeration indicating which resource caused the failure].
+As with BOLT, PLASMASnooze indicates only failures of each individual resource, leaving the backend to indicate failure of the proof.
+
+----
+// Collect these from the parser
+uint64_t characteristic = /* ... */;
+bool is_boolean = /* ... */;
+wtk::IRTree<uint64_t>* relation = /* ... */;
+wtk::InputStream<uint64_t>* instance = /* ... */;
+wtk::InputStream<uint64_t>* witness = /* ... */;
+
+// Evaluate the relation
+MyBackend backend(characteristic, is_boolean, /* ... */);
+wtk::bolt::PLASMASnooze<MyWire, uint64_t> snooze(&backend);
+
+wtk::bolt::PLASMASnoozeStatus status =
+  snooze.evaluate(relation, instance, witness);
+if(wtk::bolt::PLASMASnoozeStatus::bad_relation == status)
+{
+  /* Relation is poorly formed */
+}
+if(wtk::bolt::PLASMASnoozeStatus::bad_stream == status)
+{
+  /* Instance or witness is poorly formed */
+}
+else if(!backend.check())
+{
+  /* an assert zero failed, or other things happened to invalidate the proof */
+}
+else
+{
+  /* success */
+}
+
+backend.finish();
+----
+
+Similarly to BOLT, PLASMASnooze may be invoked with a null witness, to feed a verifier zeroes in the place of witnesses.
+
+----
+wtk::bolt::PLASMASnoozeStatus status =
+  snooze.evaluate(relation, instance, nullptr);
+----
+
+=== Streaming PLASMASnooze
+A further optimization to PLASMASnooze, when processing strict IR-Simple, is to use the xref:parsers.adoc#Streaming-API[parser's streaming API].
+When the relation is IR-Simple (a completely "flat" list of gates), the parser can pass each gate to a handler immediately after its parsed, rather than adding it to a syntax tree.
+The xref:api/wtk/bolt/ArithmeticPLASMASnoozeHandler.adoc#api_bolt_ArithmeticPLASMASnoozeHandler[`wtk::bolt::ArithmeticPLASMASnoozeHandler<Wire_T, Number_T>`] and xref:api/wtk/bolt/BooleanPLASMASnoozeHandler.adoc#api_bolt_BooleanPLASMASnoozeHandler[`wtk::bolt::BooleanPLASMASnoozeHandler<Wire_T>` (`Number_T` is fixed as `uint8_t`)] implement the Streaming API for PLASMASnooze. the `check()` method of each must be used to collect the xref:api/wtk/bolt/PLASMASnooze.adoc#enum_PLASMASnoozeStatus[status code (`wtk::bolt::PLASMASnoozeStatus`)].
+
+Here is an example invocation for arithmetic PLASMASnooze streaming.
+
+----
+// Collect these from the parser
+uint64_t characteristic = /* ... */;
+bool is_boolean = /* ... */;
+wtk::ArithemticParser<uint64_t>* relation_parser = /* ... */;
+wtk::InputStream<uint64_t>* instance = /* ... */;
+wtk::InputStream<uint64_t>* witness = /* ... */;
+
+// Evaluate the relation
+MyBackend backend(characteristic, is_boolean, /* ... */);
+wtk::bolt::ArithmeticPLASMASnoozeHandler<MyWire, uint64_t> snooze(&backend, instance, witness);
+
+if(!relation_parser->parseStream(&snooze))
+{
+  /* Syntax error */
+}
+else
+{
+  wtk::bolt::PLASMASnoozeStatus status = snooze.check();
+  if(wtk::bolt::PLASMASnoozeStatus::bad_relation == status)
+  {
+    /* Relation is poorly formed */
+  }
+  if(wtk::bolt::PLASMASnoozeStatus::bad_stream == status)
+  {
+    /* Instance or witness is poorly formed */
+  }
+  else if(!backend.check())
+  {
+    /* an assert zero failed, or other things happened to invalidate the proof */
+  }
+  else
+  {
+    /* success */
+  }
+}
+
+backend.finish();
+----
+
+For verifiers, who have access to the instance but not the witness, the handler may be constructed with a `nullptr` witness.
+
+----
+wtk::bolt::ArithmeticPLASMASnoozeHandler<MyWire, uint64_t> snooze(&backend, instance, nullptr);
+----

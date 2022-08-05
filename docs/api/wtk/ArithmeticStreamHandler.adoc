@@ -1,0 +1,134 @@
+[#api_ArithmeticStreamHandler]
+= Arithmetic Stream Handler API
+:toc:
+:source-highlighter: pygments
+:source-language: c++
+:source_subs: attributes,specialchars,macros
+ifndef::xref-rel-dir[]
+:xref-rel-dir: ../../
+endif::[]
+
+Include this API as
+
+----
+#include <wtk/ArithmeticStreamHandler.h>
+----
+
+Members of this API live in the following namespace
+
+----
+namespace wtk { ...
+----
+
+This API is parameterized on a `Number_T` template.
+`Number_T` should be integer-like enough to be parsed from a string.
+This API is abstract and implemented by parsers for various IR formats.
+
+[#class_ArithmeticStreamHandler]
+== `template<typename Number_T> class ArithmeticStreamHandler`
+The `wtk::ArithmeticStreamHandler<Number_T>` is a virtual class for the user to implement with callbacks for the xref:{xref-rel-dir}api/wtk/Parser.adoc#api_Parser[Parser API] to use when stream parsing.
+
+[#ArithmeticStreamHandler_setLineNumber]
+=== `virtual void setLineNumber(size_t const line)`
+If the Parser supports line-numbering, it will use this callback to set the current line number before a gate's callback is invoked.
+
+----
+virtual void setLineNum(size_t const line);
+----
+
+[#ArithmeticStreamHandler_handleInstance]
+=== `virtual void handleInstance(wtk::index_t const idx)`
+Called when an `@instance` directive is reached.
+
+----
+virtual void handleInstance(wtk::index_t const idx);
+----
+
+[#ArithmeticStreamHandler_handleShortWitness]
+=== `virtual void handleShortWitness(wtk::index_t const idx)`
+Called when an `@short_witness` directive is reached.
+
+----
+virtual void handleShortWitness(wtk::index_t const idx);
+----
+
+[#ArithmeticStreamHandler_handleAdd]
+=== `virtual void handleAdd(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right)`
+Called when an `@add` directive is reached.
+
+----
+virtual void handleAdd(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right);
+----
+
+[#ArithmeticStreamHandler_handleMul]
+=== `virtual void handleMul(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right)`
+Called when an `@mul` directive is reached.
+
+----
+virtual void handleMul(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right);
+----
+
+[#ArithmeticStreamHandler_handleAddC]
+=== `virtual void handleAddC(wtk::index_t const out, wtk::index_t const left, Number_T const right)`
+Called when an `@addc` directive is reached.
+
+----
+virtual void handleAddC(wtk::index_t const out, wtk::index_t const left, Number_T const right);
+----
+
+[#ArithmeticStreamHandler_handleMulC]
+=== `virtual void handleMulC(wtk::index_t const out, wtk::index_t const left, Number_T const right)`
+Called when an `@mulc` directive is reached.
+
+----
+virtual void handleMulC(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right);
+----
+
+[#ArithmeticStreamHandler_handleAssign]
+=== `virtual void handleAssign(wtk::index_t const out, Number_T const val)`
+Called when a constant assignment directive is reached.
+
+----
+virtual void handleAssign(wtk::index_t const out, Number_T const val);
+----
+
+[#ArithmeticStreamHandler_handleCopy]
+=== `virtual void handleCopy(wtk::index_t const out, wtk::index_t const in)`
+Called when a copy directive is reached.
+
+----
+virtual void handleCopy(wtk::index_t const out, wtk::index_t const in);
+----
+
+[#ArithmeticStreamHandler_handleAssertZero]
+=== `virtual void handleAssertZero(wtk::index_t const in)`
+Called when an `@assert_zero` directive is reached.
+
+----
+virtual void handleAssertZero(wtk::index_t const in);
+----
+
+[#ArithmeticStreamHandler_handleDeleteSingle]
+=== `virtual void handleDeleteSingle(wtk::index_t const in)`
+Called when a `@delete` directive with a single argument is reached.
+
+----
+virtual void handleDeleteSingle(wtk::index_t const in);
+----
+
+[#ArithmeticStreamHandler_handleDeleteRange]
+=== `virtual void handleDeleteRange(wtk::index_t const first, wtk::index_t const last)`
+Called when a `@delete` directive with a range argument is reached.
+The range is inclusive on both ends.
+
+----
+virtual void handleDeleteRange(wtk::index_t const first, wtk::index_t const last);
+----
+
+[#ArithmeticStreamHandler_handleEnd]
+=== `virtual void handleEnd()`
+Called after the last directive is reached.
+
+----
+virtual void handleEnd();
+----

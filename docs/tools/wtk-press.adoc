@@ -1,0 +1,46 @@
+[#tools_press]
+= PRESS (Format and Feature Conversion)
+ifndef::xref-rel-dir[]
+:xref-rel-dir: ../
+endif::[]
+
+PRESS, as in printing-press, is short for **P**rinting and **R**epresentation **E**xchange **S**oftware **S**uite.
+``wtk-press`` is a tool for changing the format of the IR or to remove unwanted features from the IR.
+Press can convert between the text and binary formats of the IR, or it can replace `@switch` directives with a multiplexer.
+The multiplexer is composed with `@for` loops, and a `@function(check_case, ....)`, which does have to exponentiate by _p-1_ when using arithmetic gates.
+
+== Command-Line Modes
+`wtk-press` uses a `<mode> <input-file> [ <output-file> ]` format on its command line.
+Available modes are as follows.
+Text parsing is always done with xref:{xref-rel-dir}api/wtk/irregular/Parser.adoc#api_irregular_Parser[IRRegular].
+
+[horizontal]
+`b2b`:: Binary to binary
+`b2mux`:: Binary to binary, with multiplex converter (if necessary)
+`b2t`:: Binary to text
+`t2b`:: Text to binary
+`t2mux`:: Text to text, with multiplex converter (if necessary)
+`t2t`:: Text to text
+
+It also has some more testing oriented modes, which convert to nothing.
+Essentially they are for testing and profiling the xref:{xref-rel-dir}parsers.adoc#parsers[parsers].
+
+[horizontal]
+`a2n`:: xref:{xref-rel-dir}api/wtk/antlr/Parser.adoc#api_antlr_Parser[ANTLR] to nothing
+`b2n`:: xref:{xref-rel-dir}api/wtk/flatbuffer/Parser.adoc#api_flatbuffer_Parser[Binary] to nothing
+`t2n`:: xref:{xref-rel-dir}api/wtk/irregular/Parser.adoc#api_irregular_Parser[Text (IRRegular)] to nothing
+
+== Example invocations
+To convert from a text file to a binary file, or reverse.
+
+----
+wtk-press t2b relation_file.rel bin_relation_file.rel
+wtk-press b2t bin_relation_file.rel > relation_file_copy.rel
+----
+
+To remove the `@switch` features.
+
+----
+wtk-press t2mux relation_file.rel relation_file_mux.rel
+wtk-press b2mux bin_relation_file.rel bin_relation_file_mux.rel
+----

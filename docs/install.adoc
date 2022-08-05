@@ -1,0 +1,230 @@
+[#install]
+= Installing WizToolKit
+:toc:
+:revdate: 2022-02-10
+:source-highlighter: pygments
+:source-language: bash
+
+== Linux and Unix derivitives
+We've compiled a list of installation instructions for a few common systems.
+
+=== RedHat/CentOS-Stream/Rocky/Alma 8
+These systems are regularly tested by CI.
+Starting from a 'minimal installation', You will need to install these dependencies with `yum`.
+
+----
+yum install \
+  epel-release \
+  yum-utils
+yum config-manager --set-enabled powertools
+yum install \
+  git \
+  tar \
+  make \
+  wget \
+  unzip \
+  cmake \
+  libuuid \
+  libuuid-devel \
+  gcc-c++ \
+  diffutils \
+  which \
+  java-11-openjdk-devel \
+  java-11-openjdk-headless \
+  python39 \
+  openssl \
+  openssl-devel
+----
+
+Once installed, you can invoke make as normal.
+Keep in mind, that `make` will download additional dependencies.
+
+----
+make
+make install
+----
+
+=== RedHat/CentOS 7
+These systems are tested regularly in CI, however the xref:api/wtk/antlr/Parser.adoc#api_antlr_Parser[ANTLR parser] does not build due to differences in C++ dialects.
+Starting with a 'minimal installation' You will need to install these dependencies with `yum`.
+
+----
+yum install epel-release
+yum install \
+  git \
+  tar \
+  make \
+  wget \
+  unzip \
+  cmake3 \
+  libuuid \
+  libuuid-devel \
+  gcc-c++ \
+  diffutils \
+  which \
+  java-11-openjdk-devel \
+  java-11-openjdk-headless \
+  python3 \
+  openssl \
+  openssl-devel
+----
+
+To use `make`, you will need to disable ANTLR.
+Keep in mind, that `make` will download additional dependencies.
+
+----
+make ENABLE_ANTLR=0 CMAKE_CMD=cmake3
+make install
+----
+
+=== Ubuntu 18.04 LTS
+This platform is regularly tested in CI. To install dependencies
+
+----
+apt-get install \
+  git \
+  build-essential \
+  make \
+  wget \
+  unzip \
+  cmake \
+  g++ \
+  uuid-dev \
+  default-jdk \
+  python3 \
+  libssl-dev
+----
+
+Build is as normal.
+Keep in mind, that `make` will download additional dependencies.
+
+----
+make
+make install
+----
+
+=== Ubuntu 20.04 LTS
+This platform is regularly tested in CI. To install dependencies
+
+----
+apt-get install \
+  git \
+  build-essential \
+  make \
+  wget \
+  unzip \
+  cmake \
+  g++ \
+  uuid-dev \
+  default-jdk \
+  python3 \
+  libssl-dev
+----
+
+Build is as normal.
+Keep in mind, that `make` will download additional dependencies.
+
+----
+make
+make install
+----
+
+== Windows 10
+We are not able to regularly test this platform as of yet, but we do some manual testing on occasion.
+We find that windows builds are best done within the https://www.msys2.org[MSYS2's] MinGW64 environment.
+After installing MSYS2, launch _"MSYS2 MinGW 64-bit"_ from the "start-button".
+
+To install the necessary dependencies use `pacman`.
+
+----
+pacman -S --needed \
+  tar \
+  git \
+  wget \
+  make \
+  unzip \
+  diffutil \
+  mingw-w64-x86_64-gcc \
+  mingw-w64-x86_64-make \
+  mingw-w64-x86_64-cmake \
+  mingw-w64-x86_64-openssl
+----
+
+Then you will need to invoke `make` with the correct variables.
+
+* xref:api/wtk/antlr/Parser.adoc#api_antlr_Parser[ANTLR] doesn't compile in MSYS2 because Java doesn't exist.
+* `make` should be invoked as normal, but when it invokes make it should use `mingw32-make`.
+* CMake should use the `'MinGW Makefiles'` generator.
+* The C++ compiler should be `/mingw64/bin/x86_64-w64-mingw32-g++.exe`
+
+To do all this, the following `make` command is best.
+Keep in mind, that `make` will download additional dependencies.
+
+----
+make ENABLE_ANTLR=0 MAKE_CMD=mingw32-make CMAKE_GENERATOR='MinGW Makefiles' CXX=/mingw64/bin/x86_64-w64-mingw32-g++.exe
+make ENABLE_ANTLR=0 MAKE_CMD=mingw32-make CMAKE_GENERATOR='MinGW Makefiles' CXX=/mingw64/bin/x86_64-w64-mingw32-g++.exe install
+----
+
+To use WizToolKit commandline tools beyond the realm of MSYS2, (for example from `cmd.exe`) you will need to add to your `PATH`.
+Then you can invoke `wtk-` commands by their absolute path (or add their path to the `PATH` as well).
+
+----
+PATH=%PATH%;C:\msys64\mingw64\bin;C:\msys64\mingw64\lib
+C:\msys64\usr\local\bin\wtk-firealarm.exe
+----
+
+== Generic Build Guide
+
+=== Dependencies
+The build system for WizToolKit depends on a number of tools.
+See also the WizToolKit link:./sbom.spdx[Software Bill-of-Materials]
+
+* GNU Make: for task orchestration
+* CMake: for C++ build orchestration
+* C\++ Compiler (tested against `g++` and `clang++`)
+* `wget`: for downloading dependencies
+* Java Runtime 1.8 (or higher): for running the ANTLR tool (required only at build time)
+* Python 3: for generating portions of the IRRegular text parser (required only at build time).
+* ``pkg-config``: is required by CMake, and apparently not always installed by default on Ubuntu.
+* OpenSSL libcrypto and ``sst::bignum``:
+** OpenSSL should be provided by the system.
+** ``sst::bignum`` is downloaded automatically.
+** Only the WizToolKit xref:commandline.adoc#commandline[_command line tools_] use the unlimited precision number library ``openssl/bn.h`` and C++ wrapper ``sst::bignum``.
+** the WizToolKit _API_ **does not** link to these library.
+* https://www.antlr.org/[ANTLR 4]: for generating and running the xref:api/wtk/antlr/Parser.adoc#api_antlr_Parser[``wtk/antlr/Parser.h``] parser implementation.
+** downloaded automatically at build time.
+** the runtime may require the ``libuuid-devel`` package (or equivalent from your system's package manager).
+** may be disabled with ``make ENABLE_ANTLR=0``
+* https://google.github.io/flatbuffers[FlatBuffers 2.0.0]: to implement the binary format of the IR specification via the xref:api/wtk/flatbuffer/Parser.adoc#api_flatbuffer_Parser[FlatBuffer Parser].
+** may be disabled with ``make ENABLE_FLATBUFFER=0``
+* Stealth logging: For reporting errors and other conditions at runtime.
+** this is used by the WizToolKit API.
+** downloaded automatically at build time.
+* https://google.github.io/googletest/[Google Test]: for running unit tests.
+** downloaded automatically at build time.
+** Only used during testing.
+
+=== Make Targets and Options
+After downloading  or ``git clone``ing a WizToolKit package, to quickly install run the following commands.
+
+[source,bash]
+----
+ > make
+ > make install # as root
+----
+
+The makefile has the following more specific targets,
+
+* ``deps``: calls scripts to download all the non-system dependencies.
+* ``gen_parser``: calls scripts which do code-generation for the parser implementations.
+* ``configure``: calls CMake to configure the C++ build system. The following environment variables are respected.
+** ``BUILD_TYPE``: indicates whether to use ``Debug`` or ``Release`` mode. Defaults to ``Release``.
+** ``PREFIX``: is the installation prefix to use when calling ``install``. Defaults to ``/usr/local``.
+** ``CXX``: to change the compiler
+** ``ENABLE_ANTLR``: enables compile of the xref:api/wtk/antlr/Parser.adoc#api_antlr_Parser[ANTLR parser], otherwise only IRRegular is produced. (default 1)
+** ``ENABLE_FLATBUFFER``: enables compile of the xref:api/wtk/flatbuffer/Parser.adoc#api_flatbuffer_Parser[FlatBuffer parser] (default 1).
+* ``build``: calls CMake generate make files.
+* ``test``: (default target) will run the unit tests.
+* ``install``: installs all WizToolKit files to the system.
+* ``clean``: will remove all build files.
+* ``deps-clean``: will remove all dependencies.

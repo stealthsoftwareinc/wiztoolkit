@@ -1,0 +1,8 @@
+src/deps/*/
+src/deps/deps.success
+*.swp
+*.swo
+**/target/
+**/dist/
+tests/**/temp.out
+*.html

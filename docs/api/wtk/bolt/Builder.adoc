@@ -1,0 +1,52 @@
+[#api_bolt_Builder]
+= BOLT Builder API
+:toc:
+:source-highlighter: pygments
+:source-language: c++
+:source_subs: attributes,specialchars,macros
+ifndef::xref-rel-dir[]
+:xref-rel-dir: ../../../
+endif::[]
+
+Include this API as
+
+----
+#include <wtk/bolt/Builder.h>
+----
+
+Members of this API live in the following namespace
+
+----
+namespace wtk { namespace bolt { ...
+----
+
+The BOLT API is parameterized on two templates.
+
+`Number_T`:: This template is the same integer-like template which the xref:{xref-rel-dir}api/wtk/Parser.adoc#api_Parser[Parser API] uses for numeric literals.
+`Wire_T`:: This template is an opaque structure supplied by the xref:{xref-rel-dir}api/wtk/bolt/Backend.adoc#api_bolt_Backend[Backend] for encapsulating data related to a wire.
+The Builder requires it to be default constructible/destructible, and the xref:{xref-rel-dir}api/wtk/bolt/Evaluator.adoc#api_bolt_Evaluator[Evaluator] requires it be mutable/overwritable.
+
+[#struct_bolt_Builder]
+== `template<typename Wire_T, typename Number_T> struct Builder`
+The `wtk::bolt::Builder<Wire_T, Number_T>` conducts the first stage of BOLT invocation -- building an augmented/annotated syntax tree.
+It does its best to do this in _O(s)_ time where _s_ is the size of the syntax-tree.
+This is easy to do for most of the IR, however, certain classes of for-loops require work proportional to either number of iterations ("soft" unrolling), or proportional to iterations and size of the sub-syntax tree ("hard" unrolling).
+
+[#bolt_Builder_constructor]
+=== `Builder(Number_T const c)`
+The only constructor for a `wtk::bolt::Builder<Wire_T, Number_T>` requires just a single `Number_T` parameter for the circuit's _characteristic_ (prime modulus).
+
+----
+Builder(Number_T const c);
+----
+
+[#bolt_Builder_build]
+=== `Bolt<Wire_T, Number_T>* build(wtk::IRTree<Number_T>* const tree)`
+This method builds a `wtk::bolt::Bolt<Wire_T, Number_T>` tree from the xref:{xref-rel-dir}api/wtk/IRTree.adoc#struct_IRTree[`wtk::IRTree<Number_T>`] parameter.
+It returns `nullptr` when the `tree` violates IR well-formedness semantics.
+In the case that `tree == nullptr` then undefined behavior occurs.
+Multiple invocations of `build(...)` on the same object will result in undefined behavior.
+
+----
+wtk::bolt::Bolt<Wire_T, Number_T>* build(wtk::IRTree<Number_T>* const tree);
+----

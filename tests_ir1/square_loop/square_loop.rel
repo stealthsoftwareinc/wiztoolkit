@@ -1,0 +1,32 @@
+version 1.0.0;
+field characteristic 127 degree 1;
+relation
+gate_set: arithmetic;
+features: @for;
+
+@begin
+
+$0 ... $99 <- @for i @first 0 @last 9
+  // Range is based in i^2, rather than simply i.
+  // Ordinarily, varying output size would cause the body to poorly-formed on some iteration.
+  // In this case, since there is no input-list it can be constructed as well-formed
+  $(i * i) ... $(((i + 1) * (i + 1)) - 1) <- @anon_call(@instance:0, @short_witness:1)
+    $100 <- @short_witness;
+    // This inner one is just to fill
+    $0 ... $99 <- @for j @first 0 @last 99
+      $(99 - j) <- @anon_call($(100 - j), @instance:0, @short_witness:0)
+        $0 <- @mul($1, $1);
+      @end
+    @end
+  @end
+@end
+
+@for i @first 0 @last 99
+  @anon_call($i, @instance: 1, @short_witness: 0)
+    $1 <- @instance;
+    $2 <- @add($0, $1);
+    @assert_zero($2);
+  @end
+@end
+
+@end

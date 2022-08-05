@@ -1,0 +1,9 @@
+version 1.0.0;
+field characteristic 2 degree 1;
+short_witness
+@begin
+< 1 >;
+< 1 >;
+< 0 >;
+@end
+

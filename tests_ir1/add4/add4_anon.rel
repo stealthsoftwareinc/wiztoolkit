@@ -1,0 +1,17 @@
+version 1.0.0;
+field characteristic 97 degree 1;
+relation
+gate_set: arithmetic;
+features: @function;
+@begin
+  $0 <- @short_witness;
+  $1 <- @instance;
+  $2 <- @short_witness;
+  $3 <- @instance;
+  $4 <- @anon_call($0...$3, @instance: 0, @short_witness: 0)
+    $5 <- @add($1, $2);
+    $6 <- @add($3, $4);
+    $0 <- @add($5, $6);
+  @end
+  @assert_zero($4);
+@end

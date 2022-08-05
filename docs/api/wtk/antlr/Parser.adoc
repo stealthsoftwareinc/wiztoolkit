@@ -1,0 +1,42 @@
+[#api_antlr_Parser]
+= ANTLR Parser API
+:toc:
+:source-highlighter: pygments
+:source-language: c++
+:source_subs: attributes,specialchars,macros
+ifndef::xref-rel-dir[]
+:xref-rel-dir: ../../
+endif::[]
+
+Include this API as
+
+----
+#include <wtk/antlr/Parser.h>
+----
+
+Members of this API live in the following namespaces
+
+----
+namespace wtk { namespace antlr { ...
+----
+
+The Parser API is parameterized on a `Number_T` template.
+`Number_T` should be integer-like enough to be parsed from a string.
+This API is abstract and implemented by parsers for various IR formats.
+
+[#struct_antlr_Parser]
+== `template<typename Number_T> struct Parser`
+The `wtk::antlr::Parser<Number_T>` implements the xref:{xref-rel-dir}api/wtk/Parser.adoc#struct_Parser[`wtk::Parser<Number_T>`].
+It parses text and produces line numbering.
+However, the https://www.antlr.org/[ANTLR] runtime has been known to use large quantities of memory.
+Additionally, it cannot truly stream parse either IR-Simple or input streams (instance/short witness).
+While, it does implement the `parseStream(...)` API, it must read the entire relation ahead of time.
+
+[#antlr_Parser_constructor_string]
+=== `Parser(std::string& f_name)`
+Constructor via opening the file named by `f_name`.
+Undefined behavior occurs if the file does not exist.
+
+----
+Parser(std::string& f_name);
+----

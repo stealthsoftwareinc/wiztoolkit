@@ -1,0 +1,52 @@
+[#api_bolt_BooleanPLASMASnoozeHandler]
+= Boolean PLASMASnooze Streaming API
+:toc:
+:source-highlighter: pygments
+:source-language: c++
+:source_subs: attributes,specialchars,macros
+ifndef::xref-rel-dir[]
+:xref-rel-dir: ../../../
+endif::[]
+
+Include this API as
+
+----
+#include <wtk/bolt/BooleanPLASMASnoozeHandler.h>
+----
+
+Members of this API live in the following namespace
+
+----
+namespace wtk { namespace bolt { ...
+----
+
+The BOLT API is parameterized on two templates.
+
+`Number_T`:: This template is the same integer-like template which the xref:{xref-rel-dir}api/wtk/Parser.adoc#api_Parser[Parser API] uses for numeric literals.
+For Boolean relations, this is fixed to `uint8_t`.
+`Wire_T`:: This template is an opaque structure supplied by the Backend for encapsulating data related to a wire.
+PLASMASnooze requires it to be default constructible/destructible, and mutable/overwritable.
+
+[#class_BooleanPLASMASnoozeHandler]
+== `template<template Wire_T, typename Number_T> class BooleanPLASMASnoozeHandler`
+The `wtk::bolt::BooleanPLASMASnoozeHandler<Wire_T, Number_T>` implements the xref:{xref-rel-dir}api/wtk/BooleanStreamHandler.adoc#api_BooleanStreamHandler[`wtk::BooleanStreamHandler` abstract class] with callbacks for interpreting wire-numbers and making calls to the xref:{xref-rel-dir}api/wtk/bolt/Backend.adoc#api_bolt_Backend[`wtk::bolt::Backend<Wire_T, uint8_t>`] callback API.
+
+[#BooleanPLASMASnoozeHandler_constructor]
+=== `BooleanPLASMASnoozeHandler(wtk::bolt::Backend<Wire_T, uint8_t>* const b, wtk::InputStream<uint8_t>* const ins, wtk::InputStream<uint8_t>* const wit)`
+The constructor requires a xref:{xref-rel-dir}api/wtk/bolt/Backend.adoc#api_bolt_Backend[`wtk::bolt::Backend<Wire_T, uint8_t>*`] for ZK callbacks, as well as two xref:{xref-rel-dir}api/wtk/Parser.adoc#struct_InputStream[`wtk::InputStream<uint8_t>*`] parameters for the instance and short witness.
+The second input stream (short witness) may be `nullptr`, as may be necessary for verifier implementations.
+
+----
+BooleanPLASMASnoozeHandler(
+    wtk::bolt::Backend<Wire_T, uint8_t>* const b,
+    wtk::InputStream<uint8_t>* const ins,
+    wtk::InputStream<uint8_t>* const wit);
+----
+
+[#BooleanPLASMASnoozeHandler_check]
+=== `wtk::Bolt::PLASMASnoozeStatus check()`
+After stream parsing/processing the `check()` method retrieves a status (xref:{xref-rel-dir}api/wtk/bolt/PLASMASnooze.adoc#enum_PLASMASnoozeStatus[`wtk::PLASMASnoozeStatus`]).
+
+----
+wtk::bolt::PLASMASnoozeStatus check();
+----
