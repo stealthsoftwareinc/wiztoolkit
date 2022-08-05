@@ -5,7 +5,7 @@ ifndef::xref-rel-dir[]
 endif::[]
 
 FIREALARM stands for **F**riendly **IR** **E**valuator **A**nd **L**ogic **A**ssertion and **R**ejection **M**achine, it checks and evaluates IR resources without ZK.
-Its intention is to be as obviously compliant with the link:./placeholder.pdf[IR Specification] as possible.
+Its intention is to be as obviously compliant with the https://github.com/sieve-zk/ir/blob/main/v1.0.1/sieve-ir-v1.0.1.pdf.pdf[IR Specification] as possible.
 When given a relation, `wtk-firealarm` will also print gate counts before completion.
 
 When given a single resource `wtk-firealarm` will checks for well-formedness.
