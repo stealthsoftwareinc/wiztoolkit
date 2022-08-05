@@ -7,7 +7,7 @@ This is a collection of tools, provided by team Wizkit, for working with the SIE
 It In addition to a few command-line tools, it has an extensive C++ API for manipulating the SIEVE IR.
 This release of WizToolKit corresponds to version `1.0.0` of the SIEVE IR Specification.
 
-If you're not familiar with the SIEVE IR, have a look at our link:placeholder.html[introduction to the SIEVE IR].
+If you're not familiar with the SIEVE IR, have a look at our https://stealthsoftwareinc.github.io/wizkit-blog/2021/09/20/introducing-the-sieve-ir.html[introduction to the SIEVE IR].
 It represents ZK relations using circuits, and the instance and short-witness as input streams.
 
 == Command-line
@@ -64,15 +64,8 @@ See the xref:{xref-rel-dir}install.adoc#install[Install Guide] for details, and 
 == Licensing
 The source code and other substantial material in this directory is Copyright (C) 2020-2022 Stealth Software Technologies, Inc.
 
-.In effect until DARPA approves and Stealth releases WizToolKit (to be removed at that time)
-This copy of WizToolKit is for SIEVE PROGRAM USE ONLY! Performers on the SIEVE program may use this code for its intended purpose ONLY for the SIEVE Program.
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
-.To take effect when DARPA approves and Stealth releases WizToolKit.
 This version of WizToolKit has been approved for public release under the open-source xref:{xref-rel-dir}../license.md[MIT License].
 
-This material is based upon work supported by DARPA under Contract No. HR001120C0087.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of DARPA.
+**Distribution Statement A**: Approved for Public Release, Distribution Unlimited.
 
-.Distribution of prior versions
-Distribution Statement "A" (Approved for Public Release, Distribution Unlimited).
-https://github.mit.edu/sieve-all/wiztoolkit/compare/distar-2021-08-04\...distar-2022-04-29[Changes made since approval] https://github.mit.edu/sieve-all/wiztoolkit/compare/distar-2022-03-08\...distar-2022-04-29[Changes made since last distar submission].
+This material is based upon work supported by DARPA under Contract No. HR001120C0087.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of DARPA.

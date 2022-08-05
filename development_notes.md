@@ -6,7 +6,7 @@ This document will attempt to explain API changes and declare the status of vari
 
 ## IR Version 1.0.0
 The following APIs are stable.
-Links currently go to header-files with documentation-like commentary. More recently, a [manual](docs/single_page_manual.adoc) has been added.
+Links currently go to header-files with documentation-like commentary. More recently, a [manual](https://stealthsoftwareinc.github.io/wiztoolkit/single_page_manual.html) has been added.
 
  - [``wtk/Parser.h``](src/main/cpp/wtk/Parser.h): defines the top level API for parsing.
    Its split along two boundaries, one for the gate set (arithmetic or boolean) and one for the parsing method (streaming or syntax-tree).
