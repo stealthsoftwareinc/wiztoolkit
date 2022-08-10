@@ -1,7 +1,7 @@
 SPDXVersion: SPDX-2.2
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
-DocumentNamespace: https://stealthsoftwareinc.com/stealth/wiztoolkit/25ee6ea3-d994-447c-8a19-284cc2a5008a
+DocumentNamespace: https://stealthsoftwareinc.com/stealth/wiztoolkit/d93ef190-3f4d-4d71-949c-10d85eaa7c46
 DocumentName: WizToolKit SBOM
 Creator: Organization: Stealth Software Technologies, Inc. ()
 Created: 2022-08-04T00:00:00Z
@@ -10,7 +10,7 @@ Created: 2022-08-04T00:00:00Z
 
 PackageName: WizToolKit
 SPDXID: SPDXRef-WTK
-PackageVersion: 0.1.1
+PackageVersion: 1.0.1
 PackageSupplier: Organization: Stealth Software Technologies, Inc ()
 PackageOriginator: Organization: Stealth Software Technologies, Inc ()
 PackageDownloadLocation: git+ssh://github.com/stealthsoftwareinc/wiztoolkit.git
