@@ -64,7 +64,7 @@ See the xref:{xref-rel-dir}install.adoc#install[Install Guide] for details, and 
 == Licensing
 The source code and other substantial material in this directory is Copyright (C) 2020-2022 Stealth Software Technologies, Inc.
 
-This version of WizToolKit has been approved for public release under the open-source xref:{xref-rel-dir}../license.md[MIT License].
+This version of WizToolKit has been approved for public release under the open-source xref:license.md[MIT License].
 
 **Distribution Statement A**: Approved for Public Release, Distribution Unlimited.
 

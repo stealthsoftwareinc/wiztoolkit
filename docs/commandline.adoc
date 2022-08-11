@@ -1,14 +1,15 @@
 [#commandline]
 = WizToolKit on the Command-Line
+:include-rel-dir:
 
 :leveloffset: +1
 
-include::tools/wtk-firealarm.adoc[]
+include::{include-rel-dir}tools/wtk-firealarm.adoc[]
 
-include::tools/wtk-press.adoc[]
+include::{include-rel-dir}tools/wtk-press.adoc[]
 
-include::tools/wtk-viz.adoc[]
+include::{include-rel-dir}tools/wtk-viz.adoc[]
 
-include::tools/wtk-bolt.adoc[]
+include::{include-rel-dir}tools/wtk-bolt.adoc[]
 
 :leveloffset: -1

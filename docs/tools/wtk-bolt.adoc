@@ -1,5 +1,5 @@
 [#tools_bolt]
-== BOLT (Example and Testing)
+= BOLT (Example and Testing)
 ifndef::xref-rel-dir[]
 :xref-rel-dir: ../
 endif::[]
@@ -9,5 +9,5 @@ The `wtk-bolt` command-line tool serves for testing this API in a _non-ZK_ and a
 More information may be found in xref:{xref-rel-dir}backends.adoc#backends[WizToolKit for Backends].
 
 `wtk::bolt` implements two intepreters, BOLT for relations with heavy use of loops and PLASMASnooze for relations which are largely IR-Simple.
-PLASMASnooze also implements the Parser's xref:{xref-rel-dir}parser.adoc#Streaming-API[streaming API] for additional performance when parsing IR-Simple (rather than nearly simple).
+PLASMASnooze also implements the Parser's xref:{xref-rel-dir}parsers.adoc#Streaming-API[streaming API] for additional performance when parsing IR-Simple (rather than nearly simple).
 Invocation is `wtk-bolt [ bolt | plasmasnooze | stream ] <relation.rel> <instance.ins> <witness.wit>`.

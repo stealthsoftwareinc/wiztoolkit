@@ -1,20 +1,20 @@
 = WizToolKit Manual
-:toc: left
 :source-highlighter: pygments
 :source-language: c++
+:include-rel-dir:
 :xref-rel-dir:
 
 :leveloffset: +1
 
-include::../readme.adoc[]
+include::{include-rel-dir}index.adoc[]
 
-include::install.adoc[]
+include::{include-rel-dir}install.adoc[]
 
-include::commandline.adoc[]
+include::{include-rel-dir}commandline.adoc[]
 
-include::parsers.adoc[]
+include::{include-rel-dir}parsers.adoc[]
 
-include::backends.adoc[]
+include::{include-rel-dir}backends.adoc[]
 
 :leveloffset: -1
 
@@ -22,30 +22,30 @@ include::backends.adoc[]
 
 :leveloffset: +2
 
-include::api/wtk/Parser.adoc[]
+include::{include-rel-dir}api/wtk/Parser.adoc[]
 
-include::api/wtk/IRTree.adoc[]
+include::{include-rel-dir}api/wtk/IRTree.adoc[]
 
-include::api/wtk/IRParameters.adoc[]
+include::{include-rel-dir}api/wtk/IRParameters.adoc[]
 
-include::api/wtk/ArithmeticStreamHandler.adoc[]
+include::{include-rel-dir}api/wtk/ArithmeticStreamHandler.adoc[]
 
-include::api/wtk/BooleanStreamHandler.adoc[]
+include::{include-rel-dir}api/wtk/BooleanStreamHandler.adoc[]
 
-include::api/wtk/antlr/Parser.adoc[]
+include::{include-rel-dir}api/wtk/antlr/Parser.adoc[]
 
-include::api/wtk/irregular/Parser.adoc[]
+include::{include-rel-dir}api/wtk/irregular/Parser.adoc[]
 
-include::api/wtk/flatbuffer/Parser.adoc[]
+include::{include-rel-dir}api/wtk/flatbuffer/Parser.adoc[]
 
-include::api/wtk/bolt/Builder.adoc[]
+include::{include-rel-dir}api/wtk/bolt/Builder.adoc[]
 
-include::api/wtk/bolt/Evaluator.adoc[]
+include::{include-rel-dir}api/wtk/bolt/Evaluator.adoc[]
 
-include::api/wtk/bolt/Backend.adoc[]
+include::{include-rel-dir}api/wtk/bolt/Backend.adoc[]
 
-include::api/wtk/bolt/PLASMASnooze.adoc[]
+include::{include-rel-dir}api/wtk/bolt/PLASMASnooze.adoc[]
 
-include::api/wtk/bolt/ArithmeticPLASMASnoozeHandler.adoc[]
+include::{include-rel-dir}api/wtk/bolt/ArithmeticPLASMASnoozeHandler.adoc[]
 
-include::api/wtk/bolt/BooleanPLASMASnoozeHandler.adoc[]
+include::{include-rel-dir}api/wtk/bolt/BooleanPLASMASnoozeHandler.adoc[]
