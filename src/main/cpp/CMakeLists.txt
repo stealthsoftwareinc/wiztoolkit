@@ -184,6 +184,7 @@ LIST(APPEND bolt_h
   wtk/bolt/PLASMASnooze.h
   wtk/bolt/PLASMASnooze.t.h
   wtk/bolt/ArithmeticPLASMASnoozeHandler.h
+  wtk/bolt/BooleanPLASMASnoozeHandler.h
 )
 
 LIST(APPEND bolt_cpp

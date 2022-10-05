@@ -1,6 +1,7 @@
 [#commandline]
 = WizToolKit on the Command-Line
 :include-rel-dir:
+:xref-rel-dir:
 
 :leveloffset: +1
 
