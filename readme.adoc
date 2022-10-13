@@ -1,6 +1,6 @@
 = WizToolKit
 ifndef::xref-rel-dir[]
-:xref-rel-dir: docs/
+:xref-rel-dir: https://stealthsoftwareinc.github.io/wiztoolkit/docs/v1.0.1/
 endif::[]
 
 This is a collection of tools, provided by team Wizkit, for working with the SIEVE IR.

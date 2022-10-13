@@ -10,7 +10,10 @@ include::{include-rel-dir}index.adoc[]
 
 include::{include-rel-dir}install.adoc[]
 
-include::{include-rel-dir}commandline.adoc[]
+:include-rel-dir2: {include-rel-dir}
+:include-rel-dir: ./
+include::{include-rel-dir2}commandline.adoc[]
+:include-rel-dir: {include-rel-dir2}
 
 include::{include-rel-dir}parsers.adoc[]
 
