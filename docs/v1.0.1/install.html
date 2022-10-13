@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Installing WizToolKit - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Installing WizToolKit | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Installing WizToolKit" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/install.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/install.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Installing WizToolKit" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Installing WizToolKit","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/install.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a><ul><li><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a></li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a>
+      <ul class="sectlevel1">
+<li><a href="#linux-and-unix-derivitives">Linux and Unix derivitives</a>
+<ul class="sectlevel2">
+<li><a href="#redhatcentos-streamrockyalma-8">RedHat/CentOS-Stream/Rocky/Alma 8</a></li>
+<li><a href="#redhatcentos-7">RedHat/CentOS 7</a></li>
+<li><a href="#ubuntu-18-04-lts">Ubuntu 18.04 LTS</a></li>
+<li><a href="#ubuntu-20-04-lts">Ubuntu 20.04 LTS</a></li>
+</ul>
+</li>
+<li><a href="#windows-10">Windows 10</a></li>
+<li><a href="#generic-build-guide">Generic Build Guide</a>
+<ul class="sectlevel2">
+<li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#make-targets-and-options">Make Targets and Options</a></li>
+</ul>
+</li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a></li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>Installing WizToolKit</h1>
+  <div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#linux-and-unix-derivitives">Linux and Unix derivitives</a>
+<ul class="sectlevel2">
+<li><a href="#redhatcentos-streamrockyalma-8">RedHat/CentOS-Stream/Rocky/Alma 8</a></li>
+<li><a href="#redhatcentos-7">RedHat/CentOS 7</a></li>
+<li><a href="#ubuntu-18-04-lts">Ubuntu 18.04 LTS</a></li>
+<li><a href="#ubuntu-20-04-lts">Ubuntu 20.04 LTS</a></li>
+</ul>
+</li>
+<li><a href="#windows-10">Windows 10</a></li>
+<li><a href="#generic-build-guide">Generic Build Guide</a>
+<ul class="sectlevel2">
+<li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#make-targets-and-options">Make Targets and Options</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="sect1">
+<h2 id="linux-and-unix-derivitives">Linux and Unix derivitives</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We&#8217;ve compiled a list of installation instructions for a few common systems.</p>
+</div>
+<div class="sect2">
+<h3 id="redhatcentos-streamrockyalma-8">RedHat/CentOS-Stream/Rocky/Alma 8</h3>
+<div class="paragraph">
+<p>These systems are regularly tested by CI.
+Starting from a 'minimal installation', You will need to install these dependencies with <code>yum</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">yum install \
+  epel-release \
+  yum-utils
+yum config-manager --set-enabled powertools
+yum install \
+  git \
+  tar \
+  make \
+  wget \
+  unzip \
+  cmake \
+  libuuid \
+  libuuid-devel \
+  gcc-c++ \
+  diffutils \
+  which \
+  java-11-openjdk-devel \
+  java-11-openjdk-headless \
+  python39 \
+  openssl \
+  openssl-devel</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once installed, you can invoke make as normal.
+Keep in mind, that <code>make</code> will download additional dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">make
+make install</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="redhatcentos-7">RedHat/CentOS 7</h3>
+<div class="paragraph">
+<p>These systems are tested regularly in CI, however the <a href="api/wtk/antlr/Parser.html#api_antlr_Parser">ANTLR parser</a> does not build due to differences in C++ dialects.
+Starting with a 'minimal installation' You will need to install these dependencies with <code>yum</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">yum install epel-release
+yum install \
+  git \
+  tar \
+  make \
+  wget \
+  unzip \
+  cmake3 \
+  libuuid \
+  libuuid-devel \
+  gcc-c++ \
+  diffutils \
+  which \
+  java-11-openjdk-devel \
+  java-11-openjdk-headless \
+  python3 \
+  openssl \
+  openssl-devel</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To use <code>make</code>, you will need to disable ANTLR.
+Keep in mind, that <code>make</code> will download additional dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">make ENABLE_ANTLR=0 CMAKE_CMD=cmake3
+make install</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ubuntu-18-04-lts">Ubuntu 18.04 LTS</h3>
+<div class="paragraph">
+<p>This platform is regularly tested in CI. To install dependencies</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">apt-get install \
+  git \
+  build-essential \
+  make \
+  wget \
+  unzip \
+  cmake \
+  g++ \
+  uuid-dev \
+  default-jdk \
+  python3 \
+  libssl-dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Build is as normal.
+Keep in mind, that <code>make</code> will download additional dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">make
+make install</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ubuntu-20-04-lts">Ubuntu 20.04 LTS</h3>
+<div class="paragraph">
+<p>This platform is regularly tested in CI. To install dependencies</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">apt-get install \
+  git \
+  build-essential \
+  make \
+  wget \
+  unzip \
+  cmake \
+  g++ \
+  uuid-dev \
+  default-jdk \
+  python3 \
+  libssl-dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Build is as normal.
+Keep in mind, that <code>make</code> will download additional dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">make
+make install</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="windows-10">Windows 10</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We are not able to regularly test this platform as of yet, but we do some manual testing on occasion.
+We find that windows builds are best done within the <a href="https://www.msys2.org">MSYS2&#8217;s</a> MinGW64 environment.
+After installing MSYS2, launch <em>"MSYS2 MinGW 64-bit"</em> from the "start-button".</p>
+</div>
+<div class="paragraph">
+<p>To install the necessary dependencies use <code>pacman</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">pacman -S --needed \
+  tar \
+  git \
+  wget \
+  make \
+  unzip \
+  diffutil \
+  mingw-w64-x86_64-gcc \
+  mingw-w64-x86_64-make \
+  mingw-w64-x86_64-cmake \
+  mingw-w64-x86_64-openssl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you will need to invoke <code>make</code> with the correct variables.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="api/wtk/antlr/Parser.html#api_antlr_Parser">ANTLR</a> doesn&#8217;t compile in MSYS2 because Java doesn&#8217;t exist.</p>
+</li>
+<li>
+<p><code>make</code> should be invoked as normal, but when it invokes make it should use <code>mingw32-make</code>.</p>
+</li>
+<li>
+<p>CMake should use the <code>'MinGW Makefiles'</code> generator.</p>
+</li>
+<li>
+<p>The C compiler should be `/mingw64/bin/x86_64-w64-mingw32-g.exe`</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To do all this, the following <code>make</code> command is best.
+Keep in mind, that <code>make</code> will download additional dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">make ENABLE_ANTLR=0 MAKE_CMD=mingw32-make CMAKE_GENERATOR='MinGW Makefiles' CXX=/mingw64/bin/x86_64-w64-mingw32-g++.exe
+make ENABLE_ANTLR=0 MAKE_CMD=mingw32-make CMAKE_GENERATOR='MinGW Makefiles' CXX=/mingw64/bin/x86_64-w64-mingw32-g++.exe install</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To use WizToolKit commandline tools beyond the realm of MSYS2, (for example from <code>cmd.exe</code>) you will need to add to your <code>PATH</code>.
+Then you can invoke <code>wtk-</code> commands by their absolute path (or add their path to the <code>PATH</code> as well).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">PATH=%PATH%;C:\msys64\mingw64\bin;C:\msys64\mingw64\lib
+C:\msys64\usr\local\bin\wtk-firealarm.exe</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="generic-build-guide">Generic Build Guide</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="dependencies">Dependencies</h3>
+<div class="paragraph">
+<p>The build system for WizToolKit depends on a number of tools.
+See also the WizToolKit <a href="./sbom.spdx">Software Bill-of-Materials</a></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>GNU Make: for task orchestration</p>
+</li>
+<li>
+<p>CMake: for C++ build orchestration</p>
+</li>
+<li>
+<p>C++ Compiler (tested against <code>g++</code> and <code>clang++</code>)</p>
+</li>
+<li>
+<p><code>wget</code>: for downloading dependencies</p>
+</li>
+<li>
+<p>Java Runtime 1.8 (or higher): for running the ANTLR tool (required only at build time)</p>
+</li>
+<li>
+<p>Python 3: for generating portions of the IRRegular text parser (required only at build time).</p>
+</li>
+<li>
+<p><code>pkg-config</code>: is required by CMake, and apparently not always installed by default on Ubuntu.</p>
+</li>
+<li>
+<p>OpenSSL libcrypto and <code>sst::bignum</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenSSL should be provided by the system.</p>
+</li>
+<li>
+<p><code>sst::bignum</code> is downloaded automatically.</p>
+</li>
+<li>
+<p>Only the WizToolKit <a href="commandline.html#commandline"><em>command line tools</em></a> use the unlimited precision number library <code>openssl/bn.h</code> and C++ wrapper <code>sst::bignum</code>.</p>
+</li>
+<li>
+<p>the WizToolKit <em>API</em> <strong>does not</strong> link to these library.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="https://www.antlr.org/">ANTLR 4</a>: for generating and running the <a href="api/wtk/antlr/Parser.html#api_antlr_Parser"><code>wtk/antlr/Parser.h</code></a> parser implementation.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>downloaded automatically at build time.</p>
+</li>
+<li>
+<p>the runtime may require the <code>libuuid-devel</code> package (or equivalent from your system&#8217;s package manager).</p>
+</li>
+<li>
+<p>may be disabled with <code>make ENABLE_ANTLR=0</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="https://google.github.io/flatbuffers">FlatBuffers 2.0.0</a>: to implement the binary format of the IR specification via the <a href="api/wtk/flatbuffer/Parser.html#api_flatbuffer_Parser">FlatBuffer Parser</a>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>may be disabled with <code>make ENABLE_FLATBUFFER=0</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Stealth logging: For reporting errors and other conditions at runtime.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>this is used by the WizToolKit API.</p>
+</li>
+<li>
+<p>downloaded automatically at build time.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="https://google.github.io/googletest/">Google Test</a>: for running unit tests.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>downloaded automatically at build time.</p>
+</li>
+<li>
+<p>Only used during testing.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="make-targets-and-options">Make Targets and Options</h3>
+<div class="paragraph">
+<p>After downloading  or <code>git clone</code>ing a WizToolKit package, to quickly install run the following commands.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"> &gt; make
+ &gt; make install # as root</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The makefile has the following more specific targets,</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>deps</code>: calls scripts to download all the non-system dependencies.</p>
+</li>
+<li>
+<p><code>gen_parser</code>: calls scripts which do code-generation for the parser implementations.</p>
+</li>
+<li>
+<p><code>configure</code>: calls CMake to configure the C++ build system. The following environment variables are respected.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>BUILD_TYPE</code>: indicates whether to use <code>Debug</code> or <code>Release</code> mode. Defaults to <code>Release</code>.</p>
+</li>
+<li>
+<p><code>PREFIX</code>: is the installation prefix to use when calling <code>install</code>. Defaults to <code>/usr/local</code>.</p>
+</li>
+<li>
+<p><code>CXX</code>: to change the compiler</p>
+</li>
+<li>
+<p><code>ENABLE_ANTLR</code>: enables compile of the <a href="api/wtk/antlr/Parser.html#api_antlr_Parser">ANTLR parser</a>, otherwise only IRRegular is produced. (default 1)</p>
+</li>
+<li>
+<p><code>ENABLE_FLATBUFFER</code>: enables compile of the <a href="api/wtk/flatbuffer/Parser.html#api_flatbuffer_Parser">FlatBuffer parser</a> (default 1).</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>build</code>: calls CMake generate make files.</p>
+</li>
+<li>
+<p><code>test</code>: (default target) will run the unit tests.</p>
+</li>
+<li>
+<p><code>install</code>: installs all WizToolKit files to the system.</p>
+</li>
+<li>
+<p><code>clean</code>: will remove all build files.</p>
+</li>
+<li>
+<p><code>deps-clean</code>: will remove all dependencies.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

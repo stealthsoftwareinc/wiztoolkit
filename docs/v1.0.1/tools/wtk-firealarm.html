@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FIREALARM (Checking and Evaluating) - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>FIREALARM (Checking and Evaluating) | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="FIREALARM (Checking and Evaluating)" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="FIREALARM (Checking and Evaluating)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"FIREALARM (Checking and Evaluating)","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a><ul><li><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a></li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a></li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a></li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a>
+      <ul class="sectlevel1">
+<li><a href="#command-line-optionsflags">Command-Line Options/Flags</a></li>
+<li><a href="#example-invocations">Example Invocations</a></li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>FIREALARM (Checking and Evaluating)</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>FIREALARM stands for <strong>F</strong>riendly <strong>IR</strong> <strong>E</strong>valuator <strong>A</strong>nd <strong>L</strong>ogic <strong>A</strong>ssertion and <strong>R</strong>ejection <strong>M</strong>achine, it checks and evaluates IR resources without ZK.
+Its intention is to be as obviously compliant with the <a href="https://github.com/sieve-zk/ir/raw/main/v1.0.1/sieve-ir-v1.0.1.pdf">IR Specification</a> as possible.
+When given a relation, <code>wtk-firealarm</code> will also print gate counts before completion.</p>
+</div>
+<div class="paragraph">
+<p>When given a single resource <code>wtk-firealarm</code> will checks for well-formedness.
+For a relation, this means that each wire is assigned before it is used, and that it is never reused ("topological ordering", and "single static assignment (SSA)").
+For an instance or short witness, this simply means that each value in the stream is a field-element (e.g. does not exceed the field&#8217;s characteristic).</p>
+</div>
+<div class="paragraph">
+<p>When given all three resources, <code>wtk-firealarm</code> will evaluate the relation with the instance and short witness, indicating if the proof should be valid or not (evaluation validity).
+It can also generate a program trace at two levels of detail.</p>
+</div>
+<div class="paragraph">
+<p><code>wtk-firealarm</code> and other WizToolKit utilities may identify resource types using the following file-suffixes.
+Although the IR Specification calls for all binary resources to be identified by a <code>.sieve</code> extension (when applicable), WizToolKit uses these suffixes instead.
+The IR Specification does not prescribe any file-suffixes for text resources.</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+<code>*.rel</code>
+</td>
+<td class="hdlist2">
+<p>relation</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>*.ins</code>
+</td>
+<td class="hdlist2">
+<p>instance</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>*.wit</code>
+</td>
+<td class="hdlist2">
+<p>short witness</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="command-line-optionsflags">Command-Line Options/Flags</h2>
+<div class="sectionbody">
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+<code>-i</code>
+</td>
+<td class="hdlist2">
+<p>Use the <a href="../api/wtk/irregular/Parser.html#api_irregular_Parser">IRRegular text parser</a>, instead of the <a href="../api/wtk/antlr/Parser.html#api_antlr_Parser">ANTLR text parser</a>.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>-f</code>
+</td>
+<td class="hdlist2">
+<p>Use the <a href="../api/wtk/flatbuffer/Parser.html#api_flatbuffer_Parser">FlatBuffer binary parser</a>, instead of the ANTLR text parser. This option is required in order to check binary resources.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>-t</code>
+</td>
+<td class="hdlist2">
+<p>Produces a "light" trace, showing function-boundaries, instance and witness values, and assertions. <code>wtk-firealarm</code> must be invoked with all three resources for this to take affect.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>-T</code>
+</td>
+<td class="hdlist2">
+<p>Produces a "heavy" trace, all wire assignments, in addition to a "light" trace. <code>wtk-firealarm</code> must be invoked with all three resources for this to take affect.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>-h</code> or <code>--help</code>
+</td>
+<td class="hdlist2">
+<p>Print the help text.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>-v</code> or <code>--version</code>
+</td>
+<td class="hdlist2">
+<p>Print the version text.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-invocations">Example Invocations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To check a relation, instance, or witness for well-formedness.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>wtk-firealarm relation_file.rel
+wtk-firealarm instance_file.ins
+wtk-firealarm witness_file.wit</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To check all three for evaluation validity.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>wtk-firealarm relation_file.rel instance_file.ins witness_file.wit</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To check with binary IR.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>wtk-firealarm -f bin_relation_file.rel bin_instance_file.ins bin_witness_file.wit</pre>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

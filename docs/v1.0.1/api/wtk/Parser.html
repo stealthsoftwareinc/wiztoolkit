@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parser API - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Parser API | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Parser API" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Parser API" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Parser API","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a><ul><li><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a></li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a></li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a>
+      <ul class="sectlevel1">
+<li><a href="#struct_Parser"><code>template&lt;typename Number_T&gt; struct Parser</code></a>
+<ul class="sectlevel2">
+<li><a href="#Parser_parseHeader"><code>bool parseHeader()</code></a></li>
+<li><a href="#Parser_parseResource"><code>bool parseResource()</code></a></li>
+<li><a href="#Parser_parseParameters"><code>bool parseParameters()</code></a></li>
+<li><a href="#Parser_parseHdrResParams"><code>bool parseHdrResParams()</code></a></li>
+<li><a href="#Parser_version"><code>struct { &#8230;&#8203; } version</code></a></li>
+<li><a href="#Parser_characteristic"><code>Number_T characteristic</code></a></li>
+<li><a href="#Parser_degree"><code>size_t degree</code></a></li>
+<li><a href="#Parser_resource"><code>wtk::Resource resource</code></a></li>
+<li><a href="#Parser_gateSet"><code>wtk::GateSet gateSet</code></a></li>
+<li><a href="#Parser_featureToggles"><code>wtk::FeatureToggles featureToggles</code></a></li>
+<li><a href="#Parser_arithmetic"><code>wtk::ArithemticParser&lt;Number_T&gt;* arithmetic()</code></a></li>
+<li><a href="#Parser_arithmetic64"><code>wtk::ArithemticParser&lt;uint64_t&gt;* arithmetic()</code></a></li>
+<li><a href="#Parser_arithmetic32"><code>wtk::ArithemticParser&lt;uint32_t&gt;* arithmetic()</code></a></li>
+<li><a href="#Parser_boolean"><code>wtk::BooleanParser* boolean()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_ArithmeticParser"><code>template&lt;typename Number_T&gt; struct ArithmeticParser</code></a>
+<ul class="sectlevel2">
+<li><a href="#ArithmeticParser_parseStream"><code>bool parseStream(wtk::ArithmeticStreamHandler&lt;Number_T&gt;* handler)</code></a></li>
+<li><a href="#ArithmeticParser_parseTree"><code>wtk:IRTree&lt;Number_T&gt; parseTree()</code></a></li>
+<li><a href="#ArithmeticParser_instance"><code>wtk::InputStream&lt;Number_T&gt;* instance()</code></a></li>
+<li><a href="#ArithmeticParser_shortWitness"><code>wtk::InputStream&lt;Number_T&gt;* shortWitness()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_BooleanParser"><code>struct BooleanParser</code></a>
+<ul class="sectlevel2">
+<li><a href="#BooleanParser_parseStream"><code>bool parseStream(wtk::BooleanStreamHandler* handler)</code></a></li>
+<li><a href="#BooleanParser_parseTree"><code>wtk:IRTree&lt;uint8_t&gt; parseTree()</code></a></li>
+<li><a href="#BooleanParser_instance"><code>wtk::InputStream&lt;uint8_t&gt;* instance()</code></a></li>
+<li><a href="#BooleanParser_shortWitness"><code>wtk::InputStream&lt;uint8_t&gt;* shortWitness()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_InputStream"><code>template&lt;typename Number_T&gt; struct InputStream</code></a>
+<ul class="sectlevel2">
+<li><a href="#InputStream_next"><code>StreamStatus next(Number_T* num)</code></a></li>
+<li><a href="#InputStream_lineNum"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#enum_StreamStatus"><code>enum StreamStatus</code></a></li>
+</ul>
+    </li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>Parser API</h1>
+  <div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#struct_Parser"><code>template&lt;typename Number_T&gt; struct Parser</code></a>
+<ul class="sectlevel2">
+<li><a href="#Parser_parseHeader"><code>bool parseHeader()</code></a></li>
+<li><a href="#Parser_parseResource"><code>bool parseResource()</code></a></li>
+<li><a href="#Parser_parseParameters"><code>bool parseParameters()</code></a></li>
+<li><a href="#Parser_parseHdrResParams"><code>bool parseHdrResParams()</code></a></li>
+<li><a href="#Parser_version"><code>struct { &#8230;&#8203; } version</code></a></li>
+<li><a href="#Parser_characteristic"><code>Number_T characteristic</code></a></li>
+<li><a href="#Parser_degree"><code>size_t degree</code></a></li>
+<li><a href="#Parser_resource"><code>wtk::Resource resource</code></a></li>
+<li><a href="#Parser_gateSet"><code>wtk::GateSet gateSet</code></a></li>
+<li><a href="#Parser_featureToggles"><code>wtk::FeatureToggles featureToggles</code></a></li>
+<li><a href="#Parser_arithmetic"><code>wtk::ArithemticParser&lt;Number_T&gt;* arithmetic()</code></a></li>
+<li><a href="#Parser_arithmetic64"><code>wtk::ArithemticParser&lt;uint64_t&gt;* arithmetic()</code></a></li>
+<li><a href="#Parser_arithmetic32"><code>wtk::ArithemticParser&lt;uint32_t&gt;* arithmetic()</code></a></li>
+<li><a href="#Parser_boolean"><code>wtk::BooleanParser* boolean()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_ArithmeticParser"><code>template&lt;typename Number_T&gt; struct ArithmeticParser</code></a>
+<ul class="sectlevel2">
+<li><a href="#ArithmeticParser_parseStream"><code>bool parseStream(wtk::ArithmeticStreamHandler&lt;Number_T&gt;* handler)</code></a></li>
+<li><a href="#ArithmeticParser_parseTree"><code>wtk:IRTree&lt;Number_T&gt; parseTree()</code></a></li>
+<li><a href="#ArithmeticParser_instance"><code>wtk::InputStream&lt;Number_T&gt;* instance()</code></a></li>
+<li><a href="#ArithmeticParser_shortWitness"><code>wtk::InputStream&lt;Number_T&gt;* shortWitness()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_BooleanParser"><code>struct BooleanParser</code></a>
+<ul class="sectlevel2">
+<li><a href="#BooleanParser_parseStream"><code>bool parseStream(wtk::BooleanStreamHandler* handler)</code></a></li>
+<li><a href="#BooleanParser_parseTree"><code>wtk:IRTree&lt;uint8_t&gt; parseTree()</code></a></li>
+<li><a href="#BooleanParser_instance"><code>wtk::InputStream&lt;uint8_t&gt;* instance()</code></a></li>
+<li><a href="#BooleanParser_shortWitness"><code>wtk::InputStream&lt;uint8_t&gt;* shortWitness()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_InputStream"><code>template&lt;typename Number_T&gt; struct InputStream</code></a>
+<ul class="sectlevel2">
+<li><a href="#InputStream_next"><code>StreamStatus next(Number_T* num)</code></a></li>
+<li><a href="#InputStream_lineNum"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#enum_StreamStatus"><code>enum StreamStatus</code></a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Include this API as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">#include &lt;wtk/Parser.h&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Members of this API live in the following namespace</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">namespace wtk { ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Parser API is parameterized on a <code>Number_T</code> template.
+<code>Number_T</code> should be integer-like enough to be parsed from a string.
+This API is abstract and implemented by parsers for various IR formats.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_Parser"><code>template&lt;typename Number_T&gt; struct Parser</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Parser will read the IR&#8217;s front matter before delegating to an <a href="#struct_ArithmeticParser"><code>wtk::ArithmeticParser&lt;Number_T&gt;</code></a> or a <a href="#struct_BooleanParser"><code>wtk::BooleanParser</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>The struct&#8217;s public data members are set to default values (mostly 0) at construction and assigned concrete values as parse methods are invoked.
+The parser methods are expected to be called in the correct order (<a href="#Parser_parseHeader"><code>parseHeader()</code></a>, <a href="#Parser_parseResource"><code>parseResource()</code></a>, and finally for relations only <a href="#Parser_parseParameters"><code>parseParameters()</code></a>).
+A helper for calling them in the correct order is provided as <a href="#Parser_parseHdrResParams"><code>parseHdrResParams()</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>When the front-matter has been parsed, one of <a href="#Parser_arithmetic"><code>arithmetic()</code></a>, <a href="#Parser_arithmetic64"><code>arithmetic64()</code></a>,  <a href="#Parser_arithmetic32"><code>arithmetic32()</code></a>, or <a href="#Parser_boolean"><code>boolean()</code></a> may be invoked to delegate parsing the body to either of <a href="#struct_ArithmeticParser"><code>wtk::ArithemticParser&lt;&#8230;&#8203;&gt;</code></a>
+or <a href="#struct_BooleanParser"><code>wtk::BooleanParser</code></a>.</p>
+</div>
+<div class="sect2">
+<h3 id="Parser_parseHeader"><code>bool parseHeader()</code></h3>
+<div class="paragraph">
+<p>Parses the resources header section setting the following attributes.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#Parser_version"><code>struct { &#8230;&#8203; } version</code></a></p>
+</li>
+<li>
+<p><a href="#Parser_characteristic"><code>Number_T characteristic</code></a></p>
+</li>
+<li>
+<p><a href="#Parser_degree"><code>size_t degree</code></a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Returns <code>true</code> on success, false if a parse error occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual bool parseHeader() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_parseResource"><code>bool parseResource()</code></h3>
+<div class="paragraph">
+<p>Parses the resource type and sets the <a href="#Parser_resource"><code>wtk::Resource resource</code></a> attribute.</p>
+</div>
+<div class="paragraph">
+<p>Returns <code>true</code> on success, false if a parse error occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual bool parseResource() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_parseParameters"><code>bool parseParameters()</code></h3>
+<div class="paragraph">
+<p>Parses the relation&#8217;s parameters and sets the following attributes.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#Parser_gateSet"><code>wtk::GateSet gateSet</code></a></p>
+</li>
+<li>
+<p><a href="#Parser_featureToggles"><code>wtk::FeatureToggles featureToggles</code></a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Returns <code>true</code> on success, false if a parse error occurs.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">WARNING</dt>
+<dd>
+<p><code>parseParameters()</code> should only be used if <code>resource == wtk::Resource::relation</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual bool parseParameters() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_parseHdrResParams"><code>bool parseHdrResParams()</code></h3>
+<div class="paragraph">
+<p>This is a helper to call <a href="#Parser_parseHeader"><code>parseHeader()</code></a>, <a href="#Parser_parseResource"><code>parseResource()</code></a>, and, if necessary, <a href="#Parser_parseParameters"><code>parseParameters()</code></a> in sequence.</p>
+</div>
+<div class="paragraph">
+<p>Returns <code>true</code> on success, false if a parse error occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual bool parseHdrResParams() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_version"><code>struct { &#8230;&#8203; } version</code></h3>
+<div class="paragraph">
+<p>The version is the first line of an IR resource.
+Although WizToolKit tends to be tied to a particular IR version, the Parser does not make any checks for the particular IR version.</p>
+</div>
+<div class="paragraph">
+<p>The version consists of <code>major</code>, <code>minor</code>, and <code>patch</code> elements, all of type <code>size_t</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">struct {
+  size_t major = 0;
+  size_t minor = 0;
+  size_t patch = 0;
+} version;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_characteristic"><code>Number_T characteristic</code></h3>
+<div class="paragraph">
+<p>The field&#8217;s prime modulus or "characteristic".
+The parser does not check for primality.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">Number_T characteristic = Number_T(0);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_degree"><code>size_t degree</code></h3>
+<div class="paragraph">
+<p>The field&#8217;s degree.
+The IR requires this to be <code>1</code>, although the parser does not test this.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">size_t degree = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_resource"><code>wtk::Resource resource</code></h3>
+<div class="paragraph">
+<p>The resource type which is currently being parsed.
+This has type <a href="../../api/wtk/IRParameters.html#enum_Resource"><code>wtk::Resource</code></a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">wtk::Resource resource = Resource::invalid;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_gateSet"><code>wtk::GateSet gateSet</code></h3>
+<div class="paragraph">
+<p>The set of gates to be allowed within the relation.
+This has type <a href="../../api/wtk/IRParameters.html#struct_GateSet"><code>wtk::GateSet</code></a>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">WARNING</dt>
+<dd>
+<p><code>gateSet</code> may only be used if <code>resource == wtk::Resource::relation</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">wtk::GateSet gateSet;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_featureToggles"><code>wtk::FeatureToggles featureToggles</code></h3>
+<div class="paragraph">
+<p>The IR structural features to be allowed within the relation.
+This has type <a href="../../api/wtk/IRParameters.html#struct_FeatureToggles"><code>wtk::FeatureToggles</code></a>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">WARNING</dt>
+<dd>
+<p><code>featureToggles</code> may only be used if <code>resource == wtk::Resource::relation</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">wtk::FeatureToggles featureToggles;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_arithmetic"><code>wtk::ArithemticParser&lt;Number_T&gt;* arithmetic()</code></h3>
+<div class="paragraph">
+<p>This method returns a delegate parser for an arithmetic resource.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">WARNING</dt>
+<dd>
+<p>When parsing a relation, use of an arithmetic parser for parsing a non-arithmetic gateset will result in parse errors.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">void wtk::ArithmeticParser&lt;Number_T&gt;*  arithmetic() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_arithmetic64"><code>wtk::ArithemticParser&lt;uint64_t&gt;* arithmetic()</code></h3>
+<div class="paragraph">
+<p>This method returns a delegate parser for an arithmetic resource. However the <code>Number_T</code> template is downgraded to a <code>uint64_t</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">WARNING</dt>
+<dd>
+<p>When parsing a relation, use of an arithmetic parser for parsing a non-arithmetic gateset will result in parse errors.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">void wtk::ArithmeticParser&lt;uint64_t&gt;*  arithmetic64() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_arithmetic32"><code>wtk::ArithemticParser&lt;uint32_t&gt;* arithmetic()</code></h3>
+<div class="paragraph">
+<p>This method returns a delegate parser for an arithmetic resource. However the <code>Number_T</code> template is downgraded to a <code>uint32_t</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">WARNING</dt>
+<dd>
+<p>When parsing a relation, use of an arithmetic parser for parsing a non-arithmetic gateset will result in parse errors.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">void wtk::ArithmeticParser&lt;uint32_t&gt;*  arithmetic32() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Parser_boolean"><code>wtk::BooleanParser* boolean()</code></h3>
+<div class="paragraph">
+<p>This method returns a delegate parser for a boolean resource.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">NOTE</dt>
+<dd>
+<p>The <code>Number_T</code> template is removed for <code>wtk::BooleanParser</code>, and <code>uint8_t</code> is always used in its place.</p>
+</dd>
+<dt class="hdlist1">WARNING</dt>
+<dd>
+<p>When parsing a relation, use of a boolean parser for parsing a non-boolean gateset will result in parse errors.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">void wtk::BooleanParser*  boolean() = 0;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_ArithmeticParser"><code>template&lt;typename Number_T&gt; struct ArithmeticParser</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is a delegate parser for the body of an arithmetic IR resource.
+Its interface is substantially similar to <a href="#struct_BooleanParser"><code>wtk::BooleanParser</code></a>.
+In general, this type should not be constructed, but rather obtained from <a href="#Parser_arithmetic"><code>parser.arithmetic()</code></a>.</p>
+</div>
+<div class="sect2">
+<h3 id="ArithmeticParser_parseStream"><code>bool parseStream(wtk::ArithmeticStreamHandler&lt;Number_T&gt;* handler)</code></h3>
+<div class="paragraph">
+<p>Parses the body of an arithmetic IR-Simple relation, passing each gate off to the handler in a streaming fashion.
+The <a href="#Parser_resource"><code>parser.resource</code></a> must be <a href="../../api/wtk/IRParameters.html#enum_Resource"><code>wtk::Resource::relation</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="../../api/wtk/ArithmeticStreamHandler.html#class_ArithmeticStreamHandler"><code>handler</code></a> parameter must be nonnull.
+The method returns <code>false</code> on failure, including if either the <a href="#Parser_gateSet"><code>parser.gateSet</code></a> or <a href="#Parser_featureToggles"><code>parser.featureToggles</code></a> are violated.
+It does not make any other well-formedness checks.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual bool parseStream(wtk::ArithmeticStreamHandler&lt;Number_T&gt;* handler) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ArithmeticParser_parseTree"><code>wtk:IRTree&lt;Number_T&gt; parseTree()</code></h3>
+<div class="paragraph">
+<p>Parses the body of any arithmetic relation, constructing a <a href="../../api/wtk/IRTree.html#api_IRTree">syntax tree</a>.
+The <a href="#Parser_resource"><code>parser.resource</code></a> must be <a href="../../api/wtk/IRParameters.html#enum_Resource"><code>wtk::Resource::relation</code></a>.
+If a parse failure occurs, <code>nullptr</code> is returned, including if either the <a href="#Parser_gateSet"><code>parser.gateSet</code></a> or <a href="#Parser_featureToggles"><code>parser.featureToggles</code></a> are violated.
+It does not make any other well-formedness checks.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::IRTree&lt;Number_T&gt;* parseTree() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ArithmeticParser_instance"><code>wtk::InputStream&lt;Number_T&gt;* instance()</code></h3>
+<div class="paragraph">
+<p>Returns an <a href="#struct_InputStream"><code>wtk::InputStream&lt;Number_T&gt;*</code></a> which will parse the instance one value at a time.
+The <a href="#Parser_resource"><code>parser.resource</code></a> must be <a href="../../api/wtk/IRParameters.html#enum_Resource"><code>wtk::Resource::instance</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>This method will never return <code>nullptr</code>, instead returned <a href="#struct_InputStream"><code>wtk::InputStream&lt;Number_T&gt;*</code></a> will return <a href="#enum_StreamStatus"><code>wtk::StreamStatus::error</code></a> as necessary.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::InputStream&lt;Number_T&gt;* instance() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ArithmeticParser_shortWitness"><code>wtk::InputStream&lt;Number_T&gt;* shortWitness()</code></h3>
+<div class="paragraph">
+<p>Returns an <a href="#struct_InputStream"><code>wtk::InputStream&lt;Number_T&gt;*</code></a> which will parse the short witness one value at a time.
+The <a href="#Parser_resource"><code>parser.resource</code></a> must be <a href="../../api/wtk/IRParameters.html#enum_Resource"><code>wtk::Resource::shortWitness</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>This method will never return <code>nullptr</code>, instead returned <a href="#struct_InputStream"><code>wtk::InputStream&lt;Number_T&gt;*</code></a> will return <a href="#enum_StreamStatus"><code>wtk::StreamStatus::error</code></a> as necessary.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::InputStream&lt;Number_T&gt;* shortWitness() = 0;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_BooleanParser"><code>struct BooleanParser</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is a delegate parser for the body of an boolean IR resource.
+Its interface is substantially similar to <a href="#struct_AritheticParser"><code>wtk::ArithmeticParser&lt;Number_T&gt;</code></a>.
+In general, this type should not be constructed, but rather obtained from <a href="#Parser_boolean"><code>parser.boolean()</code></a>.
+Note that this struct is not parameterized by <code>Number_T</code>.
+Instead anywhere the a field/numeric literal would be expected, <code>uint8_t</code> is used instead.</p>
+</div>
+<div class="sect2">
+<h3 id="BooleanParser_parseStream"><code>bool parseStream(wtk::BooleanStreamHandler* handler)</code></h3>
+<div class="paragraph">
+<p>Parses the body of an boolean IR-Simple relation, passing each gate off to the handler in a streaming fashion.
+The <a href="#Parser_resource"><code>parser.resource</code></a> must be <a href="../../api/wtk/IRParameters.html#enum_Resource"><code>wtk::Resource::relation</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="../../api/wtk/BooleanStreamHandler.html#class_BooleanStreamHandler"><code>handler</code></a> parameter must be nonnull.
+The method returns <code>false</code> on failure, including if either the <a href="#Parser_gateSet"><code>parser.gateSet</code></a> or <a href="#Parser_featureToggles"><code>parser.featureToggles</code></a> are violated.
+It does not make any other well-formedness checks.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual bool parseStream(wtk::BooleanStreamHandler* handler) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanParser_parseTree"><code>wtk:IRTree&lt;uint8_t&gt; parseTree()</code></h3>
+<div class="paragraph">
+<p>Parses the body of any arithmetic relation, constructing a <a href="../../api/wtk/IRTree.html#api_IRTree">syntax tree</a>.
+The <a href="#Parser_resource"><code>parser.resource</code></a> must be <a href="../../api/wtk/IRParameters.html#enum_Resource"><code>wtk::Resource::relation</code></a>.
+If a parse failure occurs, <code>nullptr</code> is returned, including if either the <a href="#Parser_gateSet"><code>parser.gateSet</code></a> or <a href="#Parser_featureToggles"><code>parser.featureToggles</code></a> are violated.
+It does not make any other well-formedness checks.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::IRTree&lt;uint8_t&gt;* parseTree() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanParser_instance"><code>wtk::InputStream&lt;uint8_t&gt;* instance()</code></h3>
+<div class="paragraph">
+<p>Returns an <a href="#struct_InputStream"><code>wtk::InputStream&lt;uint8_t&gt;*</code></a> which will parse the instance one value at a time.
+The <a href="#Parser_resource"><code>parser.resource</code></a> must be <a href="../../api/wtk/IRParameters.html#enum_Resource"><code>wtk::Resource::instance</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>This method will never return <code>nullptr</code>, instead returned <a href="#struct_InputStream"><code>wtk::InputStream&lt;Number_T&gt;*</code></a> will return <a href="#enum_StreamStatus"><code>wtk::StreamStatus::error</code></a> as necessary.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::InputStream&lt;uint8_t&gt;* instance() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanParser_shortWitness"><code>wtk::InputStream&lt;uint8_t&gt;* shortWitness()</code></h3>
+<div class="paragraph">
+<p>Returns an <a href="#struct_InputStream"><code>wtk::InputStream&lt;uint8_t&gt;*</code></a> which will parse the short witness one value at a time.
+The <a href="#Parser_resource"><code>parser.resource</code></a> must be <a href="../../api/wtk/IRParameters.html#enum_Resource"><code>wtk::Resource::shortWitness</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>This method will never return <code>nullptr</code>, instead returned <a href="#struct_InputStream"><code>wtk::InputStream&lt;Number_T&gt;*</code></a> will return <a href="#enum_StreamStatus"><code>wtk::StreamStatus::error</code></a> as necessary.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::InputStream&lt;uint8_t&gt;* shortWitness() = 0;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_InputStream"><code>template&lt;typename Number_T&gt; struct InputStream</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The InputStream represents either an instance or a short witness, and and allows the user to consume one value at a time from the stream.
+Do not attempt to construct one manually.
+Instead retrieve one from <a href="#ArithmeticParser_instance"><code>arithmeticParser.instance()</code></a>, <a href="#ArithmeticParser_shortWitness"><code>arithmeticParser.shortWitness()</code></a>, <a href="#BooleanParser_instance"><code>booleanParser.instance()</code></a>,  or <a href="#BooleanParser_shortWitness"><code>booleanParser.shortWitness()</code></a>.</p>
+</div>
+<div class="sect2">
+<h3 id="InputStream_next"><code>StreamStatus next(Number_T* num)</code></h3>
+<div class="paragraph">
+<p>Consumes a single value from the stream, placing it in the <code>num</code> parameter.
+This operation may fail if a parse error or the end of file is reached, returning an <a href="#enum_StreamStatus"><code>wtk::StreamStatus</code></a>  error code.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual StreamStatus next(Number_T* num) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="InputStream_lineNum"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>If the parser supports line numbering, then this method returns the line number corresponding to the prior invocation of <code>this&#8594;next(&#8230;&#8203;)</code>.
+If line numbering is not supported then <code>0</code> is returned.</p>
+</div>
+<div class="paragraph">
+<p>If <code>this&#8594;next(&#8230;&#8203;)</code> has not been called, it returned <code>wtk::StreamStatus::end</code>, or it returned <code>wtk::StreamStatus::error</code> then <code>this&#8594;lineNum()</code> may return any of <code>0</code>, the line number on which the error or end occurred, or the line number of the most recent successful call to <code>this&#8594;next(&#8230;&#8203;)</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="enum_StreamStatus"><code>enum StreamStatus</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This enumeration indicates the success or means of failure for an <a href="#struct_InputStream"><code>wtk::InputStream&lt;Number_T&gt;</code></a>.
+It may take one of the following values.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk::StreamStatus::success</code></dt>
+<dd>
+<p>Successfully retrieved an item from the stream.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::StreamStatus::end</code></dt>
+<dd>
+<p>Reached the end of the stream.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::StreamStatus::error</code></dt>
+<dd>
+<p>A parse error occurred.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

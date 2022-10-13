@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BOLT Backend API - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>BOLT Backend API | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="BOLT Backend API" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="BOLT Backend API" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"BOLT Backend API","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a><ul><li><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a></li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a></li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a></li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a>
+      <ul class="sectlevel1">
+<li><a href="#class_Backend"><code>template&lt;typename Wire_T, typename Number_T&gt; class Backend</code></a>
+<ul class="sectlevel2">
+<li><a href="#Backend_prime"><code>Number_T const prime</code></a></li>
+<li><a href="#Backend_isBoolean"><code>bool const isBoolean</code></a></li>
+<li><a href="#Backend_constructor"><code>Backend(Number_T const p, bool const ib)</code></a></li>
+<li><a href="#Backend_addGate"><code>virtual void addGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></a></li>
+<li><a href="#Backend_mulGate"><code>virtual void mulGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></a></li>
+<li><a href="#Backend_addcGate"><code>virtual void addcGate(Wire_T* const out, Wire_T const* const left, Number_T const right) = 0</code></a></li>
+<li><a href="#Backend_mulcGate"><code>virtual void mulcGate(Wire_T* const out, Wire_T const* const left, Number_T const right) = 0</code></a></li>
+<li><a href="#Backend_xorGate"><code>virtual void xorGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></a></li>
+<li><a href="#Backend_andGate"><code>virtual void andGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></a></li>
+<li><a href="#Backend_notGate"><code>virtual void notGate(Wire_T* const out, Wire_T const* const left) = 0</code></a></li>
+<li><a href="#Backend_copy"><code>virtual void copy(Wire_T* const out, Wire_T const* const left) = 0</code></a></li>
+<li><a href="#Backend_assign"><code>virtual void assign(Wire_T* const out, Number_T const left) = 0</code></a></li>
+<li><a href="#Backend_instance"><code>virtual void instance(Wire_T* const out, Number_T const left) = 0</code></a></li>
+<li><a href="#Backend_witness"><code>virtual void witness(Wire_T* const out, Number_T const left) = 0</code></a></li>
+<li><a href="#Backend_assertZero"><code>virtual void assertZero(Wire_T const* const wire) = 0</code></a></li>
+<li><a href="#Backend_caseSelect"><code>virtual void caseSelect(Wire_T* const selected_bit, Number_T const case_number, Wire_T const* const select_wire) = 0</code></a></li>
+<li><a href="#Backend_multiplexHelper"><code>virtual void multiplexHelper(Wire_T* const out, std::vector&lt;LocalWireRange&lt;Wire_T, Number_T*&gt;* const dummies, std::vector&lt;Wire_T&gt; const* const selector_bits, wtk::index_t const dummy_place)</code></a></li>
+<li><a href="#Backend_check"><code>virtual bool check() = 0</code></a></li>
+<li><a href="#Backend_finish"><code>virtual void finish()</code></a></li>
+</ul>
+</li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>BOLT Backend API</h1>
+  <div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#class_Backend"><code>template&lt;typename Wire_T, typename Number_T&gt; class Backend</code></a>
+<ul class="sectlevel2">
+<li><a href="#Backend_prime"><code>Number_T const prime</code></a></li>
+<li><a href="#Backend_isBoolean"><code>bool const isBoolean</code></a></li>
+<li><a href="#Backend_constructor"><code>Backend(Number_T const p, bool const ib)</code></a></li>
+<li><a href="#Backend_addGate"><code>virtual void addGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></a></li>
+<li><a href="#Backend_mulGate"><code>virtual void mulGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></a></li>
+<li><a href="#Backend_addcGate"><code>virtual void addcGate(Wire_T* const out, Wire_T const* const left, Number_T const right) = 0</code></a></li>
+<li><a href="#Backend_mulcGate"><code>virtual void mulcGate(Wire_T* const out, Wire_T const* const left, Number_T const right) = 0</code></a></li>
+<li><a href="#Backend_xorGate"><code>virtual void xorGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></a></li>
+<li><a href="#Backend_andGate"><code>virtual void andGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></a></li>
+<li><a href="#Backend_notGate"><code>virtual void notGate(Wire_T* const out, Wire_T const* const left) = 0</code></a></li>
+<li><a href="#Backend_copy"><code>virtual void copy(Wire_T* const out, Wire_T const* const left) = 0</code></a></li>
+<li><a href="#Backend_assign"><code>virtual void assign(Wire_T* const out, Number_T const left) = 0</code></a></li>
+<li><a href="#Backend_instance"><code>virtual void instance(Wire_T* const out, Number_T const left) = 0</code></a></li>
+<li><a href="#Backend_witness"><code>virtual void witness(Wire_T* const out, Number_T const left) = 0</code></a></li>
+<li><a href="#Backend_assertZero"><code>virtual void assertZero(Wire_T const* const wire) = 0</code></a></li>
+<li><a href="#Backend_caseSelect"><code>virtual void caseSelect(Wire_T* const selected_bit, Number_T const case_number, Wire_T const* const select_wire) = 0</code></a></li>
+<li><a href="#Backend_multiplexHelper"><code>virtual void multiplexHelper(Wire_T* const out, std::vector&lt;LocalWireRange&lt;Wire_T, Number_T*&gt;* const dummies, std::vector&lt;Wire_T&gt; const* const selector_bits, wtk::index_t const dummy_place)</code></a></li>
+<li><a href="#Backend_check"><code>virtual bool check() = 0</code></a></li>
+<li><a href="#Backend_finish"><code>virtual void finish()</code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Include this API as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">#include &lt;wtk/bolt/Backend.h&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Members of this API live in the following namespace</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">namespace wtk { namespace bolt { ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The BOLT API is parameterized on two templates.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>Number_T</code></dt>
+<dd>
+<p>This template is the same integer-like template which the <a href="../../../api/wtk/Parser.html#api_Parser">Parser API</a> uses for numeric literals.</p>
+</dd>
+<dt class="hdlist1"><code>Wire_T</code></dt>
+<dd>
+<p>This template is an opaque structure supplied by the Backend for encapsulating data related to a wire.
+The <a href="../../../api/wtk/bolt/Builder.html#api_bolt_Builder">Builder</a> requires it to be default constructible/destructible, and the <a href="../../../api/wtk/bolt/Evaluator.html#api_bolt_Evaluator">Evaluator</a> requires it be mutable/overwritable.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="class_Backend"><code>template&lt;typename Wire_T, typename Number_T&gt; class Backend</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An abstract class defining directives passed on to the ZK Backend.
+A backend can implement this interface for BOLT to use during evaluation.
+Each funciton is a handler for a different simple gate.</p>
+</div>
+<div class="paragraph">
+<p>Wires are reported as <code>Wire_T</code> pointers, which are generally constructed ahead of time and reused, rather than allocated once.
+BOLT does ensure that output pointer != input pointer, but multiple input pointers could be equal.</p>
+</div>
+<div class="paragraph">
+<p>All handlers return <code>void</code>, and errors must be cached until the end of the relation when <a href="#Backend_check"><code>check()</code></a> is called by the user.</p>
+</div>
+<div class="sect2">
+<h3 id="Backend_prime"><code>Number_T const prime</code></h3>
+<div class="paragraph">
+<p>This public attribute must be set by the <a href="#Backend_constructor">constructor</a> to the characteristic/prime modulus.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">Number_T const prime;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_isBoolean"><code>bool const isBoolean</code></h3>
+<div class="paragraph">
+<p>This public attribute must be set by the <a href="#Backend_constructor">constructor</a> to <code>true</code> if the <a href="../../../api/wtk/Parser.html#Parser_gateSet"><em>GateSet</em> is Boolean</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">Number_T const prime;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_constructor"><code>Backend(Number_T const p, bool const ib)</code></h3>
+<div class="paragraph">
+<p>The <code>wtk::Backend&lt;Wire_T, Number_T&gt;</code> has only one constructor, with two parameters.
+The first parameter, <code>p</code>, is the prime modulus or characteristic.
+The second parameter, <code>ib</code>, is a flag indicating <code>true</code> when the<a href="../../../api/wtk/Parser.html#Parser_gateSet"><em>GateSet</em></a> is Boolean and <code>false</code> when Arithmetic.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">Backend(Number_T const p, bool const ib) : prime(p), isBoolean(ib) { }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_addGate"><code>virtual void addGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must handle an addition.
+<code>out</code> may be assumed to point to a different object from <code>left</code> or <code>right</code>.
+This method is guaranteed only to be called if <code><a href="#Backend_isBoolean">this&#8594;isBoolean</a> == false</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void addGate(Wire_T* const out,
+    Wire_T const* const left, Wire_T const* const right) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_mulGate"><code>virtual void mulGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must handle a multiplication.
+<code>out</code> may be assumed to point to a different object from <code>left</code> or <code>right</code>.
+This method is guaranteed only to be called if <code><a href="#Backend_isBoolean">this&#8594;isBoolean</a> == false</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void mulGate(Wire_T* const out,
+    Wire_T const* const left, Wire_T const* const right) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_addcGate"><code>virtual void addcGate(Wire_T* const out, Wire_T const* const left, Number_T const right) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must handle an addition with a constant.
+<code>out</code> may be assumed to point to a different object from <code>left</code>.
+This method is guaranteed only to be called if <code><a href="#Backend_isBoolean">this&#8594;isBoolean</a> == false</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void addcGate(Wire_T* const out,
+    Wire_T const* const left, Number_T const right) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_mulcGate"><code>virtual void mulcGate(Wire_T* const out, Wire_T const* const left, Number_T const right) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must handle a multiplication with a constant.
+<code>out</code> may be assumed to point to a different object from <code>left</code>.
+This method is guaranteed only to be called if <code><a href="#Backend_isBoolean">this&#8594;isBoolean</a> == false</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void addcGate(Wire_T* const out,
+    Wire_T const* const left, Number_T const right) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_xorGate"><code>virtual void xorGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must handle an XOR.
+<code>out</code> may be assumed to point to a different object from <code>left</code> or <code>right</code>.
+This method is guaranteed only to be called if <code><a href="#Backend_isBoolean">this&#8594;isBoolean</a> == true</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void xorGate(Wire_T* const out,
+    Wire_T const* const left, Wire_T const* const right) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_andGate"><code>virtual void andGate(Wire_T* const out, Wire_T const* const left, Wire_T const* const right) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must handle an AND.
+<code>out</code> may be assumed to point to a different object from <code>left</code> or <code>right</code>.
+This method is guaranteed only to be called if <code><a href="#Backend_isBoolean">this&#8594;isBoolean</a> == true</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void andGate(Wire_T* const out,
+    Wire_T const* const left, Wire_T const* const right) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_notGate"><code>virtual void notGate(Wire_T* const out, Wire_T const* const left) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must handle an AND.
+<code>out</code> may be assumed to point to a different object from <code>left</code>.
+This method is guaranteed only to be called if <code><a href="#Backend_isBoolean">this&#8594;isBoolean</a> == true</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void notGate(Wire_T* const out, Wire_T const* const left) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_copy"><code>virtual void copy(Wire_T* const out, Wire_T const* const left) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must copy from <code>left</code> to <code>right</code>.
+<code>out</code> may be assumed to point to a different object from <code>left</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void copy(Wire_T* const out, Wire_T const* const left) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_assign"><code>virtual void assign(Wire_T* const out, Number_T const left) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must assign <code>out</code> the constant value <code>left</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void assign(Wire_T* const out, Number_T const left) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_instance"><code>virtual void instance(Wire_T* const out, Number_T const left) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must assign <code>out</code> the instance value <code>left</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void instance(Wire_T* const out, Number_T const left) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_witness"><code>virtual void witness(Wire_T* const out, Number_T const left) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must assign <code>out</code> the witness value <code>left</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void witness(Wire_T* const out, Number_T const left) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_assertZero"><code>virtual void assertZero(Wire_T const* const wire) = 0</code></h3>
+<div class="paragraph">
+<p>The backend must check that <code>wire</code> is equal to <code>0</code>, and if this is not the case, a failure must be cached until <a href="#Backend_check"><code>this&#8594;check()</code></a> is called.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void assertZero(Wire_T const* const wire) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_caseSelect"><code>virtual void caseSelect(Wire_T* const selected_bit, Number_T const case_number, Wire_T const* const select_wire) = 0</code></h3>
+<div class="paragraph">
+<p>This function decides if a case is selected or active by comparison of the <code>select_wire</code> to the <code>case_number</code>.
+If they are equal then <code>selected_bit</code> must be set to <code>1</code>, otherwise it must be set to <code>0</code>.</p>
+</div>
+<div class="paragraph">
+<p>The default implementation uses exponentiation and <a href="https://en.wikipedia.org/wiki/Fermat&#8217;s_little_theorem">Fermat&#8217;s Little Theorem</a> to make the computation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void caseSelect(Wire_T* const selected_bit,
+    Number_T const case_number, Wire_T const* const select_wire);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_multiplexHelper"><code>virtual void multiplexHelper(Wire_T* const out, std::vector&lt;LocalWireRange&lt;Wire_T, Number_T*&gt;* const dummies, std::vector&lt;Wire_T&gt; const* const selector_bits, wtk::index_t const dummy_place)</code></h3>
+<div class="paragraph">
+<p>Implements a multiplexer by summing a column of dummy wires conditionally on each selector bit.
+This is repeated for each column of dummies.
+This method is guaranteed only to be called if <code><a href="#Backend_isBoolean">this&#8594;isBoolean</a> == false</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>out</code></dt>
+<dd>
+<p>output wire (sum)</p>
+</dd>
+<dt class="hdlist1"><code>dummies</code></dt>
+<dd>
+<p>A rectangular matrix, although this method must access only the <code>dummy_place</code> column.</p>
+</dd>
+<dt class="hdlist1"><code>selector_bits</code></dt>
+<dd>
+<p>vector of condition bits, guaranteed to have the same length as the column.</p>
+</dd>
+<dt class="hdlist1"><code>dummy_place</code></dt>
+<dd>
+<p>the column to be summed</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Unfortunately, this method must expose the <code>wtk::bolt::LocalWireRange&lt;Wire_T, Number_T&gt;</code> internal structure.
+The backend may call only the <code>deref(&#8230;&#8203;)</code> method (shown here) with <code>dummy_place</code> as the argument.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">Wire_T* deref(wtk::index_t const idx);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here is a pseudo-ish code this function should implement:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p><code>*out</code> := sum(<code>i</code>, <code>(*dummies)[i].deref(dummy_place)</code> * <code>(*selector_bits)[i]</code> );</p>
+</div>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void multiplexHelper(Wire_T* const out,
+    std::vector&lt;LocalWireRange&lt;Wire_T, Number_T&gt;*&gt;* const dummies,
+    std::vector&lt;Wire_T&gt; const* const selector_bits,
+    wtk::index_t const dummy_place);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_check"><code>virtual bool check() = 0</code></h3>
+<div class="paragraph">
+<p>This method is to be called by the caller (rather than the BOLT <a href="../../../api/wtk/bolt/Builder.html#api_bolt_Builder">Builder</a> or <a href="../../../api/wtk/bolt/Evaluator.html#api_bolt_Evaluator">Evaluator</a>.
+After the Evaluator completes successfully, this function should be called to indicate if <em>evaluation validity</em> holds for the witnessed-statement.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual bool check() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Backend_finish"><code>virtual void finish()</code></h3>
+<div class="paragraph">
+<p>This method is to be called by the caller (rather than the BOLT <a href="../../../api/wtk/bolt/Builder.html#api_bolt_Builder">Builder</a> or <a href="../../../api/wtk/bolt/Evaluator.html#api_bolt_Evaluator">Evaluator</a>.
+After the Evaluator completes (successfully or not), this function must be called to perform cleanup tasks.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void finish() { }</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

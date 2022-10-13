@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WizToolKit for Backends - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>WizToolKit for Backends | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="WizToolKit for Backends" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/backends.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/backends.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="WizToolKit for Backends" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"WizToolKit for Backends","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/backends.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a><ul><li class="curr_page"><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a>
+      <ul class="sectlevel1">
+<li><a href="#numeric-representations">Numeric Representations</a></li>
+<li><a href="#the-backend-api">The Backend API</a>
+<ul class="sectlevel2">
+<li><a href="#assert-zero">Assert Zero</a></li>
+<li><a href="#replacing-exponentiation-in-switch-statements">Replacing Exponentiation in Switch-Statements</a></li>
+</ul>
+</li>
+<li><a href="#invoking-bolt">Invoking BOLT</a></li>
+<li><a href="#invoking-plasmasnooze">Invoking PLASMASnooze</a>
+<ul class="sectlevel2">
+<li><a href="#streaming-plasmasnooze">Streaming PLASMASnooze</a></li>
+</ul>
+</li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a></li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a></li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>WizToolKit for Backends</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>WizToolKit&#8217;s BOLT and PLASMASnooze IR interpreters share a common Backend API.
+The advantage of this is it allows the backend to focus on proofs and reuse IR semantics from WizToolKit.
+BOLT is a "two-pass" interpreter and is most ideally suited for relations which rely heavily on loops.
+PLASMASnooze is a "single-pass" interpreter and picks up the slack when very few gates are reused.</p>
+</div>
+<div class="paragraph">
+<p>The following includes are required.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><a href="api/wtk/bolt/Builder.html#api_bolt_Builder"><code>#include &lt;wtk/bolt/Builder.h&gt;</code></a></dt>
+<dd>
+<p>the <em>build</em> phase of the BOLT interpreter.</p>
+</dd>
+<dt class="hdlist1"><a href="api/wtk/bolt/Evaluator.html#api_bolt_Evaluator"><code>#include &lt;wtk/bolt/Evaluator.h&gt;</code></a></dt>
+<dd>
+<p>the <em>evaluate</em> phase of BOLT interpreter.</p>
+</dd>
+<dt class="hdlist1"><a href="api/wtk/bolt/PLASMASnooze.html#api_bolt_PLASMASnooze"><code>#include &lt;wtk/bolt/PLASMASnooze.h&gt;</code></a></dt>
+<dd>
+<p>the PLASMASnooze interpreter.</p>
+</dd>
+<dt class="hdlist1"><a href="api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html#api_bolt_ArithmeticPLASMASnoozeHandler"><code>#include &lt;wtk/bolt/ArithmeticPLASMASnoozeHandler.h&gt;</code></a>, and <a href="api/wtk/bolt/BooleanPLASMASnoozeHandler.html#api_bolt_BooleanPLASMASnoozeHandler"><code>#include &lt;wtk/bolt/BooleanPLASMASnoozeHandler.h&gt;</code></a></dt>
+<dd>
+<p>the PLASMASnooze interpreter, adapted to the <a href="parsers.html#Streaming-API">Streaming Parser API</a>.</p>
+</dd>
+<dt class="hdlist1"><a href="api/wtk/bolt/Backend.html#api_bolt_Backend"><code>#include &lt;wtk/bolt/Backend.h&gt;</code></a></dt>
+<dd>
+<p>the interface which a backend implementor must implement.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For those who are curious about the naming scheme of these, BOLT is short for <strong>B</strong>etter <strong>O</strong>ptimization via <strong>L</strong>ookup-reuse and <strong>T</strong>wo-pass.
+PLASMASnooze is an improvement over <a href="tools/wtk-firealarm.html#tools_firealarm">FIREALARM</a> in the sense of performance and of plugability with ZK Backends.
+However, it is also a disprovement in the sense that it relaxes certain IR semantics, for example, it allows reassignment to a wire, after the wire was <code>@delete</code>d.
+Thus PLASMA is an improvement upon FIRE, and Snooze is the opposite of ALARM.
+PLASMASnooze stands for <strong>P</strong>ractical <strong>L</strong>ocal <strong>A</strong>cceleration for <strong>S</strong>ingle-pass with <strong>M</strong>alleable <strong>A</strong>ssumtions <strong>Snooze</strong>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="numeric-representations">Numeric Representations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this API there are generally three numeric representation types.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Wire numbers</dt>
+<dd>
+<p>A <code>typedef</code> named <code>wtk::index_t</code> defines the 64-bit unsigned integers (with wraparound) required by the IR specification for indices in the wire numbering system.
+These are almost entirely hidden from the backend.</p>
+</dd>
+<dt class="hdlist1">Wire values</dt>
+<dd>
+<p>A template parameter which is typically referred to as <code>Wire_T</code> must be specified by the backend to carry the value across each wire.</p>
+</dd>
+<dt class="hdlist1">Parser literals</dt>
+<dd>
+<p>A template parameter which is typically referred to as <code>Number_T</code> must be the same numeric type as parameterizing the parser.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="the-backend-api">The Backend API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="api/wtk/bolt/Backend.html#class_Backend"><code>wtk::bolt::Backend&lt;Wire_T, Number_T&gt;</code></a> is a simple abstract class which must be implemented by the backend.
+It declares a number of methods which must be overridden by the backend.
+Each method handles a simple gate, such as <code>@mul</code> or <code>@xor</code>.
+WizToolKit guarantees that it will only call methods of one <em>Gate Set</em>.
+If an implementor can only handle one <em>Gate Set</em> it is acceptable to have empty or failing implementations for the other <em>Gate Set</em>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">typedef MyWire /* something that is default-constructible */;
+
+struct MyBackend : public wtk::bolt::Backend&lt;MyWire, uint64_t&gt;
+{
+  void addGate(MyWire* const out, MyWire const* const left, MyWire const* const right) override
+  {
+    /* implementation */
+  }
+
+  void mulGate(MyWire* const out, MyWire const* const left, MyWire const* const right) override
+  {
+    /* implementation */
+  }
+
+  /* remaining methods omitted for brevity */
+};</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="assert-zero">Assert Zero</h3>
+<div class="paragraph">
+<p>The <code>@assert_zero</code> directive indicates that the proof would fail if its input were non-zero.
+The Backend API expects the implementor to cache assertions and check them at the end.
+This is done with a pair of <a href="api/wtk/bolt/Backend.html#Backend_assertZero"><code>assertZero(&#8230;&#8203;)</code></a> and <a href="api/wtk/bolt/Backend.html#Backend_check"><code>check()</code></a> methods.
+Here is an example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">  bool failureCache = false;
+
+  void assertZero(MyWire const* const wire) override
+  {
+    this-&gt;failureCache = (MyWire != 0) || this-&gt;failureCache;
+  }
+
+  bool check() override
+  {
+    return this-&gt;failureCache;
+  }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The top-level caller may call <a href="api/wtk/bolt/Backend.html#Backend_check"><code>check()</code></a> at the top-level to check for failures.
+If shutdown code is necessary, it may be written in either the the <a href="api/wtk/bolt/Backend.html#Backend_finish"><code>finish()</code></a> method or the destructor.
+The top-level caller must call <code>finish()</code> at the top level scope.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="replacing-exponentiation-in-switch-statements">Replacing Exponentiation in Switch-Statements</h3>
+<div class="paragraph">
+<p>By default, WizToolKit uses exponentiation (and <a href="https://en.wikipedia.org/wiki/Fermat's_little_theorem">Fermat&#8217;s Little Theorem</a>) to test which case is selected in an arithmetic switch-statement.
+This means that there are <code>n log(P)</code> many additional multiplications per switch statement (<code>n</code> being number of cases and <code>P</code> being the prime).
+If an implementor&#8217;s ZK system can improve upon this, they may override the <code>caseSelect(&#8230;&#8203;)</code> function.
+The <code>selected_bit</code> output wire must be assigned <code>1</code> or <code>0</code> when the <code>select_wire</code> input wire is or is not equal to the <code>case_number</code> field-literal.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">  void caseSelect(MyWire* const selected_bit,
+      uint64_t const case_number, MyWire const* const select_wire) override
+  {
+    // Implement this
+  }</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="invoking-bolt">Invoking BOLT</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>BOLT has two phases of invocation.
+First <a href="api/wtk/bolt/Builder.html#api_bolt_Builder"><em>build</em></a> translates the IR syntax tree to a more accelerated form, then <a href="api/wtk/bolt/Builder.html#api_bolt_Evaluator"><em>evaluate</em></a> processes the relation, invoking methods of the backend as necessary.
+Here is an example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">// Collect these from the parser
+uint64_t characteristic = /* ... */;
+bool is_boolean = /* ... */;
+wtk::IRTree&lt;uint64_t&gt;* relation = /* ... */;
+wtk::InputStream&lt;uint64_t&gt;* instance = /* ... */;
+wtk::InputStream&lt;uint64_t&gt;* witness = /* ... */;
+
+// Build the relation. *bolt_relation has the same lifetime as builder
+wtk::bolt::Builder&lt;MyWire, uint64_t&gt; builder(characteristic);
+wtk::bolt::Bolt&lt;MyWire, uint64_t&gt;* bolt_relation = builder.build(relation);
+
+// Check that build succeeded and then evaluate.
+if(bolt_relation != nullptr)
+{
+  // Evaluate the relation
+  MyBackend backend(characteristic, is_boolean, /* ... */);
+  wtk::bolt::Evaluator&lt;MyWire, uint64_t&gt; evaluator(&amp;backend);
+
+  if(!evaluator.evaluate(bolt_relation, instance, witness))
+  {
+    /* Instance or witness is poorly formed */
+  }
+  else if(!backend.check())
+  {
+    /* an assert zero failed, or other things happened to invalidate the proof */
+  }
+  else
+  {
+    /* success */
+  }
+
+  backend.finish();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>At invocation time, it may be nonsensical for the a verifier to have a witness stream.
+To handle this, <a href="api/wtk/bolt/Evaluator.html#Evaluator_evaluate"><code>evaluate(&#8230;&#8203;)</code></a> may be called with a <code>nullptr</code>.
+In this case, the evaluator will feed the backend zeroes in place of the witness.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">  if(!evaluator.evaluate(bolt_relation, instance, nullptr))</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="invoking-plasmasnooze">Invoking PLASMASnooze</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="api/wtk/bolt/PLASMASnooze.html#api_bolt_PLASMASnooze">PLASMASnooze</a> has just a single phase of execution.
+Instead of returning true/false for success or failure, it returns an <a href="api/wtk/bolt/PLASMASnooze.html#enum_PLASMASnoozeStatus">enumeration indicating which resource caused the failure</a>.
+As with BOLT, PLASMASnooze indicates only failures of each individual resource, leaving the backend to indicate failure of the proof.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">// Collect these from the parser
+uint64_t characteristic = /* ... */;
+bool is_boolean = /* ... */;
+wtk::IRTree&lt;uint64_t&gt;* relation = /* ... */;
+wtk::InputStream&lt;uint64_t&gt;* instance = /* ... */;
+wtk::InputStream&lt;uint64_t&gt;* witness = /* ... */;
+
+// Evaluate the relation
+MyBackend backend(characteristic, is_boolean, /* ... */);
+wtk::bolt::PLASMASnooze&lt;MyWire, uint64_t&gt; snooze(&amp;backend);
+
+wtk::bolt::PLASMASnoozeStatus status =
+  snooze.evaluate(relation, instance, witness);
+if(wtk::bolt::PLASMASnoozeStatus::bad_relation == status)
+{
+  /* Relation is poorly formed */
+}
+if(wtk::bolt::PLASMASnoozeStatus::bad_stream == status)
+{
+  /* Instance or witness is poorly formed */
+}
+else if(!backend.check())
+{
+  /* an assert zero failed, or other things happened to invalidate the proof */
+}
+else
+{
+  /* success */
+}
+
+backend.finish();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Similarly to BOLT, PLASMASnooze may be invoked with a null witness, to feed a verifier zeroes in the place of witnesses.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">wtk::bolt::PLASMASnoozeStatus status =
+  snooze.evaluate(relation, instance, nullptr);</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="streaming-plasmasnooze">Streaming PLASMASnooze</h3>
+<div class="paragraph">
+<p>A further optimization to PLASMASnooze, when processing strict IR-Simple, is to use the <a href="parsers.html#Streaming-API">parser&#8217;s streaming API</a>.
+When the relation is IR-Simple (a completely "flat" list of gates), the parser can pass each gate to a handler immediately after its parsed, rather than adding it to a syntax tree.
+The <a href="api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html#api_bolt_ArithmeticPLASMASnoozeHandler"><code>wtk::bolt::ArithmeticPLASMASnoozeHandler&lt;Wire_T, Number_T&gt;</code></a> and <a href="api/wtk/bolt/BooleanPLASMASnoozeHandler.html#api_bolt_BooleanPLASMASnoozeHandler"><code>wtk::bolt::BooleanPLASMASnoozeHandler&lt;Wire_T&gt;</code> (<code>Number_T</code> is fixed as <code>uint8_t</code>)</a> implement the Streaming API for PLASMASnooze. the <code>check()</code> method of each must be used to collect the <a href="api/wtk/bolt/PLASMASnooze.html#enum_PLASMASnoozeStatus">status code (<code>wtk::bolt::PLASMASnoozeStatus</code>)</a>.</p>
+</div>
+<div class="paragraph">
+<p>Here is an example invocation for arithmetic PLASMASnooze streaming.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">// Collect these from the parser
+uint64_t characteristic = /* ... */;
+bool is_boolean = /* ... */;
+wtk::ArithemticParser&lt;uint64_t&gt;* relation_parser = /* ... */;
+wtk::InputStream&lt;uint64_t&gt;* instance = /* ... */;
+wtk::InputStream&lt;uint64_t&gt;* witness = /* ... */;
+
+// Evaluate the relation
+MyBackend backend(characteristic, is_boolean, /* ... */);
+wtk::bolt::ArithmeticPLASMASnoozeHandler&lt;MyWire, uint64_t&gt; snooze(&amp;backend, instance, witness);
+
+if(!relation_parser-&gt;parseStream(&amp;snooze))
+{
+  /* Syntax error */
+}
+else
+{
+  wtk::bolt::PLASMASnoozeStatus status = snooze.check();
+  if(wtk::bolt::PLASMASnoozeStatus::bad_relation == status)
+  {
+    /* Relation is poorly formed */
+  }
+  if(wtk::bolt::PLASMASnoozeStatus::bad_stream == status)
+  {
+    /* Instance or witness is poorly formed */
+  }
+  else if(!backend.check())
+  {
+    /* an assert zero failed, or other things happened to invalidate the proof */
+  }
+  else
+  {
+    /* success */
+  }
+}
+
+backend.finish();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For verifiers, who have access to the instance but not the witness, the handler may be constructed with a <code>nullptr</code> witness.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">wtk::bolt::ArithmeticPLASMASnoozeHandler&lt;MyWire, uint64_t&gt; snooze(&amp;backend, instance, nullptr);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

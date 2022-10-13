@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Boolean Stream Handler API - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Boolean Stream Handler API | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Boolean Stream Handler API" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Boolean Stream Handler API" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Boolean Stream Handler API","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a><ul><li><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a></li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a></li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a>
+      <ul class="sectlevel1">
+<li><a href="#class_BooleanStreamHandler"><code>class BooleanStreamHandler</code></a>
+<ul class="sectlevel2">
+<li><a href="#BooleanStreamHandler_setLineNumber"><code>virtual void setLineNumber(size_t const line)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleInstance"><code>virtual void handleInstance(wtk::index_t const idx)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleShortWitness"><code>virtual void handleShortWitness(wtk::index_t const idx)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleXor"><code>virtual void handleXor(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleAnd"><code>virtual void handleAnd(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleNot"><code>virtual void handleNot(wtk::index_t const out, wtk::index_t const in)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleAssign"><code>virtual void handleAssign(wtk::index_t const out, uint8_t const val)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleCopy"><code>virtual void handleCopy(wtk::index_t const out, wtk::index_t const in)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleAssertZero"><code>virtual void handleAssertZero(wtk::index_t const in)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleDeleteSingle"><code>virtual void handleDeleteSingle(wtk::index_t const in)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleDeleteRange"><code>virtual void handleDeleteRange(wtk::index_t const first, wtk::index_t const last)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleEnd"><code>virtual void handleEnd()</code></a></li>
+</ul>
+</li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a></li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>Boolean Stream Handler API</h1>
+  <div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#class_BooleanStreamHandler"><code>class BooleanStreamHandler</code></a>
+<ul class="sectlevel2">
+<li><a href="#BooleanStreamHandler_setLineNumber"><code>virtual void setLineNumber(size_t const line)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleInstance"><code>virtual void handleInstance(wtk::index_t const idx)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleShortWitness"><code>virtual void handleShortWitness(wtk::index_t const idx)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleXor"><code>virtual void handleXor(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleAnd"><code>virtual void handleAnd(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleNot"><code>virtual void handleNot(wtk::index_t const out, wtk::index_t const in)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleAssign"><code>virtual void handleAssign(wtk::index_t const out, uint8_t const val)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleCopy"><code>virtual void handleCopy(wtk::index_t const out, wtk::index_t const in)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleAssertZero"><code>virtual void handleAssertZero(wtk::index_t const in)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleDeleteSingle"><code>virtual void handleDeleteSingle(wtk::index_t const in)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleDeleteRange"><code>virtual void handleDeleteRange(wtk::index_t const first, wtk::index_t const last)</code></a></li>
+<li><a href="#BooleanStreamHandler_handleEnd"><code>virtual void handleEnd()</code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Include this API as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">#include &lt;wtk/BooleanStreamHandler.h&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Members of this API live in the following namespace</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">namespace wtk { ...</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="class_BooleanStreamHandler"><code>class BooleanStreamHandler</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk::BooleanStreamHandler</code> is a virtual class for the user to implement with callbacks for the <a href="../../api/wtk/Parser.html#api_Parser">Parser API</a> to use when stream parsing.</p>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_setLineNumber"><code>virtual void setLineNumber(size_t const line)</code></h3>
+<div class="paragraph">
+<p>If the Parser supports line-numbering, it will use this callback to set the current line number before a gate&#8217;s callback is invoked.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void setLineNum(size_t const line);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleInstance"><code>virtual void handleInstance(wtk::index_t const idx)</code></h3>
+<div class="paragraph">
+<p>Called when an <code>@instance</code> directive is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleInstance(wtk::index_t const idx);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleShortWitness"><code>virtual void handleShortWitness(wtk::index_t const idx)</code></h3>
+<div class="paragraph">
+<p>Called when an <code>@short_witness</code> directive is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleShortWitness(wtk::index_t const idx);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleXor"><code>virtual void handleXor(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right)</code></h3>
+<div class="paragraph">
+<p>Called when an <code>@xor</code> directive is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleXor(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleAnd"><code>virtual void handleAnd(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right)</code></h3>
+<div class="paragraph">
+<p>Called when an <code>@and</code> directive is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleAnd(wtk::index_t const out, wtk::index_t const left, wtk::index_t const right);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleNot"><code>virtual void handleNot(wtk::index_t const out, wtk::index_t const in)</code></h3>
+<div class="paragraph">
+<p>Called when a <code>@not</code> directive is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleNot(wtk::index_t const out, wtk::index_t const in);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleAssign"><code>virtual void handleAssign(wtk::index_t const out, uint8_t const val)</code></h3>
+<div class="paragraph">
+<p>Called when a constant assignment directive is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleAssign(wtk::index_t const out, uint8_t const val);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleCopy"><code>virtual void handleCopy(wtk::index_t const out, wtk::index_t const in)</code></h3>
+<div class="paragraph">
+<p>Called when a copy directive is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleCopy(wtk::index_t const out, wtk::index_t const in);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleAssertZero"><code>virtual void handleAssertZero(wtk::index_t const in)</code></h3>
+<div class="paragraph">
+<p>Called when an <code>@assert_zero</code> directive is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleAssertZero(wtk::index_t const in);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleDeleteSingle"><code>virtual void handleDeleteSingle(wtk::index_t const in)</code></h3>
+<div class="paragraph">
+<p>Called when a <code>@delete</code> directive with a single argument is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleDeleteSingle(wtk::index_t const in);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleDeleteRange"><code>virtual void handleDeleteRange(wtk::index_t const first, wtk::index_t const last)</code></h3>
+<div class="paragraph">
+<p>Called when a <code>@delete</code> directive with a range argument is reached.
+The range is inclusive on both ends.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleDeleteRange(wtk::index_t const first, wtk::index_t const last);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanStreamHandler_handleEnd"><code>virtual void handleEnd()</code></h3>
+<div class="paragraph">
+<p>Called after the last directive is reached.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual void handleEnd();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

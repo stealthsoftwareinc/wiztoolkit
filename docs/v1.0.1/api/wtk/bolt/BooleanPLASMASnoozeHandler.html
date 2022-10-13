@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Boolean PLASMASnooze Streaming API - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Boolean PLASMASnooze Streaming API | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Boolean PLASMASnooze Streaming API" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Boolean PLASMASnooze Streaming API" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Boolean PLASMASnooze Streaming API","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a><ul><li><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a></li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a></li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a></li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a>
+      <ul class="sectlevel1">
+<li><a href="#class_BooleanPLASMASnoozeHandler"><code>template&lt;template Wire_T, typename Number_T&gt; class BooleanPLASMASnoozeHandler</code></a>
+<ul class="sectlevel2">
+<li><a href="#BooleanPLASMASnoozeHandler_constructor"><code>BooleanPLASMASnoozeHandler(wtk::bolt::Backend&lt;Wire_T, uint8_t&gt;* const b, wtk::InputStream&lt;uint8_t&gt;* const ins, wtk::InputStream&lt;uint8_t&gt;* const wit)</code></a></li>
+<li><a href="#BooleanPLASMASnoozeHandler_check"><code>wtk::Bolt::PLASMASnoozeStatus check()</code></a></li>
+</ul>
+</li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>Boolean PLASMASnooze Streaming API</h1>
+  <div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#class_BooleanPLASMASnoozeHandler"><code>template&lt;template Wire_T, typename Number_T&gt; class BooleanPLASMASnoozeHandler</code></a>
+<ul class="sectlevel2">
+<li><a href="#BooleanPLASMASnoozeHandler_constructor"><code>BooleanPLASMASnoozeHandler(wtk::bolt::Backend&lt;Wire_T, uint8_t&gt;* const b, wtk::InputStream&lt;uint8_t&gt;* const ins, wtk::InputStream&lt;uint8_t&gt;* const wit)</code></a></li>
+<li><a href="#BooleanPLASMASnoozeHandler_check"><code>wtk::Bolt::PLASMASnoozeStatus check()</code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Include this API as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">#include &lt;wtk/bolt/BooleanPLASMASnoozeHandler.h&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Members of this API live in the following namespace</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">namespace wtk { namespace bolt { ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The BOLT API is parameterized on two templates.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>Number_T</code></dt>
+<dd>
+<p>This template is the same integer-like template which the <a href="../../../api/wtk/Parser.html#api_Parser">Parser API</a> uses for numeric literals.
+For Boolean relations, this is fixed to <code>uint8_t</code>.</p>
+</dd>
+<dt class="hdlist1"><code>Wire_T</code></dt>
+<dd>
+<p>This template is an opaque structure supplied by the Backend for encapsulating data related to a wire.
+PLASMASnooze requires it to be default constructible/destructible, and mutable/overwritable.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="class_BooleanPLASMASnoozeHandler"><code>template&lt;template Wire_T, typename Number_T&gt; class BooleanPLASMASnoozeHandler</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk::bolt::BooleanPLASMASnoozeHandler&lt;Wire_T, Number_T&gt;</code> implements the <a href="../../../api/wtk/BooleanStreamHandler.html#api_BooleanStreamHandler"><code>wtk::BooleanStreamHandler</code> abstract class</a> with callbacks for interpreting wire-numbers and making calls to the <a href="../../../api/wtk/bolt/Backend.html#api_bolt_Backend"><code>wtk::bolt::Backend&lt;Wire_T, uint8_t&gt;</code></a> callback API.</p>
+</div>
+<div class="sect2">
+<h3 id="BooleanPLASMASnoozeHandler_constructor"><code>BooleanPLASMASnoozeHandler(wtk::bolt::Backend&lt;Wire_T, uint8_t&gt;* const b, wtk::InputStream&lt;uint8_t&gt;* const ins, wtk::InputStream&lt;uint8_t&gt;* const wit)</code></h3>
+<div class="paragraph">
+<p>The constructor requires a <a href="../../../api/wtk/bolt/Backend.html#api_bolt_Backend"><code>wtk::bolt::Backend&lt;Wire_T, uint8_t&gt;*</code></a> for ZK callbacks, as well as two <a href="../../../api/wtk/Parser.html#struct_InputStream"><code>wtk::InputStream&lt;uint8_t&gt;*</code></a> parameters for the instance and short witness.
+The second input stream (short witness) may be <code>nullptr</code>, as may be necessary for verifier implementations.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">BooleanPLASMASnoozeHandler(
+    wtk::bolt::Backend&lt;Wire_T, uint8_t&gt;* const b,
+    wtk::InputStream&lt;uint8_t&gt;* const ins,
+    wtk::InputStream&lt;uint8_t&gt;* const wit);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BooleanPLASMASnoozeHandler_check"><code>wtk::Bolt::PLASMASnoozeStatus check()</code></h3>
+<div class="paragraph">
+<p>After stream parsing/processing the <code>check()</code> method retrieves a status (<a href="../../../api/wtk/bolt/PLASMASnooze.html#enum_PLASMASnoozeStatus"><code>wtk::PLASMASnoozeStatus</code></a>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">wtk::bolt::PLASMASnoozeStatus check();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

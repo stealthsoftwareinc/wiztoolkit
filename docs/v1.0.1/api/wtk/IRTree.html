@@ -1,0 +1,2400 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IR Tree API - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>IR Tree API | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="IR Tree API" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="IR Tree API" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"IR Tree API","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a><ul><li><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a></li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a></li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a>
+      <ul class="sectlevel1">
+<li><a href="#struct_IRTree"><code>template&lt;typename Number_T&gt; struct IRTree</code></a>
+<ul class="sectlevel2">
+<li><a href="#IRTree_size"><code>size_t size()</code></a></li>
+<li><a href="#IRTree_functionDeclare"><code>wtk::FunctionDeclare&lt;Number_T&gt;* functionDeclare(size_t n)</code></a></li>
+<li><a href="#IRTree_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#IRTree_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_DirectiveList"><code>template&lt;typename Number_T&gt; struct DirectiveList</code></a>
+<ul class="sectlevel2">
+<li><a href="#DirectiveList_size"><code>size_t size()</code></a></li>
+<li><a href="#DirectiveList_enum_Type"><code>enum Type</code></a></li>
+<li><a href="#DirectiveList_type"><code>wtk::DirectiveList&lt;Number_T&gt;::Type type(size_t n)</code></a></li>
+<li><a href="#DirectiveList_binaryGate"><code>wtk::BinaryGate* binaryGate(size_t n)</code></a></li>
+<li><a href="#DirectiveList_unaryGate"><code>wtk::UnaryGate* unaryGate(size_t n)</code></a></li>
+<li><a href="#DirectiveList_binaryConstGate"><code>wtk::BinaryConstGate&lt;Number_T&gt;* binaryConstGate(size_t n)</code></a></li>
+<li><a href="#DirectiveList_input"><code>wtk::Input* input(size_t n)</code></a></li>
+<li><a href="#DirectiveList_assign"><code>wtk::Assign&lt;Number_T&gt;* assign(size_t n)</code></a></li>
+<li><a href="#DirectiveList_assertZero"><code>wtk::Terminal* assertZero(size_t n)</code></a></li>
+<li><a href="#DirectiveList_deleteSingle"><code>wtk::Terminal* deleteSingle(size_t n)</code></a></li>
+<li><a href="#DirectiveList_deleteRange"><code>wtk::WireRange* deleteRange(size_t n)</code></a></li>
+<li><a href="#DirectiveList_functionInvoke"><code>wtk::FunctionInvoke* functionInvoke(size_t n)</code></a></li>
+<li><a href="#DirectiveList_anonFunction"><code>wtk::AnonFunction&lt;Number_T&gt;* anonFunction(size_t n)</code></a></li>
+<li><a href="#DirectiveList_forLoop"><code>wtk::ForLoop&lt;Number_T&gt;* forLoop(size_t n)</code></a></li>
+<li><a href="#DirectiveList_switchStatement"><code>wtk::SwitchStatement&lt;Number_T&gt;* switchStatement(size_t n)</code></a></li>
+<li><a href="#DirectiveList_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_BinaryGate"><code>struct BinaryGate</code></a>
+<ul class="sectlevel2">
+<li><a href="#BinaryGate_enum_Calculation"><code>enum Calculation</code></a></li>
+<li><a href="#BinaryGate_calculation"><code>wtk::BinaryGate::Calculation calculation()</code></a></li>
+<li><a href="#BinaryGate_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#BinaryGate_leftWire"><code>wtk::index_t leftWire()</code></a></li>
+<li><a href="#BinaryGate_rightWire"><code>wtk::index_t rightWire()</code></a></li>
+<li><a href="#BinaryGate_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_UnaryGate"><code>struct UnaryGate</code></a>
+<ul class="sectlevel2">
+<li><a href="#UnaryGate_enum_Calculation"><code>enum Calculation</code></a></li>
+<li><a href="#UnaryGate_calculation"><code>wtk::UnaryGate::Calculation calculation()</code></a></li>
+<li><a href="#UnaryGate_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#UnaryGate_inputWire"><code>wtk::index_t rightWire()</code></a></li>
+<li><a href="#UnaryGate_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_BinaryConstGate"><code>template&lt;typename Number_T&gt; struct BinaryConstGate</code></a>
+<ul class="sectlevel2">
+<li><a href="#BinaryConstGate_enum_Calculation"><code>enum Calculation</code></a></li>
+<li><a href="#BinaryConstGate_calculation"><code>wtk::BinaryConstGate&lt;Number_T&gt;::Calculation calculation()</code></a></li>
+<li><a href="#BinaryConstGate_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#BinaryConstGate_leftWire"><code>wtk::index_t leftWire()</code></a></li>
+<li><a href="#BinaryConstGate_rightWire"><code>wtk::index_t rightWire()</code></a></li>
+<li><a href="#BinaryConstGate_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_Input"><code>struct Input</code></a>
+<ul class="sectlevel2">
+<li><a href="#Input_enum_Stream"><code>enum Stream</code></a></li>
+<li><a href="#Input_stream"><code>wtk::Input::Stream stream()</code></a></li>
+<li><a href="#Input_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#Input_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_Assign"><code>template&lt;typename Number_T&gt; struct Assign</code></a>
+<ul class="sectlevel2">
+<li><a href="#Assign_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#Assign_constValue"><code>Number_T constValue()</code></a></li>
+<li><a href="#Assign_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_Terminal"><code>struct Terminal</code></a>
+<ul class="sectlevel2">
+<li><a href="#Terminal_wire"><code>wtk::index_t wire()</code></a></li>
+<li><a href="#Terminal_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_WireRange"><code>struct WireRange</code></a>
+<ul class="sectlevel2">
+<li><a href="#WireRange_first()"><code>wtk::index_t first()</code></a></li>
+<li><a href="#WireRange_last()"><code>wtk::index_t last()</code></a></li>
+<li><a href="#WireRange_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_WireList"><code>struct WireList</code></a>
+<ul class="sectlevel2">
+<li><a href="#WireList_size"><code>size_t size()</code></a></li>
+<li><a href="#WireList_enum_Type"><code>enum Type</code></a></li>
+<li><a href="#WireList_type"><code>wtk::WireList::Type type(size_t n)</code></a></li>
+<li><a href="#WireList_single"><code>wtk::index_t single(size_t n)</code></a></li>
+<li><a href="#WireList_range"><code>wtk::WireRange* range(size_t n)</code></a></li>
+<li><a href="#WireList_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_FunctionDeclare"><code>template&lt;typename Number_T&gt; struct FunctionDeclare</code></a>
+<ul class="sectlevel2">
+<li><a href="#FunctionDeclare_name"><code>char const* name()</code></a></li>
+<li><a href="#FunctionDeclare_outputCount"><code>wtk::index_t outputCount()</code></a></li>
+<li><a href="#FunctionDeclare_inputCount"><code>wtk::index_t inputCount()</code></a></li>
+<li><a href="#FunctionDeclare_instanceCount"><code>wtk::index_t instanceCount()</code></a></li>
+<li><a href="#FunctionDeclare_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></a></li>
+<li><a href="#FunctionDeclare_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#FunctionDeclare_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_FunctionInvoke"><code>struct FunctionInvoke</code></a>
+<ul class="sectlevel2">
+<li><a href="#FunctionInvoke_name"><code>char const* name()</code></a></li>
+<li><a href="#FunctionInvoke_outputList"><code>wtk::WireList* outputList()</code></a></li>
+<li><a href="#FunctionInvoke_inputList"><code>wtk::WireList* inputList()</code></a></li>
+<li><a href="#FunctionInvoke_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_AnonFunction"><code>template&lt;typename Number_T&gt; struct AnonFunction</code></a>
+<ul class="sectlevel2">
+<li><a href="#AnonFunction_outputList"><code>wtk::WireList* outputList()</code></a></li>
+<li><a href="#AnonFunction_inputList"><code>wtk::WireList* inputList()</code></a></li>
+<li><a href="#AnonFunction_instanceCount"><code>wtk::index_t instanceCount()</code></a></li>
+<li><a href="#AnonFunction_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></a></li>
+<li><a href="#AnonFunction_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#AnonFunction_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExpr"><code>struct IterExpr</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExpr_enum_Type"><code>enum Type</code></a></li>
+<li><a href="#IterExpr_type"><code>wtk:IterExpr::Type type()</code></a></li>
+<li><a href="#IterExpr_literal"><code>wtk::index_t literal()</code></a></li>
+<li><a href="#IterExpr_name"><code>char const* name()</code></a></li>
+<li><a href="#IterExpr_lhs"><code>wtk::IterExpr* lhs()</code></a></li>
+<li><a href="#IterExpr_rhs"><code>wtk::IterExpr* lhs()</code></a></li>
+<li><a href="#IterExpr_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExprWireRange"><code>struct IterExprWireRange</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExprWireRange_first()"><code>wtk::IterExpr* first()</code></a></li>
+<li><a href="#IterExprWireRange_last()"><code>wtk::IterExpr* last()</code></a></li>
+<li><a href="#IterExprWireRange_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExprWireList"><code>struct IterExprWireList</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExprWireList_size"><code>size_t size()</code></a></li>
+<li><a href="#IterExprWireList_enum_Type"><code>enum Type</code></a></li>
+<li><a href="#IterExprWireList_type"><code>wtk::IterExprWireList::Type type(size_t n)</code></a></li>
+<li><a href="#IterExprWireList_single"><code>wtk::ItereExpr* single(size_t n)</code></a></li>
+<li><a href="#IterExprWireList_range"><code>wtk::IterExprWireRange* range(size_t n)</code></a></li>
+<li><a href="#IterExprWireList_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExprFunctionInvoke"><code>struct IterExprFunctionInvoke</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExprFunctionInvoke_name"><code>char const* name()</code></a></li>
+<li><a href="#IterExprFunctionInvoke_outputList"><code>wtk::IterExprWireList* outputList()</code></a></li>
+<li><a href="#IterExprFunctionInvoke_inputList"><code>wtk::IterExprWireList* inputList()</code></a></li>
+<li><a href="#IterExprFunctionInvoke_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExprAnonFunction"><code>template&lt;typename Number_T&gt; struct IterExprAnonFunction</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExprAnonFunction_outputList"><code>wtk::IterExprWireList* outputList()</code></a></li>
+<li><a href="#IterExprAnonFunction_inputList"><code>wtk::IterExprWireList* inputList()</code></a></li>
+<li><a href="#IterExprAnonFunction_instanceCount"><code>wtk::index_t instanceCount()</code></a></li>
+<li><a href="#IterExprAnonFunction_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></a></li>
+<li><a href="#IterExprAnonFunction_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#IterExprAnonFunction_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_ForLoop"><code>template&lt;typename Number_T&gt; struct ForLoop</code></a>
+<ul class="sectlevel2">
+<li><a href="#ForLoop_outputList"><code>wtk::WireList* outputList()</code></a></li>
+<li><a href="#ForLoop_iterName"><code>char const* iterName()</code></a></li>
+<li><a href="#ForLoop_first"><code>wtk::index_t first()</code></a></li>
+<li><a href="#ForLoop_last"><code>wtk::index_t last()</code></a></li>
+<li><a href="#ForLoop_enum_BodyType"><code>enum BodyType</code></a></li>
+<li><a href="#ForLoop_bodyType"><code>BodyType bodyType()</code></a></li>
+<li><a href="#ForLoop_invokeBody"><code>wtk::IterExprFunctionInvoke* invokeBody()</code></a></li>
+<li><a href="#ForLoop_anonymousBody"><code>wtk::IterExprAnonFunction&lt;Number_T&gt;* anonymousBody()</code></a></li>
+<li><a href="#ForLoop_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_CaseFunctionInvoke"><code>struct CaseFunctionInvoke</code></a>
+<ul class="sectlevel2">
+<li><a href="#CaseFunctionInvoke_name"><code>char const* name()</code></a></li>
+<li><a href="#CaseFunctionInvoke_inputList"><code>wtk::WireList* inputList()</code></a></li>
+<li><a href="#CaseFunctionInvoke_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_CaseAnonFunction"><code>template&lt;typename Number_T&gt; struct CaseAnonFunction</code></a>
+<ul class="sectlevel2">
+<li><a href="#CaseAnonFunction_inputList"><code>wtk::WireList* inputList()</code></a></li>
+<li><a href="#CaseAnonFunction_instanceCount"><code>wtk::index_t instanceCount()</code></a></li>
+<li><a href="#CaseAnonFunction_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></a></li>
+<li><a href="#CaseAnonFunction_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#CaseAnonFunction_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_CaseBlock"><code>template&lt;typename Number_T&gt; struct CaseBlock</code></a>
+<ul class="sectlevel2">
+<li><a href="#CaseBlock_match"><code>Number_T match()</code></a></li>
+<li><a href="#CaseBlock_enum_BodyType"><code>enum BodyType</code></a></li>
+<li><a href="#CaseBlock_bodyType"><code>BodyType bodyType()</code></a></li>
+<li><a href="#CaseBlock_invokeBody"><code>wtk::CaseFunctionInvoke* invokeBody()</code></a></li>
+<li><a href="#CaseBlock_anonymousBody"><code>wtk::CaseAnonFunction&lt;Number_T&gt;* anonymousBody()</code></a></li>
+<li><a href="#CaseBlock_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_SwitchStatement"><code>template&lt;typename Number_T&gt; struct SwitchStatement</code></a>
+<ul class="sectlevel2">
+<li><a href="#SwitchStatement_outputList"><code>wtk::WireList* outputList()</code></a></li>
+<li><a href="#SwitchStatement_condition"><code>wtk::index_t condition()</code></a></li>
+<li><a href="#SwitchStatement_size"><code>size_t size()</code></a></li>
+<li><a href="#SwitchStatement_caseBlock"><code>wtk::CaseBlock&lt;Number_T&gt;* caseBlock(size_t n)</code></a></li>
+<li><a href="#SwitchStatement_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a></li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>IR Tree API</h1>
+  <div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#struct_IRTree"><code>template&lt;typename Number_T&gt; struct IRTree</code></a>
+<ul class="sectlevel2">
+<li><a href="#IRTree_size"><code>size_t size()</code></a></li>
+<li><a href="#IRTree_functionDeclare"><code>wtk::FunctionDeclare&lt;Number_T&gt;* functionDeclare(size_t n)</code></a></li>
+<li><a href="#IRTree_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#IRTree_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_DirectiveList"><code>template&lt;typename Number_T&gt; struct DirectiveList</code></a>
+<ul class="sectlevel2">
+<li><a href="#DirectiveList_size"><code>size_t size()</code></a></li>
+<li><a href="#DirectiveList_enum_Type"><code>enum Type</code></a></li>
+<li><a href="#DirectiveList_type"><code>wtk::DirectiveList&lt;Number_T&gt;::Type type(size_t n)</code></a></li>
+<li><a href="#DirectiveList_binaryGate"><code>wtk::BinaryGate* binaryGate(size_t n)</code></a></li>
+<li><a href="#DirectiveList_unaryGate"><code>wtk::UnaryGate* unaryGate(size_t n)</code></a></li>
+<li><a href="#DirectiveList_binaryConstGate"><code>wtk::BinaryConstGate&lt;Number_T&gt;* binaryConstGate(size_t n)</code></a></li>
+<li><a href="#DirectiveList_input"><code>wtk::Input* input(size_t n)</code></a></li>
+<li><a href="#DirectiveList_assign"><code>wtk::Assign&lt;Number_T&gt;* assign(size_t n)</code></a></li>
+<li><a href="#DirectiveList_assertZero"><code>wtk::Terminal* assertZero(size_t n)</code></a></li>
+<li><a href="#DirectiveList_deleteSingle"><code>wtk::Terminal* deleteSingle(size_t n)</code></a></li>
+<li><a href="#DirectiveList_deleteRange"><code>wtk::WireRange* deleteRange(size_t n)</code></a></li>
+<li><a href="#DirectiveList_functionInvoke"><code>wtk::FunctionInvoke* functionInvoke(size_t n)</code></a></li>
+<li><a href="#DirectiveList_anonFunction"><code>wtk::AnonFunction&lt;Number_T&gt;* anonFunction(size_t n)</code></a></li>
+<li><a href="#DirectiveList_forLoop"><code>wtk::ForLoop&lt;Number_T&gt;* forLoop(size_t n)</code></a></li>
+<li><a href="#DirectiveList_switchStatement"><code>wtk::SwitchStatement&lt;Number_T&gt;* switchStatement(size_t n)</code></a></li>
+<li><a href="#DirectiveList_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_BinaryGate"><code>struct BinaryGate</code></a>
+<ul class="sectlevel2">
+<li><a href="#BinaryGate_enum_Calculation"><code>enum Calculation</code></a></li>
+<li><a href="#BinaryGate_calculation"><code>wtk::BinaryGate::Calculation calculation()</code></a></li>
+<li><a href="#BinaryGate_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#BinaryGate_leftWire"><code>wtk::index_t leftWire()</code></a></li>
+<li><a href="#BinaryGate_rightWire"><code>wtk::index_t rightWire()</code></a></li>
+<li><a href="#BinaryGate_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_UnaryGate"><code>struct UnaryGate</code></a>
+<ul class="sectlevel2">
+<li><a href="#UnaryGate_enum_Calculation"><code>enum Calculation</code></a></li>
+<li><a href="#UnaryGate_calculation"><code>wtk::UnaryGate::Calculation calculation()</code></a></li>
+<li><a href="#UnaryGate_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#UnaryGate_inputWire"><code>wtk::index_t rightWire()</code></a></li>
+<li><a href="#UnaryGate_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_BinaryConstGate"><code>template&lt;typename Number_T&gt; struct BinaryConstGate</code></a>
+<ul class="sectlevel2">
+<li><a href="#BinaryConstGate_enum_Calculation"><code>enum Calculation</code></a></li>
+<li><a href="#BinaryConstGate_calculation"><code>wtk::BinaryConstGate&lt;Number_T&gt;::Calculation calculation()</code></a></li>
+<li><a href="#BinaryConstGate_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#BinaryConstGate_leftWire"><code>wtk::index_t leftWire()</code></a></li>
+<li><a href="#BinaryConstGate_rightWire"><code>wtk::index_t rightWire()</code></a></li>
+<li><a href="#BinaryConstGate_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_Input"><code>struct Input</code></a>
+<ul class="sectlevel2">
+<li><a href="#Input_enum_Stream"><code>enum Stream</code></a></li>
+<li><a href="#Input_stream"><code>wtk::Input::Stream stream()</code></a></li>
+<li><a href="#Input_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#Input_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_Assign"><code>template&lt;typename Number_T&gt; struct Assign</code></a>
+<ul class="sectlevel2">
+<li><a href="#Assign_outputWire"><code>wtk::index_t outputWire()</code></a></li>
+<li><a href="#Assign_constValue"><code>Number_T constValue()</code></a></li>
+<li><a href="#Assign_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_Terminal"><code>struct Terminal</code></a>
+<ul class="sectlevel2">
+<li><a href="#Terminal_wire"><code>wtk::index_t wire()</code></a></li>
+<li><a href="#Terminal_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_WireRange"><code>struct WireRange</code></a>
+<ul class="sectlevel2">
+<li><a href="#WireRange_first()"><code>wtk::index_t first()</code></a></li>
+<li><a href="#WireRange_last()"><code>wtk::index_t last()</code></a></li>
+<li><a href="#WireRange_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_WireList"><code>struct WireList</code></a>
+<ul class="sectlevel2">
+<li><a href="#WireList_size"><code>size_t size()</code></a></li>
+<li><a href="#WireList_enum_Type"><code>enum Type</code></a></li>
+<li><a href="#WireList_type"><code>wtk::WireList::Type type(size_t n)</code></a></li>
+<li><a href="#WireList_single"><code>wtk::index_t single(size_t n)</code></a></li>
+<li><a href="#WireList_range"><code>wtk::WireRange* range(size_t n)</code></a></li>
+<li><a href="#WireList_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_FunctionDeclare"><code>template&lt;typename Number_T&gt; struct FunctionDeclare</code></a>
+<ul class="sectlevel2">
+<li><a href="#FunctionDeclare_name"><code>char const* name()</code></a></li>
+<li><a href="#FunctionDeclare_outputCount"><code>wtk::index_t outputCount()</code></a></li>
+<li><a href="#FunctionDeclare_inputCount"><code>wtk::index_t inputCount()</code></a></li>
+<li><a href="#FunctionDeclare_instanceCount"><code>wtk::index_t instanceCount()</code></a></li>
+<li><a href="#FunctionDeclare_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></a></li>
+<li><a href="#FunctionDeclare_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#FunctionDeclare_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_FunctionInvoke"><code>struct FunctionInvoke</code></a>
+<ul class="sectlevel2">
+<li><a href="#FunctionInvoke_name"><code>char const* name()</code></a></li>
+<li><a href="#FunctionInvoke_outputList"><code>wtk::WireList* outputList()</code></a></li>
+<li><a href="#FunctionInvoke_inputList"><code>wtk::WireList* inputList()</code></a></li>
+<li><a href="#FunctionInvoke_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_AnonFunction"><code>template&lt;typename Number_T&gt; struct AnonFunction</code></a>
+<ul class="sectlevel2">
+<li><a href="#AnonFunction_outputList"><code>wtk::WireList* outputList()</code></a></li>
+<li><a href="#AnonFunction_inputList"><code>wtk::WireList* inputList()</code></a></li>
+<li><a href="#AnonFunction_instanceCount"><code>wtk::index_t instanceCount()</code></a></li>
+<li><a href="#AnonFunction_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></a></li>
+<li><a href="#AnonFunction_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#AnonFunction_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExpr"><code>struct IterExpr</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExpr_enum_Type"><code>enum Type</code></a></li>
+<li><a href="#IterExpr_type"><code>wtk:IterExpr::Type type()</code></a></li>
+<li><a href="#IterExpr_literal"><code>wtk::index_t literal()</code></a></li>
+<li><a href="#IterExpr_name"><code>char const* name()</code></a></li>
+<li><a href="#IterExpr_lhs"><code>wtk::IterExpr* lhs()</code></a></li>
+<li><a href="#IterExpr_rhs"><code>wtk::IterExpr* lhs()</code></a></li>
+<li><a href="#IterExpr_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExprWireRange"><code>struct IterExprWireRange</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExprWireRange_first()"><code>wtk::IterExpr* first()</code></a></li>
+<li><a href="#IterExprWireRange_last()"><code>wtk::IterExpr* last()</code></a></li>
+<li><a href="#IterExprWireRange_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExprWireList"><code>struct IterExprWireList</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExprWireList_size"><code>size_t size()</code></a></li>
+<li><a href="#IterExprWireList_enum_Type"><code>enum Type</code></a></li>
+<li><a href="#IterExprWireList_type"><code>wtk::IterExprWireList::Type type(size_t n)</code></a></li>
+<li><a href="#IterExprWireList_single"><code>wtk::ItereExpr* single(size_t n)</code></a></li>
+<li><a href="#IterExprWireList_range"><code>wtk::IterExprWireRange* range(size_t n)</code></a></li>
+<li><a href="#IterExprWireList_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExprFunctionInvoke"><code>struct IterExprFunctionInvoke</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExprFunctionInvoke_name"><code>char const* name()</code></a></li>
+<li><a href="#IterExprFunctionInvoke_outputList"><code>wtk::IterExprWireList* outputList()</code></a></li>
+<li><a href="#IterExprFunctionInvoke_inputList"><code>wtk::IterExprWireList* inputList()</code></a></li>
+<li><a href="#IterExprFunctionInvoke_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_IterExprAnonFunction"><code>template&lt;typename Number_T&gt; struct IterExprAnonFunction</code></a>
+<ul class="sectlevel2">
+<li><a href="#IterExprAnonFunction_outputList"><code>wtk::IterExprWireList* outputList()</code></a></li>
+<li><a href="#IterExprAnonFunction_inputList"><code>wtk::IterExprWireList* inputList()</code></a></li>
+<li><a href="#IterExprAnonFunction_instanceCount"><code>wtk::index_t instanceCount()</code></a></li>
+<li><a href="#IterExprAnonFunction_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></a></li>
+<li><a href="#IterExprAnonFunction_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#IterExprAnonFunction_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_ForLoop"><code>template&lt;typename Number_T&gt; struct ForLoop</code></a>
+<ul class="sectlevel2">
+<li><a href="#ForLoop_outputList"><code>wtk::WireList* outputList()</code></a></li>
+<li><a href="#ForLoop_iterName"><code>char const* iterName()</code></a></li>
+<li><a href="#ForLoop_first"><code>wtk::index_t first()</code></a></li>
+<li><a href="#ForLoop_last"><code>wtk::index_t last()</code></a></li>
+<li><a href="#ForLoop_enum_BodyType"><code>enum BodyType</code></a></li>
+<li><a href="#ForLoop_bodyType"><code>BodyType bodyType()</code></a></li>
+<li><a href="#ForLoop_invokeBody"><code>wtk::IterExprFunctionInvoke* invokeBody()</code></a></li>
+<li><a href="#ForLoop_anonymousBody"><code>wtk::IterExprAnonFunction&lt;Number_T&gt;* anonymousBody()</code></a></li>
+<li><a href="#ForLoop_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_CaseFunctionInvoke"><code>struct CaseFunctionInvoke</code></a>
+<ul class="sectlevel2">
+<li><a href="#CaseFunctionInvoke_name"><code>char const* name()</code></a></li>
+<li><a href="#CaseFunctionInvoke_inputList"><code>wtk::WireList* inputList()</code></a></li>
+<li><a href="#CaseFunctionInvoke_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_CaseAnonFunction"><code>template&lt;typename Number_T&gt; struct CaseAnonFunction</code></a>
+<ul class="sectlevel2">
+<li><a href="#CaseAnonFunction_inputList"><code>wtk::WireList* inputList()</code></a></li>
+<li><a href="#CaseAnonFunction_instanceCount"><code>wtk::index_t instanceCount()</code></a></li>
+<li><a href="#CaseAnonFunction_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></a></li>
+<li><a href="#CaseAnonFunction_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></a></li>
+<li><a href="#CaseAnonFunction_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_CaseBlock"><code>template&lt;typename Number_T&gt; struct CaseBlock</code></a>
+<ul class="sectlevel2">
+<li><a href="#CaseBlock_match"><code>Number_T match()</code></a></li>
+<li><a href="#CaseBlock_enum_BodyType"><code>enum BodyType</code></a></li>
+<li><a href="#CaseBlock_bodyType"><code>BodyType bodyType()</code></a></li>
+<li><a href="#CaseBlock_invokeBody"><code>wtk::CaseFunctionInvoke* invokeBody()</code></a></li>
+<li><a href="#CaseBlock_anonymousBody"><code>wtk::CaseAnonFunction&lt;Number_T&gt;* anonymousBody()</code></a></li>
+<li><a href="#CaseBlock_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_SwitchStatement"><code>template&lt;typename Number_T&gt; struct SwitchStatement</code></a>
+<ul class="sectlevel2">
+<li><a href="#SwitchStatement_outputList"><code>wtk::WireList* outputList()</code></a></li>
+<li><a href="#SwitchStatement_condition"><code>wtk::index_t condition()</code></a></li>
+<li><a href="#SwitchStatement_size"><code>size_t size()</code></a></li>
+<li><a href="#SwitchStatement_caseBlock"><code>wtk::CaseBlock&lt;Number_T&gt;* caseBlock(size_t n)</code></a></li>
+<li><a href="#SwitchStatement_lineNum()"><code>size_t lineNum()</code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Include this API as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">#include &lt;wtk/IRTree.h&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Members of this API live in the following namespace</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">namespace wtk { ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The IR Tree API is parameterized on a <code>Number_T</code> template.
+<code>Number_T</code> should be integer-like enough to be parsed from a string.
+This API is abstract and implemented by parsers for various IR formats.
+As an abstract interface many "attributes" must be accessed through accessor methods due to different storage methods of various IR formats.</p>
+</div>
+<div class="paragraph">
+<p>At a top level, the <a href="#struct_IRTree"><code>wtk::IRTree&lt;Number_T&gt;</code></a> is the root of an abstract syntax tree for a <em>relation</em> in the SIEVE IR.
+The <a href="#struct_DirectiveList"><code>wtk::DirectiveList&lt;Number_T&gt;</code></a> defines scope block within the AST and other structs such as <a href="#struct_BinaryGate"><code>wtk::BinaryGate</code></a> defining individual directives.</p>
+</div>
+<div class="paragraph">
+<p>Pointer members provided by the IR Tree API may be expected to be nonnull, taking the lifetime of the <a href="../../api/wtk/Parser.html#api_Parser">parser</a> which provided a top-level <a href="#struct_IRTree"><code>wtk::IRTree&lt;Number_T&gt;*</code></a>.
+However, as defined by the parser, the <code>wtk::IRTree&lt;Number_T&gt;*</code> may itself be null.
+The parser retains ownership of all objects from this API, the caller may not <code>free(&#8230;&#8203;)</code> them.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_IRTree"><code>template&lt;typename Number_T&gt; struct IRTree</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk::IRTree&lt;Number_T&gt;</code> struct is the root of an IR syntax tree.
+The encapsulates both a list of named functions and the top-level scope of an IR relation.</p>
+</div>
+<div class="sect2">
+<h3 id="IRTree_size"><code>size_t size()</code></h3>
+<div class="paragraph">
+<p>This method indicates how many named function declarations are defined by this relation.
+It is an integer greater than or equal to <code>0</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t size() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IRTree_functionDeclare"><code>wtk::FunctionDeclare&lt;Number_T&gt;* functionDeclare(size_t n)</code></h3>
+<div class="paragraph">
+<p>Retrieve a named function declaration by index.
+<code>n</code> must be between <code>0</code> (inclusive) and <code>this&#8594;size()</code> (exclusive) or else undefined behavior occurs.
+It returns a nonnull <a href="#struct_FunctionDeclare"><code>wtk::FunctionDeclare&lt;Number_T&gt;*</code></a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::FunctionDeclare&lt;Number_T&gt;* functionDeclare(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IRTree_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></h3>
+<div class="paragraph">
+<p>Retrieve the body of the relation.
+It returns a nonnull <a href="#struct_DirectiveList"><code>wtk::DirectiveList&lt;Number_T&gt;*</code></a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::DirectiveList&lt;Number_T&gt;* body() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IRTree_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the IRTree begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_DirectiveList"><code>template&lt;typename Number_T&gt; struct DirectiveList</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk::DirectiveList&lt;Number_T&gt;</code> is a list type for directives.
+Since directives must be differentiated, each index of the list has a tag indicating a type, through which the element must be retrieved.</p>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_size"><code>size_t size()</code></h3>
+<div class="paragraph">
+<p>Indicates the number of elements in the list.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t size() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_enum_Type"><code>enum Type</code></h3>
+<div class="paragraph">
+<p>This enumerates the various types which an element may take.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::BINARY_GATE</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_BinaryGate"><code>wtk::BinaryGate</code></a> and <a href="#DirectiveList_binaryGate"><code>this&#8594;binaryGate(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::UNARY_GATE</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_UnaryGate"><code>wtk::UnaryGate</code></a> and <a href="#DirectiveList_unaryGate"><code>this&#8594;unaryGate(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::BINARY_CONST_GATE</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_BinaryConstGate"><code>wtk::BinaryConstGate&lt;Number_T&gt;</code></a> and <a href="#DirectiveList_binaryConstGate"><code>this&#8594;binaryConstGate(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::INPUT</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_Input"><code>wtk::Input</code></a> and <a href="#DirectiveList_input"><code>this&#8594;input(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::ASSIGN</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_Assign"><code>wtk::Assign&lt;Number_T&gt;</code></a> and <a href="#DirectiveList_assign"><code>this&#8594;assign(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::ASSERT_ZERO</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_Terminal">a <code>wtk::Terminal</code> when used for the <code>@assert_zero</code> gate</a> and <a href="#DirectiveList_assertZero"><code>this&#8594;assertZero(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::DELETE_SINGLE</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_Terminal">a <code>wtk::Terminal</code> when used for a <code>@delete</code> directive</a> and <a href="#DirectiveList_deleteSingle"><code>this&#8594;deleteSingle(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::DELETE_RANGE</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_WireRange">an <code>wtk::WireRange</code> when used for a <code>@delete</code> directive</a> and <a href="#DirectiveList_deleteRange"><code>this&#8594;deleteRange(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::FUNCTION_INVOKE</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_FunctionInvoke"><code>wtk::FunctionInvoke</code></a> and <a href="#DirectiveList_functionInvoke"><code>this&#8594;functionInvoke(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::ANON_FUNCTION</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_AnonFunction"><code>wtk::AnonFunction&lt;Number_T&gt;</code></a> and <a href="#DirectiveList_anonFunction"><code>this&#8594;anonFunction(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::FOR_LOOP</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_ForLoop"><code>wtk::ForLoop&lt;Number_T&gt;</code></a> and <a href="#DirectiveList_forLoop"><code>this&#8594;forLoop(n)</code></a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk::DirectiveList&lt;Number_T&gt;::SWITCH_STATEMENT</code></dt>
+<dd>
+<p>corresponds to <a href="#struct_SwitchStatement"><code>wtk::SwitchStatement&lt;Number_T&gt;</code></a> and <a href="#DirectiveList_switchStatement"><code>this&#8594;switchStatement(n)</code></a>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_type"><code>wtk::DirectiveList&lt;Number_T&gt;::Type type(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the <a href="#DirectiveList_enum_Type">type</a> of the nth element in this list.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; this&#8594;size()</code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Type type(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_binaryGate"><code>wtk::BinaryGate* binaryGate(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_BinaryGate"><code>wtk::BinaryGate</code></a> type.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::BINARY_GATE</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::BinaryGate* binaryGate(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_unaryGate"><code>wtk::UnaryGate* unaryGate(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_UnaryGate"><code>wtk::UnaryGate</code></a> type.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::UNARY_GATE</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::UnaryGate* unaryGate(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_binaryConstGate"><code>wtk::BinaryConstGate&lt;Number_T&gt;* binaryConstGate(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_BinaryConstGate"><code>wtk::BinaryConstGate&lt;Number_T&gt;</code></a> type.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::BINARY_CONST_GATE</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::BinaryConstGate&lt;Number_T&gt;* binaryConstGate(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_input"><code>wtk::Input* input(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_Input"><code>wtk::Input</code></a> type.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::INPUT</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::Input* input(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_assign"><code>wtk::Assign&lt;Number_T&gt;* assign(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_Assign"><code>wtk::Assign&lt;Number_T&gt;</code></a> type.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::ASSIGN</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::Assign&lt;Number_T&gt;* assign(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_assertZero"><code>wtk::Terminal* assertZero(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_Terminal"><code>wtk::Terminal</code></a> type for the purpose of an <code>@assert_zero</code> gate.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::ASSERT_ZERO</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::Terminal* assertZero(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_deleteSingle"><code>wtk::Terminal* deleteSingle(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_Terminal"><code>wtk::Terminal</code></a> type for the purpose of a <code>@delete</code> gate.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::DELETE_SINGLE</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::Terminal* deleteSingle(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_deleteRange"><code>wtk::WireRange* deleteRange(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_WireRange"><code>wtk::WireRange</code></a> type for the purpose of a <code>@delete</code> gate.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::DELETE_RANGE</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireRange* deleteRange(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_functionInvoke"><code>wtk::FunctionInvoke* functionInvoke(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_FunctionInvoke"><code>wtk::FunctionInvoke</code></a> type.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::FUNCTION_INVOKE</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::FunctionInvoke* functionInvoke(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_anonFunction"><code>wtk::AnonFunction&lt;Number_T&gt;* anonFunction(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_AnonFunction"><code>wtk::AnonFunction&lt;Number_T&gt;</code></a> type.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::ANON_FUNCTION</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::AnonFunction&lt;Number_T&gt;* anonFunction(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_forLoop"><code>wtk::ForLoop&lt;Number_T&gt;* forLoop(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_ForLoop"><code>wtk::ForLoop&lt;Number_T&gt;</code></a> type.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::FOR_LOOP</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::ForLoop&lt;Number_T&gt;* forLoop(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_switchStatement"><code>wtk::SwitchStatement&lt;Number_T&gt;* switchStatement(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element as a <a href="#struct_SwitchhStatement"><code>wtk::SwitchStatement&lt;Number_T&gt;</code></a> type.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#DirectiveList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#DirectiveList_type">this&#8594;type(n)</a> == <a href="#DirectiveList_enum_Type">wtk::DirectiveList&lt;Number_T&gt;::SWITCH_STATEMENT</a></code> otherwise undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::SwitchStatement&lt;Number_T&gt;* switchStatement(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="DirectiveList_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the DirectiveList begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_BinaryGate"><code>struct BinaryGate</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This represents a binary gate in the IR. Binary refers to the two-input wires of this gate, not numeric representation.
+It has methods for left and right input wires as well as the output wire.
+The specific gate type is the <a href="#BinaryGate_enum_Calculation"><code>Calculation</code></a> enum.</p>
+</div>
+<div class="sect2">
+<h3 id="BinaryGate_enum_Calculation"><code>enum Calculation</code></h3>
+<div class="paragraph">
+<p>Indicates what calculation this gate performs.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk::BinaryGate::AND</code></dt>
+<dd>
+<p><code>@and</code></p>
+</dd>
+<dt class="hdlist1"><code>wtk::BinaryGate::XOR</code></dt>
+<dd>
+<p><code>@xor</code></p>
+</dd>
+<dt class="hdlist1"><code>wtk::BinaryGate::ADD</code></dt>
+<dd>
+<p><code>@add</code></p>
+</dd>
+<dt class="hdlist1"><code>wtk::BinaryGate::MUL</code></dt>
+<dd>
+<p><code>@mul</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryGate_calculation"><code>wtk::BinaryGate::Calculation calculation()</code></h3>
+<div class="paragraph">
+<p>returns which calculation the binary gate performs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Calculation calculation() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryGate_outputWire"><code>wtk::index_t outputWire()</code></h3>
+<div class="paragraph">
+<p>Returns the gate&#8217;s output wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t outputWire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryGate_leftWire"><code>wtk::index_t leftWire()</code></h3>
+<div class="paragraph">
+<p>Returns the gate&#8217;s left input wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t leftWire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryGate_rightWire"><code>wtk::index_t rightWire()</code></h3>
+<div class="paragraph">
+<p>Returns the gate&#8217;s right input wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t rightWire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryGate_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the binary gate begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_UnaryGate"><code>struct UnaryGate</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This represents a unary gate in the IR. Unary refers to the single input wire of this gate, not numeric representation.
+It has methods for the input wire as well as the output wire.
+The specific gate type is the <a href="#UnaryGate_enum_Calculation"><code>Calculation</code></a> enum.</p>
+</div>
+<div class="sect2">
+<h3 id="UnaryGate_enum_Calculation"><code>enum Calculation</code></h3>
+<div class="paragraph">
+<p>Indicates what calculation this gate performs.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk::UnaryGate::NOT</code></dt>
+<dd>
+<p><code>$0 &#8592; @not($1)</code></p>
+</dd>
+<dt class="hdlist1"><code>wtk::UnaryGate::COPY</code></dt>
+<dd>
+<p><code>$0 &#8592; $1</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="UnaryGate_calculation"><code>wtk::UnaryGate::Calculation calculation()</code></h3>
+<div class="paragraph">
+<p>returns which calculation the unary gate performs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Calculation calculation() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="UnaryGate_outputWire"><code>wtk::index_t outputWire()</code></h3>
+<div class="paragraph">
+<p>Returns the gate&#8217;s output wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t outputWire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="UnaryGate_inputWire"><code>wtk::index_t rightWire()</code></h3>
+<div class="paragraph">
+<p>Returns the gate&#8217;s input wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t inputWire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="UnaryGate_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the unary gate begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_BinaryConstGate"><code>template&lt;typename Number_T&gt; struct BinaryConstGate</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This represents a binary constant gate in the IR. Binary refers to the input wire and input constant of this gate, not numeric representation.
+It has methods for left input wire and right input constant as well as the output wire.
+The specific gate type is the <a href="#BinaryConstGate_enum_Calculation"><code>Calculation</code></a> enum.</p>
+</div>
+<div class="sect2">
+<h3 id="BinaryConstGate_enum_Calculation"><code>enum Calculation</code></h3>
+<div class="paragraph">
+<p>Indicates what calculation this gate performs.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk::BinaryConstGate&lt;Number_T&gt;::ADDC</code></dt>
+<dd>
+<p><code>@addc</code></p>
+</dd>
+<dt class="hdlist1"><code>wtk::BinaryConstGate&lt;Number_T&gt;::MULC</code></dt>
+<dd>
+<p><code>@mulc</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryConstGate_calculation"><code>wtk::BinaryConstGate&lt;Number_T&gt;::Calculation calculation()</code></h3>
+<div class="paragraph">
+<p>returns which calculation the binary gate performs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Calculation calculation() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryConstGate_outputWire"><code>wtk::index_t outputWire()</code></h3>
+<div class="paragraph">
+<p>Returns the gate&#8217;s output wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t outputWire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryConstGate_leftWire"><code>wtk::index_t leftWire()</code></h3>
+<div class="paragraph">
+<p>Returns the gate&#8217;s left input wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t leftWire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryConstGate_rightWire"><code>wtk::index_t rightWire()</code></h3>
+<div class="paragraph">
+<p>Returns the gate&#8217;s right input constant.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Number_T rightValue() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="BinaryConstGate_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the binary constant gate begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_Input"><code>struct Input</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Represents an input directive (either <code>@instance</code> or <code>@short_witness</code>).
+the <a href="#Input_enum_Stream"><code>Stream</code></a> enumeration indicates from which stream to consume.</p>
+</div>
+<div class="sect2">
+<h3 id="Input_enum_Stream"><code>enum Stream</code></h3>
+<div class="paragraph">
+<p>An enumeration of the IR stream resources.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk::Input::INSTANCE</code></dt>
+<dd>
+<p><code>@instance</code></p>
+</dd>
+<dt class="hdlist1"><code>wtk::Input::SHORT_WITNESS</code></dt>
+<dd>
+<p><code>@short_witness</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Input_stream"><code>wtk::Input::Stream stream()</code></h3>
+<div class="paragraph">
+<p>Returns the <a href="#Input_enum_Stream">stream</a> from which this directive is to consume.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Stream stream() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Input_outputWire"><code>wtk::index_t outputWire()</code></h3>
+<div class="paragraph">
+<p>Returns the stream consumption&#8217;s output wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t outputWire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Input_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the input directive begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_Assign"><code>template&lt;typename Number_T&gt; struct Assign</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A directive that assigns a constant value to an output wire.</p>
+</div>
+<div class="sect2">
+<h3 id="Assign_outputWire"><code>wtk::index_t outputWire()</code></h3>
+<div class="paragraph">
+<p>Returns the assign directive&#8217;s output wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t outputWire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Assign_constValue"><code>Number_T constValue()</code></h3>
+<div class="paragraph">
+<p>Returns the assign directive&#8217;s constant input value.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Number_T constValue() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Assign_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the assign directive begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_Terminal"><code>struct Terminal</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Represents a directive with just a single input wire.
+Its name is derived from the fact that it has no output wires, thus "terminating" some sequence of gates.
+It is used by the directives <code>@assert_zero</code> and <code>@delete</code> (for a single input wire), although they are distinguished by <a href="#DirectiveList_enum_Type"><code>wtk::DirectiveList&lt;Number_T&gt;::Type</code></a> rather than an enumeration within <code>struct Terminal</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="Terminal_wire"><code>wtk::index_t wire()</code></h3>
+<div class="paragraph">
+<p>Returns the terminal&#8217;s single input wire.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t wire() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Terminal_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the terminal begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_WireRange"><code>struct WireRange</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Represents a range of wires in the IR.
+It is used for the range form of the <code>@delete</code> directive, as well as a component of the <a href="#struct_WireList"><code>wtk::WireList</code></a>.</p>
+</div>
+<div class="sect2">
+<h3 id="WireRange_first()"><code>wtk::index_t first()</code></h3>
+<div class="paragraph">
+<p>Returns the first wire in the range (consider it inclusive).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t first() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="WireRange_last()"><code>wtk::index_t last()</code></h3>
+<div class="paragraph">
+<p>Returns the last wire in the range (consider it inclusive).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t last() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="WireRange_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the wire range begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_WireList"><code>struct WireList</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The IR uses wire lists for holding parameters and returns to function-gates.
+These lists are "ranged" such that the elements of the list do not correspond to the length of the list.
+Some elements are individual wires, whereas other elements are ranges of wires.
+Element type is given by the <a href="#WireList_enum_Type"><code>Type</code></a> enumeration.</p>
+</div>
+<div class="sect2">
+<h3 id="WireList_size"><code>size_t size()</code></h3>
+<div class="paragraph">
+<p>Indicates how many <em>elements</em> are in the list (does not necessarily correspond to <em>wire count</em>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t size() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="WireList_enum_Type"><code>enum Type</code></h3>
+<div class="paragraph">
+<p>Indicates if an element a single or a range element.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wtk::WireList::SINGLE</code></p>
+</li>
+<li>
+<p><code>wtk::WireList::RANGE</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="WireList_type"><code>wtk::WireList::Type type(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the type of the nth element.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#WireList_size">this&#8594;size()</a></code> or else undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Type type(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="WireList_single"><code>wtk::index_t single(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element in the list as a single element.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#WireList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#WireList_type">this&#8594;type(n)</a> == <a href="#WireList_enum_Type">wtk::WireList::SINGLE</a></code> or else undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t single(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="WireList_range"><code>wtk::WireRange* range(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element in the list as a <a href="#struct_WireRange">range</a> element.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#WireList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#WireList_type">this&#8594;type(n)</a> == <a href="#WireList_enum_Type">wtk::WireList::RANGE</a></code> or else undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireRange* range(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="WireList_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the wire list begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_FunctionDeclare"><code>template&lt;typename Number_T&gt; struct FunctionDeclare</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This <code>wtk::FunctionDeclare&lt;Number_T&gt;</code> is the definition of a named function-gate.
+It pairs with <a href="#struct_FunctionInvoke"><code>wtk::FunctionInvoke</code></a> for invocation.
+They should be matched to eachother by a name (as a <code>char*</code>).</p>
+</div>
+<div class="sect2">
+<h3 id="FunctionDeclare_name"><code>char const* name()</code></h3>
+<div class="paragraph">
+<p>Returns the name of the function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual char const* name() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="FunctionDeclare_outputCount"><code>wtk::index_t outputCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of output wires this function gate expects.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t outputCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="FunctionDeclare_inputCount"><code>wtk::index_t inputCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of input wires this function gate expects.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t inputCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="FunctionDeclare_instanceCount"><code>wtk::index_t instanceCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of instance values this function gate will consume.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t instanceCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="FunctionDeclare_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of short witness values this function gate will consume.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t shortWitnessCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="FunctionDeclare_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></h3>
+<div class="paragraph">
+<p>returns the body of the function gate.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual DirectiveList&lt;Number_T&gt;* body() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="FunctionDeclare_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the function declaration begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_FunctionInvoke"><code>struct FunctionInvoke</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk:FunctionInvoke</code> invokes a function gate, carrying a name which should match with the name of a <a href="#struct_FunctionDeclare"><code>wtk::FunctionDeclare&lt;Number_T&gt;</code></a>.</p>
+</div>
+<div class="sect2">
+<h3 id="FunctionInvoke_name"><code>char const* name()</code></h3>
+<div class="paragraph">
+<p>Returns the name of the function gate.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual char const* name() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="FunctionInvoke_outputList"><code>wtk::WireList* outputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_WireList"><code>wtk::WireList</code></a> for the output wires of this invocation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireList* outputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="FunctionInvoke_inputList"><code>wtk::WireList* inputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_WireList"><code>wtk::WireList</code></a> for the input wires of this invocation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireList* inputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="FunctionInvoke_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the function invocation begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_AnonFunction"><code>template&lt;typename Number_T&gt; struct AnonFunction</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk::AnonFunction&lt;Number_T&gt;</code> is the simultaneous declaration and invocation of an anonymous function-gate.
+It mirrors the structure of both <a href="#struct_FunctionDeclare"><code>wtk::FunctionDeclare&lt;Number_T&gt;</code></a> and <a href="#struct_FunctionInvoke"><code>wtk::FunctionInvoke</code></a>, although without certain attributes such as <code>name()</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="AnonFunction_outputList"><code>wtk::WireList* outputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_WireList"><code>wtk::WireList</code></a> for the output wires of this anonymous function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireList* outputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="AnonFunction_inputList"><code>wtk::WireList* inputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_WireList"><code>wtk::WireList</code></a> for the input wires of this anonymous function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireList* inputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="AnonFunction_instanceCount"><code>wtk::index_t instanceCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of instance values this anonymous function gate will consume.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t instanceCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="AnonFunction_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of short witness values this anonymous function gate will consume.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t shortWitnessCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="AnonFunction_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></h3>
+<div class="paragraph">
+<p>returns the body of the anonymous function gate.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual DirectiveList&lt;Number_T&gt;* body() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="AnonFunction_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the anonymous function declaration begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_IterExpr"><code>struct IterExpr</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk::IterExpr</code> takes the place of <code>wtk::index_t</code> in input and output lists of <a href="#struct_ForLoop">For Loop</a> bodies.
+Instead of representing an exact wire-index, these expressions evaluate to a wire-index, allowing the loop to traverse ranges of wires.</p>
+</div>
+<div class="paragraph">
+<p>All iterator expressions are carried out over <code>wtk::index_t</code>.
+The expressions are a recursive datatype, with base cases for numeric literals and loop-iterators.
+Recursive cases exist for addition, subtraction, multiplication, and division by a constant.
+The expression type is given by <a href="#IterExpr_enum_Type"><code>enum Type</code></a>.</p>
+</div>
+<div class="sect2">
+<h3 id="IterExpr_enum_Type"><code>enum Type</code></h3>
+<div class="paragraph">
+<p>This enumerates the various types of expressions.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk::IterExpr::LITERAL</code></dt>
+<dd>
+<p>A numeric literal</p>
+</dd>
+<dt class="hdlist1"><code>wtk::IterExpr::ITERATOR</code></dt>
+<dd>
+<p>A reference to a loop iterator</p>
+</dd>
+<dt class="hdlist1"><code>wtk::IterExpr::ADD</code></dt>
+<dd>
+<p>Addition expression of two sub-expressions</p>
+</dd>
+<dt class="hdlist1"><code>wtk::IterExpr::SUB</code></dt>
+<dd>
+<p>Subtraction expression of two sub-expressions</p>
+</dd>
+<dt class="hdlist1"><code>wtk::IterExpr::MUL</code></dt>
+<dd>
+<p>Multiplition expression of two sub-expressions</p>
+</dd>
+<dt class="hdlist1"><code>wtk::IterExpr::DIV</code></dt>
+<dd>
+<p>Division expression of one sub-expression and a constant divisor</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExpr_type"><code>wtk:IterExpr::Type type()</code></h3>
+<div class="paragraph">
+<p>Returns the type of this expression.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Type type() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExpr_literal"><code>wtk::index_t literal()</code></h3>
+<div class="paragraph">
+<p>Returns this literal expression or the right-hand-side of this division expression as a <code>wtk::index_t</code>.
+If the following precondition isn&#8217;t met, then undefined behavior occurs (see also <a href="#IterExpr_type"><code>this&#8594;type()</code></a> and <a href="#IterExpr_enum_Type"><code>enum Type</code></a>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">this-&gt;type() == wtk::IterExpr::LITERAL
+  || this-&gt;type() == wtk::IterExpr::DIV</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t literal() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExpr_name"><code>char const* name()</code></h3>
+<div class="paragraph">
+<p>Returns this loop-iterator expression as a <code>char*</code>.
+If the following precondition isn&#8217;t met, then undefined behavior occurs (see also <a href="#IterExpr_type"><code>this&#8594;type()</code></a> and <a href="#IterExpr_enum_Type"><code>enum Type</code></a>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">this-&gt;type() == wtk::IterExpr::ITERATOR</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t literal() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExpr_lhs"><code>wtk::IterExpr* lhs()</code></h3>
+<div class="paragraph">
+<p>Returns the left-hand-side of this expression.
+If the following precondition isn&#8217;t met, then undefined behavior occurs (see also <a href="#IterExpr_type"><code>this&#8594;type()</code></a> and <a href="#IterExpr_enum_Type"><code>enum Type</code></a>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">this-&gt;type() == wtk::IterExpr::ADD
+  || this-&gt;type() == wtk::IterExpr::SUB
+  || this-&gt;type() == wtk::IterExpr::MUL
+  || this-&gt;type() == wtk::IterExpr::DIV</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual IterExpr* lhs() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExpr_rhs"><code>wtk::IterExpr* lhs()</code></h3>
+<div class="paragraph">
+<p>Returns the right-hand-side of this expression.
+If the following precondition isn&#8217;t met, then undefined behavior occurs (see also <a href="#IterExpr_type"><code>this&#8594;type()</code></a> and <a href="#IterExpr_enum_Type"><code>enum Type</code></a>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">this-&gt;type() == wtk::IterExpr::ADD
+  || this-&gt;type() == wtk::IterExpr::SUB
+  || this-&gt;type() == wtk::IterExpr::MUL</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual IterExpr* lhs() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExpr_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the iterator expression begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_IterExprWireRange"><code>struct IterExprWireRange</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Represents a range of iterator expressions, mirroring the form of <a href="#struct_WireRange"><code>wtk::WireRange</code></a>.
+It is used as a component of the <a href="#struct_IterExprWireList"><code>wtk::IterExprWireList</code></a> (which itself mirrors <a href="#struct_WireList"><code>wtk::WireList</code></a>).</p>
+</div>
+<div class="sect2">
+<h3 id="IterExprWireRange_first()"><code>wtk::IterExpr* first()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_IterExpr"><code>wtk::IterExpr</code></a> for the first wire in the range (consider it inclusive).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::IterExpr* first() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprWireRange_last()"><code>wtk::IterExpr* last()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_IterExpr"><code>wtk::IterExpr</code></a> for the last wire in the range (consider it inclusive).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::IterExpr* last() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprWireRange_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the wire range begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_IterExprWireList"><code>struct IterExprWireList</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Represents a list of iterator expressions, mirroring the form of <a href="#struct_WireList"><code>wtk::WireList</code></a>.
+For for-loop bodies, the input and output wire lists use these to enable traversal based on the loop iterator.</p>
+</div>
+<div class="paragraph">
+<p>These lists are "ranged" such that the elements of the list do not correspond to the length of the list.
+Some elements are individual expressions, whereas other elements are ranges of expressions.
+Element type is given by the <a href="#IterExprWireList_enum_Type"><code>Type</code></a> enumeration.</p>
+</div>
+<div class="sect2">
+<h3 id="IterExprWireList_size"><code>size_t size()</code></h3>
+<div class="paragraph">
+<p>Indicates how many <em>elements</em> are in the list (does not necessarily correspond to <em>wire count</em>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t size() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprWireList_enum_Type"><code>enum Type</code></h3>
+<div class="paragraph">
+<p>Indicates if an element a single or a range element.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wtk::IterExprWireList::SINGLE</code></p>
+</li>
+<li>
+<p><code>wtk::IterExprWireList::RANGE</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprWireList_type"><code>wtk::IterExprWireList::Type type(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the type of the nth element.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#IterExprWireList_size">this&#8594;size()</a></code> or else undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Type type(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprWireList_single"><code>wtk::ItereExpr* single(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element in the list as a single element.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#IterExprWireList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#IterExprWireList_type">this&#8594;type(n)</a> == <a href="#IterExprWireList_enum_Type">wtk::IterExprWireList::SINGLE</a></code> or else undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::IterExpr* single(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprWireList_range"><code>wtk::IterExprWireRange* range(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the nth element in the list as a <a href="#struct_IterExprWireRange">range</a> element.
+<code>n</code> must be in the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#IterExprWireList_size">this&#8594;size()</a></code> and <code>n</code> must have the type <code><a href="#IterExprWireList_type">this&#8594;type(n)</a> == <a href="#IterExprWireList_enum_Type">wtk::IterExprWireList::RANGE</a></code> or else undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireRange* range(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprWireList_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the wire list begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_IterExprFunctionInvoke"><code>struct IterExprFunctionInvoke</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk:IterExprFunctionInvoke</code> invokes a function gate as the body of a for-loop, carrying a name which should match with the name of a <a href="#struct_FunctionDeclare"><code>wtk::FunctionDeclare&lt;Number_T&gt;</code></a>.
+It mirrors <a href="#struct_FunctionInvoke"><code>wtk::FunctionInvoke</code></a> replacing input and output lists with <a href="#struct_IterExprWireList"><code>wtk::IterExprWireList</code></a>.</p>
+</div>
+<div class="sect2">
+<h3 id="IterExprFunctionInvoke_name"><code>char const* name()</code></h3>
+<div class="paragraph">
+<p>Returns the name of the function gate.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual char const* name() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprFunctionInvoke_outputList"><code>wtk::IterExprWireList* outputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_IterExprWireList"><code>wtk::IterExprWireList</code></a> for the output wires of this invocation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::IterExprWireList* outputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprFunctionInvoke_inputList"><code>wtk::IterExprWireList* inputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_IterExprWireList"><code>wtk::IterExprWireList</code></a> for the input wires of this invocation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::IterExprWireList* inputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprFunctionInvoke_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the function invocation begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_IterExprAnonFunction"><code>template&lt;typename Number_T&gt; struct IterExprAnonFunction</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk::IterExprAnonFunction&lt;Number_T&gt;</code> is the simultaneous declaration and invocation of an anonymous function-gate as the body of a for-loop.
+It mirrors the structure of both <a href="#struct_FunctionDeclare"><code>wtk::FunctionDeclare&lt;Number_T&gt;</code></a> and <a href="#struct_FunctionInvoke"><code>wtk::FunctionInvoke</code></a>, although without certain attributes such as <code>name()</code>, and with the input and output lists replaced by <a href="#struct_IterExprWireList"><code>wtk::IterExprWireList</code></a></p>
+</div>
+<div class="sect2">
+<h3 id="IterExprAnonFunction_outputList"><code>wtk::IterExprWireList* outputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_IterExprWireList"><code>wtk::IterExprWireList</code></a> for the output wires of this anonymous function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::IterExprWireList* outputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprAnonFunction_inputList"><code>wtk::IterExprWireList* inputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_IterExprWireList"><code>wtk::IterExprWireList</code></a> for the input wires of this anonymous function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::IterExprWireList* inputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprAnonFunction_instanceCount"><code>wtk::index_t instanceCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of instance values this anonymous function gate will consume.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t instanceCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprAnonFunction_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of short witness values this anonymous function gate will consume.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t shortWitnessCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprAnonFunction_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></h3>
+<div class="paragraph">
+<p>returns the body of the anonymous function gate.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual DirectiveList&lt;Number_T&gt;* body() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="IterExprAnonFunction_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the anonymous function declaration begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_ForLoop"><code>template&lt;typename Number_T&gt; struct ForLoop</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This represents a for-loop directive in the IR.</p>
+</div>
+<div class="sect2">
+<h3 id="ForLoop_outputList"><code>wtk::WireList* outputList()</code></h3>
+<div class="paragraph">
+<p>Returns the output list of the <em>entire for-loop</em> (not to be confused with the output list of <em>one iteration of the for-loop</em>) as a <a href="#struct_WireList"><code>wtk::WireList</code></a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual WireList* outputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ForLoop_iterName"><code>char const* iterName()</code></h3>
+<div class="paragraph">
+<p>Returns the name of the loop&#8217;s iterator.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual char const* iterName() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ForLoop_first"><code>wtk::index_t first()</code></h3>
+<div class="paragraph">
+<p>Returns the first iteration of the loop (inclusive).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t first() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ForLoop_last"><code>wtk::index_t last()</code></h3>
+<div class="paragraph">
+<p>Returns the last iteration of the loop (inclusive).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t last() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ForLoop_enum_BodyType"><code>enum BodyType</code></h3>
+<div class="paragraph">
+<p>An enumeration to indicate whether the loop&#8217;s body is named or anonymous.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk::ForLoop&lt;Number_T&gt;::INVOKE</code></dt>
+<dd>
+<p>Named body (use <a href="#ForLoop_invokeBody"><code>this&#8594;invokeBody()</code></a> and <a href="#struct_IterExprFunctionInvoke"><code>wtk::IterExprFunctionInvoke</code></a>).</p>
+</dd>
+<dt class="hdlist1"><code>wtk::ForLoop&lt;Number_T&gt;::ANONYMOUS</code></dt>
+<dd>
+<p>Anonymous body (use <a href="#ForLoop_anonymousBody"><code>this&#8594;anonymousBody()</code></a> and <a href="#struct_IterExprAnonFunction"><code>wtk::IterExprAnonFunction&lt;Number_T&gt;</code></a>).</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ForLoop_bodyType"><code>BodyType bodyType()</code></h3>
+<div class="paragraph">
+<p>Returns the body type of this for-loop.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual BodyType bodyType() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ForLoop_invokeBody"><code>wtk::IterExprFunctionInvoke* invokeBody()</code></h3>
+<div class="paragraph">
+<p>Returns the body of this for-loop as an <a href="#struct_IterExprFunctionInvoke"><code>wtk::IterExprFunctionInvoke</code></a>.
+If the loop&#8217;s body type is not <code><a href="#ForLoop_bodyType">this&#8594;bodyType()</a> == <a href="#ForLoop_enum_BodyType">wtk::ForLoop&lt;Number_T&gt;::INVOKE</a></code>, then undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual IterExprFunctionInvoke* invokeBody() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ForLoop_anonymousBody"><code>wtk::IterExprAnonFunction&lt;Number_T&gt;* anonymousBody()</code></h3>
+<div class="paragraph">
+<p>Returns the body of this for-loop as an <a href="#struct_IterExprAnonFunction"><code>wtk::IterExprAnonFunction&lt;Number_T&gt;</code></a>.
+If the loop&#8217;s body type is not <code><a href="#ForLoop_bodyType">this&#8594;bodyType()</a> == <a href="#ForLoop_enum_BodyType">wtk::ForLoop&lt;Number_T&gt;::ANONYMOUS</a></code>, then undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual IterExprAnonFunction&lt;Number_T&gt;* anonymousBody() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ForLoop_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the for-loop begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_CaseFunctionInvoke"><code>struct CaseFunctionInvoke</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk:CaseFunctionInvoke</code> invokes a function gate as the body of a switch-case.
+It mirrors the form of <a href="#struct_FunctionInvoke"><code>wtk::FunctionInvoke</code></a>, however, as the body of a switch-case, it is missing <code>outputList()</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="CaseFunctionInvoke_name"><code>char const* name()</code></h3>
+<div class="paragraph">
+<p>Returns the name of the function gate.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual char const* name() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseFunctionInvoke_inputList"><code>wtk::WireList* inputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_WireList"><code>wtk::WireList</code></a> for the input wires of this invocation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireList* inputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseFunctionInvoke_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the function invocation begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_CaseAnonFunction"><code>template&lt;typename Number_T&gt; struct CaseAnonFunction</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk:CaseAnonFunction</code> is the simultaneous declaration and invocation of an anonymous function-gate as the body of a switch-case.
+It mirrors the structure of both <a href="#struct_FunctionDeclare"><code>wtk::FunctionDeclare&lt;Number_T&gt;</code></a> and <a href="#struct_FunctionInvoke"><code>wtk::FunctionInvoke</code></a>, although without certain attributes such as <code>name()</code> or, as the body of a switch-case,  <code>outputList()</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="CaseAnonFunction_inputList"><code>wtk::WireList* inputList()</code></h3>
+<div class="paragraph">
+<p>Returns a <a href="#struct_WireList"><code>wtk::WireList</code></a> for the input wires of this anonymous function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireList* inputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseAnonFunction_instanceCount"><code>wtk::index_t instanceCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of instance values this anonymous function gate will consume.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t instanceCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseAnonFunction_shortWitnessCount"><code>wtk::index_t shortWitnessCount()</code></h3>
+<div class="paragraph">
+<p>Returns the number of short witness values this anonymous function gate will consume.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t shortWitnessCount() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseAnonFunction_body"><code>wtk::DirectiveList&lt;Number_T&gt;* body()</code></h3>
+<div class="paragraph">
+<p>returns the body of the anonymous function gate.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual DirectiveList&lt;Number_T&gt;* body() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseAnonFunction_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the anonymous function declaration begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_CaseBlock"><code>template&lt;typename Number_T&gt; struct CaseBlock</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This represents a case within a switch-statement.</p>
+</div>
+<div class="sect2">
+<h3 id="CaseBlock_match"><code>Number_T match()</code></h3>
+<div class="paragraph">
+<p>Returns the field-literal which is matched against the switch-statement&#8217;s <a href="#SwitchStatement_condition"><code>condition()</code></a> wire to indicate if this case is active.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual Number_T match() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseBlock_enum_BodyType"><code>enum BodyType</code></h3>
+<div class="paragraph">
+<p>An enumeration to indicate whether the case&#8217;s body is named or anonymous.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk::CaseBlock&lt;Number_T&gt;::INVOKE</code></dt>
+<dd>
+<p>Named body (use <a href="#CaseBlock_invokeBody"><code>this&#8594;invokeBody()</code></a> and <a href="#struct_CaseFunctionInvoke"><code>wtk::CaseFunctionInvoke</code></a>).</p>
+</dd>
+<dt class="hdlist1"><code>wtk::CaseBlock&lt;Number_T&gt;::ANONYMOUS</code></dt>
+<dd>
+<p>Anonymous body (use <a href="#CaseBlock_anonymousBody"><code>this&#8594;anonymousBody()</code></a> and <a href="#struct_CaseAnonFunction"><code>wtk::CaseAnonFunction&lt;Number_T&gt;</code></a>).</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseBlock_bodyType"><code>BodyType bodyType()</code></h3>
+<div class="paragraph">
+<p>Returns the body type of this case block.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual BodyType bodyType() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseBlock_invokeBody"><code>wtk::CaseFunctionInvoke* invokeBody()</code></h3>
+<div class="paragraph">
+<p>Returns the body of this case-block as a <a href="#struct_CaseFunctionInvoke"><code>wtk::CaseFunctionInvoke</code></a>.
+If the case&#8217;s body type is not <code><a href="#CaseBlock_bodyType">this&#8594;bodyType()</a> == <a href="#CaseBlock_enum_BodyType">wtk::CaseBlock&lt;Number_T&gt;::INVOKE</a></code>, then undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual CaseFunctionInvoke* invokeBody() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseBlock_anonymousBody"><code>wtk::CaseAnonFunction&lt;Number_T&gt;* anonymousBody()</code></h3>
+<div class="paragraph">
+<p>Returns the body of this case-block as a <a href="#struct_CaseAnonFunction"><code>wtk::CaseAnonFunction&lt;Number_T&gt;</code></a>.
+If the case&#8217;s body type is not <code><a href="#CaseBlock_bodyType">this&#8594;bodyType()</a> == <a href="#CaseBlock_enum_BodyType">wtk::CaseBlock&lt;Number_T&gt;::ANONYMOUS</a></code>, then undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual CaseAnonFunction&lt;Number_T&gt;* anonymousBody() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="CaseBlock_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the case-block begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_SwitchStatement"><code>template&lt;typename Number_T&gt; struct SwitchStatement</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This represents a switch-statement directive in the IR.</p>
+</div>
+<div class="sect2">
+<h3 id="SwitchStatement_outputList"><code>wtk::WireList* outputList()</code></h3>
+<div class="paragraph">
+<p>Returns the switch-statement&#8217;s output list as a <a href="#struct_WireList"><code>wtk::WireList</code></a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::WireList* outputList() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="SwitchStatement_condition"><code>wtk::index_t condition()</code></h3>
+<div class="paragraph">
+<p>Returns the condition (or "selector") wire of this switch-statement.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual wtk::index_t condition() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="SwitchStatement_size"><code>size_t size()</code></h3>
+<div class="paragraph">
+<p>Returns the number of cases in the switch-statement.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t size() = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="SwitchStatement_caseBlock"><code>wtk::CaseBlock&lt;Number_T&gt;* caseBlock(size_t n)</code></h3>
+<div class="paragraph">
+<p>Returns the <code>n</code>th <a href="#struct_CaseBlock"><code>wtk::CaseBlock&lt;Number_T&gt;</code></a> in this switch-statement.
+If <code>n</code> is outside of the range <code>n &gt;= 0 &amp;&amp; n &lt; <a href="#SwitchStatement_size">this&#8594;size()</a></code>, then undefined behavior occurs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual CaseBlock&lt;Number_T&gt;* caseBlock(size_t n) = 0;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="SwitchStatement_lineNum()"><code>size_t lineNum()</code></h3>
+<div class="paragraph">
+<p>Returns the line number at which the switch-statement begins.
+It may be unsupported by the parser (for example line numbering is nonsensical in a binary format), in which case <code>0</code> is always returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">virtual size_t lineNum();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

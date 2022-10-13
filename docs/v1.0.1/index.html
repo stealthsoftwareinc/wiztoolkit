@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WizToolKit - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="WizToolKit" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="WizToolKit" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"WizToolKit","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+                id="currPage"
+                
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li class="curr_page"><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a>
+      <ul class="sectlevel1">
+<li><a href="#command-line">Command-line</a></li>
+<li><a href="#parsing-the-ir">Parsing the IR</a></li>
+<li><a href="#for-zk-backends">For ZK Backends</a></li>
+<li><a href="#other-apis">Other APIs</a></li>
+<li><a href="#building">Building</a></li>
+<li><a href="#licensing">Licensing</a></li>
+</ul>
+    <ul><li><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a></li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a></li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a></li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>WizToolKit</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is a collection of tools, provided by team Wizkit, for working with the SIEVE IR.
+It In addition to a few command-line tools, it has an extensive C++ API for manipulating the SIEVE IR.
+This release of WizToolKit corresponds to version <code>1.0.0</code> of the SIEVE IR Specification.</p>
+</div>
+<div class="paragraph">
+<p>If you&#8217;re not familiar with the SIEVE IR, have a look at our <a href="https://stealthsoftwareinc.github.io/wizkit-blog/2021/09/20/introducing-the-sieve-ir.html">introduction to the SIEVE IR</a>.
+It represents ZK relations using circuits, and the instance and short-witness as input streams.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="command-line">Command-line</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following tools are available on the command-line from WizToolKit.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>wtk-firealarm</code> (checking and evaluating)</dt>
+<dd>
+<p>Checks an individual IR resource for well-formedness. For a triple of relation, instance, and short-witness it checks for evaluation validity.</p>
+</dd>
+<dt class="hdlist1"><code>wtk-press</code> (format and feature conversions)</dt>
+<dd>
+<p>Converts between the text and binary formats of the IR. It can also replace IR <code>@switch</code> directives with a <em>multiplexer</em> implementation using <code>@loop</code>s and a <code>@function</code>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk-viz</code> (visualization)</dt>
+<dd>
+<p>Visualize the IR by converting it to <a href="https://graphviz.org/">Graphviz</a>.</p>
+</dd>
+<dt class="hdlist1"><code>wtk-bolt</code> (example and testing)</dt>
+<dd>
+<p>Invokes the BOLT or PLASMASnooze interpreters without ZK. For use in testing or as an example. See <a href="backends.html#backends">WizToolKit for Backends</a> for more information on these.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For more information on these tools see <a href="commandline.html#commandline">WizToolKit on the command-line</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="parsing-the-ir">Parsing the IR</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>WizToolKit enables parsing both text and binary profiles of the SIEVE IR.
+The parsing API is designed for maximal flexibility, parsing the header first and then allowing the user to decide how to proceed.</p>
+</div>
+<div class="paragraph">
+<p>In addition to both IR-Formats, WizToolKit can parse a resource with either a streaming parser (when grammar is limited to IR-Simple) or a syntax-tree parser.
+It also allows the user to supply a numeric type for parsing field-element literals via a template parameter, and after parsing the header to possibly downgrade to <code>uint64_t</code> or <code>uint32_t</code> for the remaining IR body.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parser</th>
+<th class="tableblock halign-left valign-top">Format</th>
+<th class="tableblock halign-left valign-top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ANTLR</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uses the <a href="https://www.antlr.org/">ANTLR generator</a>. "Obviously" correct, parses line-numbers, slow</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRRegular</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fast, minimal memory use, no line-numbers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FlatBuffer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binary</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://google.github.io/flatbuffers">FlatBuffer</a> parser</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>For more information see <a href="parsers.html#parsers">Parsing the IR</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="for-zk-backends">For ZK Backends</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For ZK Backends, WizToolKit provides a simple Backend API, and two interpreters to drive the API.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">BOLT</dt>
+<dd>
+<p>first builds an augmented representation of the relation while checking for well-formedness. Then it evaluates without needing any well-formedness checks or having to stop and translate indices to actual wires. This is ideal for relations which make heavy use of loops.</p>
+</dd>
+<dt class="hdlist1">PLASMASnooze</dt>
+<dd>
+<p>(A pun on FIREALARM) simply traverses the IR syntax-tree doing on-the-fly well-formedness checks.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For more information see <a href="backends.html#backends">WizToolKit for ZK Backends</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="other-apis">Other APIs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The entirety of the WizToolKit command-line is available as API, however not all of it is well documented.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="building">Building</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>WizToolKit uses CMake, Python3, Java (optional), and a number of other utilities during build, of course in addition to a C++ compiler.
+This all is orchestrated using <code>make</code>, and the familiar pattern should work.
+Build artifacts are typically deposited in the <code>target/</code> directoy.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>make
+make install</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See the <a href="install.html#install">Install Guide</a> for details, and for a list of necessary dependencies.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="licensing">Licensing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The source code and other substantial material in this directory is Copyright &#169; 2020-2022 Stealth Software Technologies, Inc.</p>
+</div>
+<div class="paragraph">
+<p>This version of WizToolKit has been approved for public release under the open-source <a href="license.md">MIT License</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Distribution Statement A</strong>: Approved for Public Release, Distribution Unlimited.</p>
+</div>
+<div class="paragraph">
+<p>This material is based upon work supported by DARPA under Contract No. HR001120C0087.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of DARPA.</p>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

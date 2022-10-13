@@ -1,0 +1,342 @@
+h1, h2, h3, h4, h5, h6
+{
+  line-height: 1em;
+  margin-top: 0em;
+  margin-bottom: 1rem;
+}
+
+h1
+{
+  color: #edb93e;
+  font-weight: 500;
+  font-size: 96px;
+}
+
+h1 a
+{
+  color: #edb93e;
+  text-decoration: underline
+}
+
+h1.eyebrow, h1.eyebrow a
+{
+  color: #c4cde8;
+  font-weight: 400;
+  font-size: 28px;
+}
+
+h2
+{
+  color: #c4cde8;
+  font-weight: 500;
+  font-size: 52px;
+}
+
+h2.eyebrow, h2.eyebrow a
+{
+  color: #ed264c;
+  font-weight: 800;
+  font-size: 24px;
+}
+
+h3
+{
+  color: #c4cde8;
+  font-weight: 500;
+  font-size: 34px;
+}
+
+h4
+{
+  color: #c4cde8;
+  font-weight: 500;
+  font-size: 24px;
+}
+
+h5
+{
+  color: #c4cde8;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+h6
+{
+  color: #c4cde8;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+h2 a, h3 a, h4 a, h5 a, h6 a
+{
+  color: #c4cde8;
+  text-decoration: underline
+}
+
+p
+{
+  margin: 0em;
+  margin-bottom: 1em;
+}
+
+a
+{
+  color: #7295ab;
+  text-decoration: underline;
+  padding: 0em;
+  padding-left: 0.1em;
+  padding-right: 0.1em;
+}
+
+a:focus,
+a:hover,
+a:active
+{
+  color: #7295ab;
+  text-decoration: none;
+  background-color: #000b24;
+  border-radius: 0.15em;
+}
+
+hr
+{
+  width: 80%;
+
+  border: none;
+  border-top: 1px solid #edb93e;
+  margin: 0em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1em;
+}
+
+b, strong
+{
+  font-weight: 700;
+}
+
+i, em
+{
+  font-style: italic;
+}
+
+code
+{
+  font-family: monospace;
+  border: 1px solid #edb93e;
+  border-radius: 0.25em;
+  padding: 0.05em;
+  padding-left: 0.15em;
+  padding-right: 0.15em;
+}
+
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code
+{
+  border: none;
+}
+
+pre
+{
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  border: 1px solid #edb93e;
+  border-radius: 0.75em;
+  padding: 0.5em;
+  margin: 0em;
+  margin-bottom: 1em;
+}
+
+pre *
+{
+  border: none;
+}
+
+sup
+{
+  vertical-align: super;
+  font-size: 80%;
+}
+
+sub
+{
+  vertical-align: sub;
+  font-size: 80%;
+}
+
+ul, ol, dl
+{
+  margin: 0em;
+  margin-bottom: 1em;
+}
+
+ul ul, ol ol, ul ol, ol ul, dl dl, ul dl, ol dl, dl ul, dl ol
+{
+  margin-bottom: 0em;
+}
+
+li, dt, dd, li p, dt p, dd p
+{
+  margin: 0em;
+}
+
+dt { font-weight: 700; }
+dd { margin-left: 2em; }
+
+blockquote
+{
+  font-size: 30px;
+  line-height: 36px;
+}
+
+blockquote, div.attribution
+{
+  border: none;
+  border-left: 2px solid #edb93e;
+  margin: 0em;
+  margin-left: 1rem;
+  padding: 0em;
+  padding-left: 1rem;
+}
+
+div.quoteblock
+{
+  margin: 0em;
+  margin-bottom: 1em;
+}
+
+table, th, tr, td
+{
+  border: 1px solid #edb93e;
+  border-radius: 0.25em;
+  border-collapse: collapse;
+  margin: 0em;
+  padding: 0.5em;
+}
+
+table { margin-bottom: 1em; }
+
+/* table p { margin: 0em; } */
+table td>*:last-child,
+table td>*:last-child>*:last-child,
+table td>*:last-child>*:last-child>*:last-child,
+table td>*:last-child>*:last-child>*:last-child>*:last-child,
+table td>*:last-child>*:last-child>*:last-child>*:last-child>*:last-child
+{
+  margin-bottom: 0em;
+}
+
+table th.valign-bottom,
+table td.valign-bottom
+{
+  vertical-align: bottom;
+}
+
+table th.valign-top,
+table td.valign-top
+{
+  vertical-align: top;
+}
+
+table th.halign-left,
+table td.halign-left
+{
+  text-align: left;
+}
+
+table th.halign-right,
+table td.halign-right
+{
+  text-align: right;
+}
+
+div.admonitionblock table
+{
+  border: 2px solid #edb93e;
+  border-collapse: separate;
+  border-radius: 0.5em;
+  width: 100%;
+}
+
+div.admonitionblock td
+{
+  border: none;
+  border-left: 1px solid #ed264c;
+  border-radius: 0em;
+  padding: 1em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+div.admonitionblock td:first-child
+{
+  border-left: none;
+  white-space: nowrap;
+  text-align: center;
+  min-width: 5em;
+}
+
+div.title, summary.title
+{
+  font-weight: 700;
+  font-size: 18px;
+}
+
+div.admonitionblock td.icon div.title
+{
+  font-weight: 400;
+  font-size: 16px;
+}
+
+div.admonitionblock td:last-child
+{
+  width: 100%;
+}
+
+div.admonitionblock.note td:first-child::before
+{
+  content: "\1F4CE";
+}
+
+div.admonitionblock.caution td:first-child::before
+{
+  content: "\01F514";
+}
+
+div.admonitionblock.warning td:first-child::before
+{
+  content: "\026A0\0FE0F";
+}
+
+div.admonitionblock.important td:first-child::before
+{
+  content: "\01F4E2";
+}
+
+div.admonitionblock.tip td:first-child::before
+{
+  content: "\01F4A1";
+}
+
+div.sidebarblock
+{
+  margin: 0em;
+  margin-left: 3em;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  padding: 0em;
+  padding-right: 1em;
+
+  border: none;
+  border-right: 2px solid #edb93e;
+
+  text-align: right;
+}
+
+img
+{
+  max-width: 95%;
+  margin: 1em;
+  margin-top: 0em;
+}

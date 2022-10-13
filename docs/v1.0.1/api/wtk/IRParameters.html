@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IRParameters API - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>IRParameters API | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="IRParameters API" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="IRParameters API" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"IRParameters API","url":"http://0.0.0.0:4000/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v1.0.1/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit//docs/v1.0.1/">WizToolKit</a><ul><li><a href="/wiztoolkit/docs/v1.0.1/backends.html">WizToolKit for Backends</a></li><li><a href="/wiztoolkit/docs/v1.0.1/commandline.html">WizToolKit on the Command-Line</a></li><li><a href="/wiztoolkit/docs/v1.0.1/install.html">Installing WizToolKit</a></li><li><a href="/wiztoolkit/docs/v1.0.1/parsers.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v1.0.1/single_page_manual.html">WizToolKit Manual</a></li><li>api<ul><li>wtk<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/ArithmeticStreamHandler.html">Arithmetic Stream Handler API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/BooleanStreamHandler.html">Boolean Stream Handler API</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRParameters.html">IRParameters API</a>
+      <ul class="sectlevel1">
+<li><a href="#enum_Resource"><code>enum class Resource</code></a></li>
+<li><a href="#struct_GateSet"><code>struct GateSet</code></a>
+<ul class="sectlevel2">
+<li><a href="#enum-gateset"><code>enum { &#8230;&#8203; } gateSet</code></a></li>
+<li><a href="#subset-definitions-union">SubSet definitions (<code>union</code>)</a></li>
+<li><a href="#bool-cannonical-const"><code>bool cannonical() const</code></a></li>
+</ul>
+</li>
+<li><a href="#struct_FeatureToggles"><code>struct FeatureToggles</code></a>
+<ul class="sectlevel2">
+<li><a href="#bool-functiontoggle"><code>bool functionToggle</code></a></li>
+<li><a href="#bool-forlooptoggle"><code>bool forLoopToggle</code></a></li>
+<li><a href="#bool-switchcasetoggle"><code>bool switchCaseToggle</code></a></li>
+<li><a href="#bool-simple-const"><code>bool simple() const</code></a></li>
+<li><a href="#bool-complete-const"><code>bool complete() const</code></a></li>
+</ul>
+</li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/IRTree.html">IR Tree API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/Parser.html">Parser API</a></li><li>bolt<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html">Arithmetic PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Backend.html">BOLT Backend API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/BooleanPLASMASnoozeHandler.html">Boolean PLASMASnooze Streaming API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Builder.html">BOLT Builder API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/Evaluator.html">BOLT Evaluator API</a></li><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/bolt/PLASMASnooze.html">PLASMASnooze</a></li></ul></li><li>flatbuffer<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/flatbuffer/Parser.html">FlatBuffer Parser API</a></li></ul></li><li>irregular<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/irregular/Parser.html">IRRegular Parser API</a></li></ul></li><li>antlr<ul><li><a href="/wiztoolkit/docs/v1.0.1/api/wtk/antlr/Parser.html">ANTLR Parser API</a></li></ul></li></ul></li></ul></li><li>tools<ul><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-bolt.html">BOLT (Example and Testing)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-firealarm.html">FIREALARM (Checking and Evaluating)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-press.html">PRESS (Format and Feature Conversion)</a></li><li><a href="/wiztoolkit/docs/v1.0.1/tools/wtk-viz.html">Viz (Visualization)</a></li></ul></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>IRParameters API</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Include this API as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">#include &lt;wtk/Parser.h&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Members of this API live in the following namespace</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">namespace wtk { ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This header defines some of the front-matter parameters of the IR.
+Generally these parameters will be provided by the <a href="../../api/wtk/Parser.html#api_Parser">Parser API</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="enum_Resource"><code>enum class Resource</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An enumeration of the various resources an IR file may be.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wtk::Resource::relation</code></p>
+</li>
+<li>
+<p><code>wtk::Resource::instance</code></p>
+</li>
+<li>
+<p><code>wtk::Resource::shortWitness</code></p>
+</li>
+<li>
+<p><code>wtk::Resource::invalid</code> (a default or error condition)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_GateSet"><code>struct GateSet</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This structure defines the allowable gates of a relation.
+It is split along two varieties of gates <code>arithmetic</code> or <code>boolean</code>, each of which may be taken as a "cannonical" set (e.g. all gates enabled) or a subset.</p>
+</div>
+<div class="sect2">
+<h3 id="enum-gateset"><code>enum { &#8230;&#8203; } gateSet</code></h3>
+<div class="paragraph">
+<p>This indicates which variety of gates are used.
+and has the following values</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wtk::GateSet::arithmetic</code></p>
+</li>
+<li>
+<p><code>wtk::GateSet::boolean</code></p>
+</li>
+<li>
+<p><code>wtk::GateSet::invalid</code> (a default or error conditions)</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">enum {
+  arithmetic,
+  boolean,
+  invalid
+} gateSet = invalid;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="subset-definitions-union">SubSet definitions (<code>union</code>)</h3>
+<div class="paragraph">
+<p>This unnamed <strong><code>union</code></strong> attribute defines sub sets of either of the gate set varieties.
+As a union, only attributes of the active/correct gate set may be used.</p>
+</div>
+<div class="sect3">
+<h4 id="arithmetic-subsets-struct">Arithmetic Subsets (<code>struct</code>)</h4>
+<div class="paragraph">
+<p>The following flags indicate if an arithmetic gate is allowable.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bool enableAdd</code> indicates if <code>@add</code> is allowed.</p>
+</li>
+<li>
+<p><code>bool enableAddC</code> indicates if <code>@addc</code> is allowed.</p>
+</li>
+<li>
+<p><code>bool enableMul</code> indicates if <code>@mul</code> is allowed.</p>
+</li>
+<li>
+<p><code>bool enableMulC</code> indicates if <code>@mulc</code> is allowed.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="boolean-subsets-struct">Boolean Subsets (<code>struct</code>)</h4>
+<div class="paragraph">
+<p>The following flags indicate if a boolean gate is allowable.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bool enableXor</code> indicates if <code>@xor</code> is allowed.</p>
+</li>
+<li>
+<p><code>bool enableAnd</code> indicates if <code>@and</code> is allowed.</p>
+</li>
+<li>
+<p><code>bool enableNot</code> indicates if <code>@not</code> is allowed.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bool-cannonical-const"><code>bool cannonical() const</code></h3>
+<div class="paragraph">
+<p>A "cannonical" gate set is one which has all gates of the variety enabled.
+This function indicates if this GateSet is cannonical.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">bool cannonical() const;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="struct_FeatureToggles"><code>struct FeatureToggles</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The IR allows structural features to be disabled.
+At the extremities "IR Simple" indicates that no features are enabled, while "IR Complete" indicates that all features are enabled.</p>
+</div>
+<div class="sect2">
+<h3 id="bool-functiontoggle"><code>bool functionToggle</code></h3>
+<div class="paragraph">
+<p>This flag indicates that named functions are enabled, and that anonymous functions are allowed (except for the bodies of other enabled features).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">bool functionToggle = false;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bool-forlooptoggle"><code>bool forLoopToggle</code></h3>
+<div class="paragraph">
+<p>This flag indicates that for loops are enabled.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">bool forLoopToggle = false;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bool-switchcasetoggle"><code>bool switchCaseToggle</code></h3>
+<div class="paragraph">
+<p>This flag indicates that switch statements are enabled.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">bool switchCaseToggle = false;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bool-simple-const"><code>bool simple() const</code></h3>
+<div class="paragraph">
+<p>This method checks if these feature toggles form IR-Simple (all features disabled).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">bool simple() const;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bool-complete-const"><code>bool complete() const</code></h3>
+<div class="paragraph">
+<p>This method checks if these feature toggles form IR-Complete (all features enabled).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++">bool complete() const;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+
