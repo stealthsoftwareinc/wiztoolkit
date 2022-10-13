@@ -16,9 +16,9 @@ The following tools are available on the command-line from WizToolKit.
 ``wtk-firealarm`` (checking and evaluating):: Checks an individual IR resource for well-formedness. For a triple of relation, instance, and short-witness it checks for evaluation validity.
 ``wtk-press`` (format and feature conversions):: Converts between the text and binary formats of the IR. It can also replace IR `@switch` directives with a _multiplexer_ implementation using ``@loop``s and a `@function`.
 ``wtk-viz`` (visualization):: Visualize the IR by converting it to https://graphviz.org/[Graphviz].
-``wtk-bolt`` (example and testing):: Invokes the BOLT or PLASMASnooze interpreters without ZK. For use in testing or as an example. See xref:{xref-rel-dir}backends.adoc#backends[WizToolKit for Backends] for more information on these.
+``wtk-bolt`` (example and testing):: Invokes the BOLT or PLASMASnooze interpreters without ZK. For use in testing or as an example. See xref:{xref-rel-dir}backends.html#backends[WizToolKit for Backends] for more information on these.
 
-For more information on these tools see xref:{xref-rel-dir}commandline.adoc#commandline[WizToolKit on the command-line].
+For more information on these tools see xref:{xref-rel-dir}commandline.html#commandline[WizToolKit on the command-line].
 
 == Parsing the IR
 WizToolKit enables parsing both text and binary profiles of the SIEVE IR.
@@ -36,7 +36,7 @@ It also allows the user to supply a numeric type for parsing field-element liter
 | FlatBuffer | Binary | https://google.github.io/flatbuffers[FlatBuffer] parser
 |===
 
-For more information see xref:{xref-rel-dir}parsers.adoc#parsers[Parsing the IR].
+For more information see xref:{xref-rel-dir}parsers.html#parsers[Parsing the IR].
 
 == For ZK Backends
 For ZK Backends, WizToolKit provides a simple Backend API, and two interpreters to drive the API.
@@ -44,7 +44,7 @@ For ZK Backends, WizToolKit provides a simple Backend API, and two interpreters 
 BOLT:: first builds an augmented representation of the relation while checking for well-formedness. Then it evaluates without needing any well-formedness checks or having to stop and translate indices to actual wires. This is ideal for relations which make heavy use of loops.
 PLASMASnooze:: (A pun on FIREALARM) simply traverses the IR syntax-tree doing on-the-fly well-formedness checks.
 
-For more information see xref:{xref-rel-dir}backends.adoc#backends[WizToolKit for ZK Backends].
+For more information see xref:{xref-rel-dir}backends.html#backends[WizToolKit for ZK Backends].
 
 == Other APIs
 The entirety of the WizToolKit command-line is available as API, however not all of it is well documented.
@@ -59,7 +59,7 @@ make
 make install
 ----
 
-See the xref:{xref-rel-dir}install.adoc#install[Install Guide] for details, and for a list of necessary dependencies.
+See the xref:{xref-rel-dir}install.html#install[Install Guide] for details, and for a list of necessary dependencies.
 
 == Licensing
 The source code and other substantial material in this directory is Copyright (C) 2020-2022 Stealth Software Technologies, Inc.
