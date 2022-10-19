@@ -64,8 +64,8 @@ void print_help()
 char const* input_filename = nullptr;
 FILE* output_file = stdout;
 bool use_flatbuffer = false;
-char const* foreground = nullptr;
-char const* background = nullptr;
+char const* foreground = "";
+char const* background = "";
 
 bool parse_args(int argc, char const* argv[])
 {
