@@ -6,5 +6,5 @@ if [ -n "${CI_JOB_TOKEN}" ]
 then
   git clone "https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.stealthsoftwareinc.com/stealth/loggingtools.git" logging/
 else
-  git clone git@github.com/stealthsoftwareinc/stealth_logging.git logging/
+  git clone https://github.com/stealthsoftwareinc/stealth_logging.git logging/
 fi
