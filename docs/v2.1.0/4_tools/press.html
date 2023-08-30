@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><code>wtk-press</code> - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>wtk-press | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="wtk-press" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/4_tools/press.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/4_tools/press.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="wtk-press" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"wtk-press","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/4_tools/press.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a>
+      <ul class="sectlevel1">
+<li><a href="#command-line-arguments">Command-line Arguments</a></li>
+<li><a href="#example-invocations">Example Invocations</a></li>
+</ul>
+    </li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1><code>wtk-press</code></h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>wtk-press</code> is a command line tool for converting between the text and flatbuffer formats of the SIEVE IR.
+PRESS stands for <strong>P</strong>rintout and <strong>R</strong>epresentation <strong>E</strong>xchange <strong>S</strong>oftware <strong>S</strong>uite.</p>
+</div>
+<div class="paragraph">
+<p><code>wtk-press</code> will open an input file, and read it as either a text or flatbuffer resource, then it will print it back out in the specified output format. (There is also a "nothing" printout for testing and debugging).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="command-line-arguments">Command-line Arguments</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre>wtk-press [options] &lt;direction&gt; &lt;input-file?&gt; &lt;output-file?&gt;</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Options</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--help</code> or <code>-h</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">print out help instructions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--version</code> or <code>-v</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">print out the version information.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Directions</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">t2f</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">text to flatbuffer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">f2t</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">flatbuffer to text</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">t2t</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">text to text</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">f2f</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">flatbuffer to flatbuffer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">t2n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">text to nothing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">f2n</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">flatbuffer to nothing</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<div class="title">Input File</div>
+<p>The input file name (optional, defaults to stdin)</p>
+</div>
+<div class="paragraph">
+<div class="title">Output File</div>
+<p>The output file name (optional, defaults to stdout)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-invocations">Example Invocations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To convert a relation, public input stream, and private input stream from text to flatbuffer.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>wtk-press t2f relation.txt relation.sieve
+wtk-press t2f public_stream.txt public_stream.sieve
+wtk-press t2f private_stream.txt private_stream.sieve</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or in reverse, from flatbuffer to text.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>wtk-press f2t relation.sieve relation.txt
+wtk-press f2t public_stream.sieve public_stream.txt
+wtk-press f2t private_stream.sieve private_stream.txt</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To convert a resource from text to flatbuffer in a pipeline.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>first_command | wtk-press t2f | second_command</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Flatbuffer to text cannot be piped, because flatbuffer parsing requires the <code>mmap</code> system call which is incompatible with <code>stdin</code>.</p>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

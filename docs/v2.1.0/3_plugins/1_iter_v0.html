@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iteration v0 Plugin - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Iteration v0 Plugin | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Iteration v0 Plugin" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Iteration v0 Plugin" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Iteration v0 Plugin","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a>
+      <ul class="sectlevel1">
+<li><a href="#operations">Operations</a>
+<ul class="sectlevel2">
+<li><a href="#map"><code>map</code></a></li>
+<li><a href="#map_enumerated"><code>map_enumerated</code></a></li>
+</ul>
+</li>
+<li><a href="#implementing-the-iter_v0-plugin">Implementing the <code>iter_v0</code> plugin</a></li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>Iteration v0 Plugin</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>iter_v0</code> plugin will iteratively repeat the invocation of a function.
+A incrementing chunk of each input and output parameter will be passed to the function on each invocation.
+Optionally, the iteration count may also be passed to the function.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="operations">Operations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The iteration plugin has two operations which repeatedly invoke a function.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>map</code></dt>
+<dd>
+<p>Repeatedly invoke a function.</p>
+</dd>
+<dt class="hdlist1"><code>map_enumerated</code></dt>
+<dd>
+<p>Repeatedly invoke a function, and pass the iteration count as an input parameter.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Here is an example which repeats a function call 5 times.
+The iteration plugin-function has 5 times the  wires in each input range.
+On each iteration, within each range the next wire is passed into the function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>//                     one output
+//                               one input
+@function(no_op, @out: 0:1, @in: 0:1)
+  $0 &lt;- @$1;
+@end
+
+// Repeat no_op on five iterations
+//                      five outputs
+//                                five inputs
+@function(no_op5, @out: 0:5, @in: 0:5)
+//                      function name
+//                                iteration count
+  @plugin(iter_v0, map, no_op, 0, 5);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The same thing happens with longer ranges.
+In this next example pairs of wires are passed on each iteration.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>//                     two outputs
+//                               two inputs
+@function(no_op2, @out: 0:2, @in: 0:2)
+  $0 &lt;- $2;
+  $1 &lt;- $3;
+@end
+
+// Repeat no_op2 on five iterations
+//                      ten outputs
+//                                 ten inputs
+@function(no_op2_5, @out: 0:10, @in: 0:10)
+//                      function name
+//                                iteration count
+  @plugin(iter_v0, map, no_op2, 0, 5);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And, of course, mixed parameter lengths are permitted, so long as all are multiples of the iteration count.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@function(mul_1_2, @out: 0:1, @in: 0:2)
+  $0 &lt;- @mul($1, $2);
+@end
+
+// Repeat mul_1_2 on five iterations
+//                         five outputs
+//                                   ten inputs
+@function(mul_1_2_5, @out: 0:5, @in: 0:10)
+//                      function name
+//                                  iteration count
+  @plugin(iter_v0, map, mul_1_2, 0, 5);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So far, these examples have ignored the <code>0</code> plugin parameter.
+This does <strong>not</strong> correspond to the type of the inputs.
+Actually it designates the first few parameters as closure parameters.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@function(mul_1_1_1, @out: 0:1, @in: 0:1, 0:1)
+  $0 &lt;- @mul($1, $2);
+@end
+
+// Repeat mul_1_1_1 on five iterations
+//                           five outputs
+//                                     one inputs
+//                                          five inputs
+@function(mul_1_1_1_5, @out: 0:5, @in: 0:1, 0:10)
+//                      function name
+//                                 closure count
+//                                    iteration count
+  @plugin(iter_v0, map, mul_1_1_1, 1, 5);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Lastly, the <code>map_enumerated</code> operation can pass the iteration counter between the closure and the iterated inputs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>//                           one output
+//                                     one closure input
+//                                          one iteration counter
+//                                               one iterated input
+@function(mul_1_1_1_1, @out: 0:1, @in: 0:1, 0:1, 0:1)
+  $4 &lt;- @mul($1, $2);
+  $0 &lt;- @mul($3, $4);
+@end
+
+// Repeat mul_1_1_1_1 on five iterations
+//                             five outputs
+//                                       one inputs
+//                                            five inputs
+@function(mul_1_1_1_1_5, @out: 0:5, @in: 0:1, 0:10)
+//                                 function name
+//                                              closure count
+//                                                 iteration count
+  @plugin(iter_v0, map_enumerated, mul_1_1_1_1, 1, 5);</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="map"><code>map</code></h3>
+<div class="paragraph">
+<p>Iteratively repeat the invocation of a function, passing on a set of iterative outputs, a set of closure inputs, and a set of iterative inputs.
+For some output types, <code>ot_1</code> through <code>ot_n</code>, output sizes <code>os_1</code> through <code>os_n</code>, some closure input types, <code>ct_1</code> through <code>ct_m</code>, closure input sizes, <code>cs_1</code> through <code>cs_m</code>, iterated input types <code>it_1</code> through <code>it_o</code>, iterated sizes, <code>is_1</code> through <code>is_o</code>, and an iteration count <code>c</code>, the following parameters are allowed.</p>
+</div>
+<div class="ulist">
+<div class="title">Iterated Function Signature</div>
+<ul>
+<li>
+<p>Output <code>ot_1:os_1</code>: the first output range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Output <code>ot_n:os_n</code>: the last output range</p>
+</li>
+<li>
+<p>Input <code>ct_1:cs_1</code>: the first closure input range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Input <code>ct_m:cs_m</code>: the last closure input range</p>
+</li>
+<li>
+<p>Input <code>it_1:is_1</code>: the first iterated range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Input <code>it_o:is_o</code>: the first iterated range</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Iter Plugin Function Signature</div>
+<ul>
+<li>
+<p>Output <code>ot_1:os_1 * c</code>: the first output range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Output <code>ot_n:os_n * c</code>: the last output range</p>
+</li>
+<li>
+<p>Input <code>ct_1:cs_1</code>: the first closure input range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Input <code>ct_m:cs_m</code>: the last closure input range</p>
+</li>
+<li>
+<p>Input <code>it_1:is_1 * c</code>: the first iterated range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Input <code>it_o:is_o * c</code>: the first iterated range</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Iter Plugin Binding</div>
+<ul>
+<li>
+<p>Plugin Name: <code>iter_v0</code></p>
+</li>
+<li>
+<p>Operation: <code>map</code></p>
+</li>
+<li>
+<p><em>String</em>: iterated function name</p>
+</li>
+<li>
+<p><em>Number</em>: <code>m</code>, the number of closures</p>
+</li>
+<li>
+<p><em>Number</em>: <code>c</code>, the iteration count</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="map_enumerated"><code>map_enumerated</code></h3>
+<div class="paragraph">
+<p>Iteratively repeat the invocation of a function, passing on a set of iterative outputs, a set of closure inputs, an iterator count input, and a set of iterative inputs.
+For some output types, <code>ot_1</code> through <code>ot_n</code>, output sizes <code>os_1</code> through <code>os_n</code>, some closure input types, <code>ct_1</code> through <code>ct_m</code>, closure input sizes, <code>cs_1</code> through <code>cs_m</code>, an iterator type, <code>rt</code>, an iterator size, <code>rs</code>, iterated input types <code>it_1</code> through <code>it_o</code>, iterated sizes, <code>is_1</code> through <code>is_o</code>, and an iteration count <code>c</code>, the following parameters are allowed.</p>
+</div>
+<div class="ulist">
+<div class="title">Iterated Function Signature</div>
+<ul>
+<li>
+<p>Output <code>ot_1:os_1</code>: the first output range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Output <code>ot_n:os_n</code>: the last output range</p>
+</li>
+<li>
+<p>Input <code>ct_1:cs_1</code>: the first closure input range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Input <code>ct_m:cs_m</code>: the last closure input range</p>
+</li>
+<li>
+<p>Input <code>rt:rs</code>: the iteration count input range.
+In the WizToolKit implementation:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>if <code>rs</code> is <em>1</em>, then the iteration count is passed as an arithmetic value and <code>rt</code> must be an arithmetic type.</p>
+</li>
+<li>
+<p>If <code>rs</code> is <em>greater than 1</em> then the iteration count is passed as a bit-vector (most significant bit first), regardless of <code>rt</code>.</p>
+</li>
+<li>
+<p>If the iteration count exceeds the prime or the bit-width&#8217;s maximum value, it will overflow modularly.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Input <code>it_1:is_1</code>: the first iterated range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Input <code>it_o:is_o</code>: the first iterated range</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Iter Plugin Function Signature</div>
+<ul>
+<li>
+<p>Output <code>ot_1:os_1 * c</code>: the first output range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Output <code>ot_n:os_n * c</code>: the last output range</p>
+</li>
+<li>
+<p>Input <code>ct_1:cs_1</code>: the first closure input range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Input <code>ct_m:cs_m</code>: the last closure input range</p>
+</li>
+<li>
+<p>Input <code>it_1:is_1 * c</code>: the first iterated range</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+<li>
+<p>Input <code>it_o:is_o * c</code>: the first iterated range</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Iter Plugin Binding</div>
+<ul>
+<li>
+<p>Plugin Name: <code>iter_v0</code></p>
+</li>
+<li>
+<p>Operation: <code>map_enumerated</code></p>
+</li>
+<li>
+<p><em>String</em>: iterated function name</p>
+</li>
+<li>
+<p><em>Number</em>: <code>m</code>, the number of closures</p>
+</li>
+<li>
+<p><em>Number</em>: <code>c</code>, the iteration count</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementing-the-iter_v0-plugin">Implementing the <code>iter_v0</code> plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>the <a href="../2_nails.html">NAILS interpreter</a> provides an implementation of the <code>iter_v0</code> plugin.
+Backends are not intended to reimplement the plugin on their own.</p>
+</div>
+<div class="paragraph">
+<p>The <code>wtk::nails::MapOperation&lt;Number_T&gt;</code> (from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/nails/IterPlugin.h"><code>#include &lt;wtk/nails/IterPlugin.h&gt;</code></a>) implements the <code>iter_v0</code> plugin.
+Opposite to most plugins the map operation creates iter plugins and hands them off to the plugins manager.
+Instantiate an map operation object, and then use the <code>map_operation.makePlugin&lt;Wire_T&gt;)()</code> method to add plugins to a <code>wtk::utils::PluginsManager&lt;Number_T, Wire_Ts&#8230;&#8203;&gt;</code> object (from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/plugins/Plugin.h"><code>#include &lt;wtk/plugins/Plugin.h&gt;</code></a>).
+You must add one plugin from the map operation for each <code>Wire_T</code> which is used in your backend.
+Here is an example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">Interpreter</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">interpreter</span><span class="tok-p">(</span><span class="tok-s">&quot;relation_file_name&quot;</span><span class="tok-p">);</span>
+<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">PluginsManager</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">WireA</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">WireB</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">plugins_manager</span><span class="tok-p">;</span>
+<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">MapOperation</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">map_operation</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">interpreter</span><span class="tok-p">);</span>
+
+<span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;iter_v0&quot;</span><span class="tok-p">,</span>
+<span class="tok-w">    </span><span class="tok-n">map_operation</span><span class="tok-p">.</span><span class="tok-n">makePlugin</span><span class="tok-o">&lt;</span><span class="tok-n">WireA</span><span class="tok-o">&gt;</span><span class="tok-p">());</span>
+<span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;iter_v0&quot;</span><span class="tok-p">,</span>
+<span class="tok-w">    </span><span class="tok-n">map_operation</span><span class="tok-p">.</span><span class="tok-n">makePlugin</span><span class="tok-o">&lt;</span><span class="tok-n">WireB</span><span class="tok-o">&gt;</span><span class="tok-p">());</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now, your backend can interpret a circuit using the <code>iter_v0</code> plugin.</p>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

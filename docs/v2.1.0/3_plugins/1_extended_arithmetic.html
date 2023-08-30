@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Extended Arithmetic Plugin - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>The Extended Arithmetic Plugin | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="The Extended Arithmetic Plugin" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="The Extended Arithmetic Plugin" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"The Extended Arithmetic Plugin","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a>
+      <ul class="sectlevel1">
+<li><a href="#operations">Operations</a>
+<ul class="sectlevel2">
+<li><a href="#less_than-and-less_than_equal"><code>less_than</code> and <code>less_than_equal</code></a></li>
+<li><a href="#division"><code>division</code></a></li>
+<li><a href="#bit_decompose"><code>bit_decompose</code></a></li>
+</ul>
+</li>
+<li><a href="#implementing-the-wizkit-arithmetic-plugin">Implementing the Wizkit Arithmetic Plugin</a></li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>The Extended Arithmetic Plugin</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>extended_arithmetic_v1</code> plugin provides additional arithmetic operations over the basic addition and multiplication, easing the development of a broader range of statements.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="operations">Operations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following operations are supported.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>less_than</code></dt>
+<dd>
+<p>Compares two inputs, returning 1 if the first input is less than the second input, or 0 otherwise.</p>
+</dd>
+<dt class="hdlist1"><code>less_than_equal</code></dt>
+<dd>
+<p>Compares two inputs, returning 1 if the first input is less than or equal to the second input, or 0 otherwise.</p>
+</dd>
+<dt class="hdlist1"><code>division</code></dt>
+<dd>
+<p>Divides two inputs as if they were integers, returning first the quotient and then the remainder.</p>
+</dd>
+<dt class="hdlist1"><code>bit_decompose</code></dt>
+<dd>
+<p>Decomposes a single input into a bit vector, returning it as range whose length is the prime&#8217;s width.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@function(lt, @out: 0:1, @in: 0:1, 0:1)
+  @plugin(extended_arithmetic_v1, less_than);
+@function(lte, @out: 0:1, @in: 0:1, 0:1)
+  @plugin(extended_arithmetic_v1, less_than_equal);
+@function(div, @out: 0:1, 0:1, @in: 0:1, 0:1)
+  @plugin(extended_arithmetic_v1, division);
+@function(bit_decomp, @out: 0:7, @in: 0:1)
+  @plugin(extended_arithmetic_v1, bit_decompose);</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="less_than-and-less_than_equal"><code>less_than</code> and <code>less_than_equal</code></h3>
+<div class="paragraph">
+<p>These compare two inputs and indicate 1 or 0 for truth or false.
+For a given type <code>t</code> the following parameters are used.</p>
+</div>
+<div class="ulist">
+<div class="title">Function Signature</div>
+<ul>
+<li>
+<p>Output <code>t:1</code>: 1 or 0</p>
+</li>
+<li>
+<p>Input <code>t:1</code>: Left side of comparison</p>
+</li>
+<li>
+<p>Input <code>t:1</code>: Right side of comparison</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Plugin Binding:</div>
+<ul>
+<li>
+<p>Plugin Name: <code>extended_arithmetic_v1</code></p>
+</li>
+<li>
+<p>Operation: <code>less_than</code> or <code>less_than_equal</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="division"><code>division</code></h3>
+<div class="paragraph">
+<p>This operation divides one input by the other, returning a quotient or a remainder.
+For a given type <code>t</code> the following parameters are used.</p>
+</div>
+<div class="ulist">
+<div class="title">Function Signature</div>
+<ul>
+<li>
+<p>Output <code>t:1</code>: Quotient</p>
+</li>
+<li>
+<p>Output <code>t:1</code>: Remainder</p>
+</li>
+<li>
+<p>Input <code>t:1</code>: Numerator/dividend</p>
+</li>
+<li>
+<p>Input <code>t:1</code>: Denominator/divisor</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Plugin Binding:</div>
+<ul>
+<li>
+<p>Plugin Name: <code>extended_arithmetic_v1</code></p>
+</li>
+<li>
+<p>Operation: <code>division</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bit_decompose"><code>bit_decompose</code></h3>
+<div class="paragraph">
+<p>The operation accepts one input, <em>n</em>, and decomposes it into a bit vector.
+The vector, <em>v</em>, is represented as a range of output wires with each element chosen from <em>{0,1}</em>, such that <em>sum(v<sub>i</sub> * 2<sup>l-i</sup>) == n</em>.
+The output vector&#8217;s length, <em>l</em>, must be exactly <em>ceiling(log2(p))</em>, where <em>p</em> is the field&#8217;s prime.
+The most significant bit is stored first and the least significant bit is last.
+For a given type <code>t</code> with prime <code>p</code>, the following parameters are used.</p>
+</div>
+<div class="ulist">
+<div class="title">Function Signature</div>
+<ul>
+<li>
+<p>Output <code>t:ceiling(log2(p))</code>: The decomposed bits</p>
+</li>
+<li>
+<p>Input <code>t:1</code>: Value to decompose</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Plugin Binding:</div>
+<ul>
+<li>
+<p>Plugin Name: <code>extended_arithmetic_v1</code></p>
+</li>
+<li>
+<p>Operation: <code>bit_decompose</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementing-the-wizkit-arithmetic-plugin">Implementing the Wizkit Arithmetic Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TODO: Coming Soon</p>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

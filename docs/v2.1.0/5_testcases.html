@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Generating Test Cases with WizToolKit - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Generating Test Cases with WizToolKit | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Generating Test Cases with WizToolKit" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/5_testcases.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/5_testcases.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Generating Test Cases with WizToolKit" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Generating Test Cases with WizToolKit","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/5_testcases.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a>
+      <ul class="sectlevel1">
+<li><a href="#matrix-multiplication">Matrix Multiplication</a></li>
+<li><a href="#multiplexer-1-type">Multiplexer 1-type</a></li>
+<li><a href="#multiplexer-2-type">Multiplexer 2-type</a></li>
+<li><a href="#memchk">Memchk</a></li>
+</ul>
+    </li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>Generating Test Cases with WizToolKit</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following test-case generation scripts are provided</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/python/matrix_prod.py"><code>matrix_prod.py</code></a></p>
+</li>
+<li>
+<p><a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/python/multiplexer_1type.py"><code>multiplexer_1type.py</code></a></p>
+</li>
+<li>
+<p><a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/python/multiplexer_2type.py"><code>multiplexer_2type.py</code></a></p>
+</li>
+<li>
+<p><a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/python/memchk.py"><code>memchk.py</code></a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="matrix-multiplication">Matrix Multiplication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>matrix_prod.py</code> script generates an IR relation demonstrating a matrix multiplication in the IR.
+The circuit inputs three matrixes, <em>M</em>, <em>N</em>, and <em>C</em>, of sizes <em>a*b</em>, <em>b*c</em>, and <em>a*c</em>.
+It computes <em>C' := M x N</em>, and then checks that <em>C' == C</em>.
+<em>M</em> and <em>C</em> are read from the public input stream, while <em>N</em> is read from the private input stream.</p>
+</div>
+<div class="paragraph">
+<p>The script accepts the following parameters</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>python3 src/main/python/matrix_prod.py &lt;ir&gt; &lt;a&gt; &lt;b&gt; &lt;c&gt; &lt;p&gt; &lt;relation&gt; &lt;public_inputs&gt; &lt;private_inputs&gt;</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>&lt;ir&gt;</code> A keyword indicating how the relation will be generated.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>flat_tb</code> A flat matrix-multiply function is generated (no helper functions), using the textbook matrix-multiply algorithm</p>
+</li>
+<li>
+<p><code>mem_flat_tb</code> Same as <code>flat_tb</code>, however memory management gates are used more aggressively.</p>
+</li>
+<li>
+<p><code>flat_pt</code> A flat matrix-multiply function is generated (no helper functions), using a derivation of the textbook algorithm which transposes each column in <em>N</em> one at a time. (<code>pt</code> is short for Partial Transpose).</p>
+</li>
+<li>
+<p><code>mem_flat_pt</code> Same as <code>flat_pt</code>, however memory management gates are used more aggressively.</p>
+</li>
+<li>
+<p><code>dotprod_tb</code> A matrix-multiply function is generated to take advantage of a dot-product helper function. The textbook algorithm is used.</p>
+</li>
+<li>
+<p><code>mem_dotprod_tb</code> Same as <code>dotprod_tb</code>, however memory management gates are used more aggressively.</p>
+</li>
+<li>
+<p><code>dotprod_pt</code> A matrix-multiply function is generated to take advantage of a dot-product helper function, and a partial-transpose helper function.</p>
+</li>
+<li>
+<p><code>mem_dotprod_pt</code> Same as <code>dotprod_pt</code>, however memory management gates are used more aggressively.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>&lt;a&gt;</code>, <code>&lt;b&gt;</code>, and <code>&lt;c&gt;</code> matrix size parameters.</p>
+</li>
+<li>
+<p><code>&lt;p&gt;</code> the field/prime.</p>
+</li>
+<li>
+<p><code>&lt;relation&gt;</code> the filename of the relation</p>
+</li>
+<li>
+<p><code>&lt;public_inputs&gt;</code> the filename of the public inputs</p>
+</li>
+<li>
+<p><code>&lt;private_inputs&gt;</code> the filename of the private inputs</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="multiplexer-1-type">Multiplexer 1-type</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The multiplexer 1-type script generates a function implementing an arithmetic multiplexer either in the IR or with a plugin.</p>
+</div>
+<div class="paragraph">
+<p>The script accepts the following parameters</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>python3 src/main/python/multiplexer_2type.py &lt;ir&gt; &lt;F&gt; &lt;G&gt; &lt;cases&gt; &lt;items&gt; &lt;output&gt;</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>&lt;ir&gt;</code> A keyword indicating how the relation will be generated</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>no_plugins</code> indicates the multiplexer should be generated without the use of any plugins.</p>
+</li>
+<li>
+<p><code>mux_v0</code> use the plugin.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>&lt;F&gt;</code> the prime used in the multiplexer test relation</p>
+</li>
+<li>
+<p><code>&lt;cases&gt;</code> the number of cases</p>
+</li>
+<li>
+<p><code>&lt;item&gt;</code> the number of items in each case</p>
+</li>
+<li>
+<p><code>&lt;output&gt;</code> the base name of all output files</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="multiplexer-2-type">Multiplexer 2-type</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The multiplexer 2-type script generates a function implementing an arithmetic multiplexer.
+The function has an input wire in field <code>F</code> as the case select wire.
+It also hase one input range for every case in the multiplexer using field <code>G</code>.
+The outputs are provided in field <code>G</code>.</p>
+</div>
+<div class="paragraph">
+<p>The script accepts the following parameters</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>python3 src/main/python/multiplexer_2type.py &lt;ir&gt; &lt;F&gt; &lt;G&gt; &lt;cases&gt; &lt;items&gt; &lt;output&gt;</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>&lt;ir&gt;</code> A keyword indicating how the relation will be generated</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>no_plugins</code> indicates the multiplexer should be generated without the use of any plugins.</p>
+</li>
+<li>
+<p>The current <code>mux_v0</code> plugin does not support multiple types.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>&lt;F&gt;</code> and <code>&lt;G&gt;</code> the primes/fields used for the case selector and item lists respectively.</p>
+</li>
+<li>
+<p><code>&lt;cases&gt;</code> the number of cases</p>
+</li>
+<li>
+<p><code>&lt;item&gt;</code> the number of items in each case</p>
+</li>
+<li>
+<p><code>&lt;output&gt;</code> the base name of all output files</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="memchk">Memchk</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The memchk script generates a relation using the <code>ram_arith_v0</code> and <code>iter_v0</code> plugins.
+It emulates the classic "memchk" program writing values to each location in memory and asserting that the same value is read.
+Then it reads a sequence of random reads and writes from the witness, and asserts the correctness of those too.</p>
+</div>
+<div class="paragraph">
+<p>The script accepts the following parameters</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>python3 src/main/python/memchk.py &lt;size&gt; &lt;prime&gt; &lt;output&gt;</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>&lt;size&gt;</code> the size of the RAM buffer to test</p>
+</li>
+<li>
+<p><code>&lt;prime&gt;</code> the prime used for the index/element type</p>
+</li>
+<li>
+<p><code>&lt;output&gt;</code> the base name for all output files</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WizToolKit Manual - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>WizToolKit Manual | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="WizToolKit Manual" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="WizToolKit Manual" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"WizToolKit Manual","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+                id="currPage"
+                
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a>
+      
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>WizToolKit Manual</h1>
+  <div class="ulist">
+<ul>
+<li>
+<p><a href="./0_intro.html">Introduction</a></p>
+</li>
+<li>
+<p><a href="./1_parsing.html">Parsing the IR</a></p>
+</li>
+<li>
+<p><a href="./2_nails.html">The NAILS Interpreter</a></p>
+</li>
+<li>
+<p><a href="./3_plugins/0_intro.html">IR Plugins</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="./3_plugins/1_iter_v0.html">Iteration Plugin</a></p>
+</li>
+<li>
+<p><a href="./3_plugins/1_mux_v0.html">Multiplexer Plugin</a></p>
+</li>
+<li>
+<p><a href="./3_plugins/1_ram_arith_v0.html">Arithmetic RAM Plugin</a></p>
+</li>
+<li>
+<p><a href="./3_plugins/1_ram_bool_v0.html">Boolean RAM Plugin</a></p>
+</li>
+<li>
+<p><a href="./3_plugins/1_wizkit_vectors.html">Wizkit Vectors Plugin</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Tools</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="./4_tools/firealarm.html"><code>wtk-firealarm</code>: Non-ZK IR Interpreter for Debugging</a></p>
+</li>
+<li>
+<p><a href="./4_tools/firealarm.html"><code>wtk-press</code>: Converter for the Text and Flatbuffer Formats</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="./5_testcases.html">Testcase Generation Scripts</a></p>
+</li>
+<li>
+<p><a href="./6_sample_backends/0_intro.html">Sample Backend Code</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="./6_sample_backends/1_simple.html">Simple Arithmetic Backend</a></p>
+</li>
+<li>
+<p><a href="./6_sample_backends/2_multitype.html">Arithmetic and Boolean Backend</a></p>
+</li>
+<li>
+<p><a href="./6_sample_backends/3_simple_plugins.html">Simple Arithmetic Backend with Plugins</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="7_install.html">Installation Guide</a></p>
+</li>
+</ul>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

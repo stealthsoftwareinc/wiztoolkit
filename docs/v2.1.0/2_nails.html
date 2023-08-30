@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAILS Circuit-IR Interpreter - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>NAILS Circuit-IR Interpreter | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="NAILS Circuit-IR Interpreter" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/2_nails.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/2_nails.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="NAILS Circuit-IR Interpreter" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"NAILS Circuit-IR Interpreter","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/2_nails.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a>
+      <ul class="sectlevel1">
+<li><a href="#implementing-a-backend">Implementing a Backend</a></li>
+<li><a href="#invoking_nails">Invoking NAILS</a></li>
+<li><a href="#field-switching-and-conversions">Field Switching and Conversions</a></li>
+</ul>
+    </li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>NAILS Circuit-IR Interpreter</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>NAILS is WizToolKit&#8217;s interpreter library for the Circuit-IR (IR0+).
+NAILS will handle the IR semantics and pass off the details of ZK to your backend.
+It stands for "Naive Amenity for Interpreting Long Streams", because it just reads things and passes them to the backend, it can&#8217;t do much in the way of smart things to speed up processing.</p>
+</div>
+<div class="paragraph">
+<p>NAILS requires you to implement an abstract class with callbacks to handle each gate.
+You will need one of these "backend" objects for each type in the statement.
+Once these are provided, the NAILS system can invoke the appropriate callbacks corresponding to the gates in the relation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementing-a-backend">Implementing a Backend</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A ZK backend should implement the <code>wtk::TypeBackend&lt;Number_T, Wire_T&gt;</code> interface defined in <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/TypeBackend.h"><code>#include &lt;wtk/TypeBackend.h&gt;</code></a>.
+the <code>Number_T</code> template should correspond with the <code>Number_T</code> used for the <a href="./1_parsing.html#common_api">Parser API</a>.
+the <code>Wire_T</code> template is representative of a wire or a field element within the backend, it has few requirements other than being default and move constructible.</p>
+</div>
+<div class="paragraph">
+<p>Implement methods of the backend to perform arithmetic like this</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">template</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Wire_T</span><span class="tok-o">&gt;</span>
+<span class="tok-k">class</span><span class="tok-w"> </span><span class="tok-nc">MyBackend</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TypeBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Wire_T</span><span class="tok-o">&gt;</span>
+<span class="tok-p">{</span>
+<span class="tok-k">public</span><span class="tok-o">:</span>
+<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">mulGate</span><span class="tok-p">(</span><span class="tok-n">Element_T</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out</span><span class="tok-p">,</span>
+<span class="tok-w">      </span><span class="tok-n">Element_T</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">left_in</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Element_T</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">right_in</span><span class="tok-p">)</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-cm">/* Your Code Here */</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+
+<span class="tok-w">  </span><span class="tok-cm">/** Etc. */</span>
+<span class="tok-p">};</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The failure method of <code>wtk::TypeBackend</code> is to cache them until the end of the relation (for example if an <code>@assert_zero</code> turns out non-zero) and report the failure at end using the <code>bool check()</code> method.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="invoking_nails">Invoking NAILS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The main worker of NAILS is the <code>wtk::nails::Interpreter&lt;Number_T&gt;</code> class from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/nails/Interpreter.h"><code>#include &lt;wtk/nails/Interpreter.h&gt;</code></a>.
+The interpreter manages gates and memory and passes off gates to the appropriate <code>wtk::TypeBackend</code> callback for doing ZK logic.
+It is templated on just the <code>Number_T</code>, for example GMP&#8217;s <code>mpz_class</code>, same as the parser.
+It is not templated with the backend&#8217;s <code>Wire_T</code> because it must handle multiple backends, each of which may have a different Wire_T template.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">Interpreter</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">interpreter</span><span class="tok-p">(</span><span class="tok-s">&quot;circuit_file_name (for error reporting)&quot;</span><span class="tok-p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You will need to add each type in your relation to the <code>interpreter</code>, along with public and private input streams.
+The <code>circuit_parser->types</code> vector holds a type specification for each conversion (<code>wtk::circuit::TypeSpec&lt;Number_T&gt;</code> from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/circuit/Data.h"><code>#include &lt;wtk/circuit/Data.h&gt;</code></a>.
+The public and private input streams may be <code>nullptr</code>, for example in preprocessing or as the verifier.
+As mentioned, the backend&#8217;s <code>Wire_T</code> template may differ on each invocation of the <code>interpreter.addBackend(...)</code> call.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-cm">/* Create the appropriate backend and streams */</span>
+
+<span class="tok-w">  </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addType</span><span class="tok-p">(</span><span class="tok-n">my_backend</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">public_in_stream</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">private_in_stream</span><span class="tok-p">);</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next is a little bit of necessary boilerplate to accomodate functions and plugins.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wtk::nails::GatesFunctionFactory&lt;Number_T&gt;</code> (from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/nails/Functions.h"><code>#include &lt;wtk/nails/Functions.h&gt;</code></a></p>
+</li>
+<li>
+<p><code>wtk::plugin::PluginsManager&lt;Number_T, Wire_Ts&#8230;&#8203;&gt;</code> (from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/plugins/Plugin.h"><code>#include &lt;wtk/plugins/Plugin.h&gt;</code></a>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This one requires a list with each distinct <code>Wire_T</code> from all backends.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">GatesFunctionFactory</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">function_factory</span><span class="tok-p">;</span>
+<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">PluginsManager</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithmeticWire</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">plugins_manager</span><span class="tok-p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally, to invoke NAILS, you&#8217;ll need to invoke the <a href="1_parsing.html#circuit">Circuit-IR Parser</a> with a <code>wtk::nails::Handler&lt;Number_T&gt;</code>.
+The <code>wtk::nails::Handler&lt;Number_T&gt;</code> implements the Parser&#8217;s callback API, either passing off gates to NAILS or recording them within functions.
+Find it in <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/nails/Handler.h"><code>#include &lt;wtk/nails/Handler.h&gt;</code></a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">Handler</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">handler</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">interpreter</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">function_factory</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">plugins_manager</span><span class="tok-p">);</span>
+
+<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parse</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">handler</span><span class="tok-p">))</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;syntax error or poorly formed relation</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">)</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Last thing to do is call <code>check()</code> and <code>finish()</code> to report errors and clean up.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">my_field</span><span class="tok-p">.</span><span class="tok-n">check</span><span class="tok-p">())</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;Something asserted non-zero&quot;</span><span class="tok-p">);</span>
+<span class="tok-p">}</span>
+
+<span class="tok-c1">// if implemented by your backend</span>
+<span class="tok-n">my_field</span><span class="tok-p">.</span><span class="tok-n">finish</span><span class="tok-p">()</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="field-switching-and-conversions">Field Switching and Conversions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The parser API includes a <code>wtk::circuit::ConversionSpec</code> type with details about each conversion (see <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/circuitData.h"><code>#include &lt;wtk/circuit/Data.h&gt;</code></a>).
+Most notably, the conversion spec defines a type and a size for the inputs and outputs.
+You will need to provide one converter object to correspond to each conversion spec.
+Implement the <code>wtk::Converter&lt;OutWire_T, InWire_T&gt;</code> interface for field switching (see <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/Converter.h"><code>#include &lt;wtk/Converter.h&gt;</code></a>).
+The <code>OutWire_T</code> and <code>InWire_T</code> templates correspond to <code>Wire_T</code> of the output and input <code>wtk::TypeBackend</code>s.
+The constructor must set the <code>ouLength</code> and <code>inLength</code> parent attributes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">class</span><span class="tok-w"> </span><span class="tok-nc">MyConversion</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-n">MyWireOut</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWireIn</span><span class="tok-o">&gt;</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-c1">// constructor recieves in/out lengths</span>
+<span class="tok-w">  </span><span class="tok-n">MyConversion</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">)</span>
+<span class="tok-w">    </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-n">MyWireOut</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWireIn</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-p">}</span>
+
+<span class="tok-w">  </span><span class="tok-c1">// convert method recieves pointers of length outLength and inLength</span>
+<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">convert</span><span class="tok-p">(</span>
+<span class="tok-w">      </span><span class="tok-n">OutWire_T</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out_wires</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">InWire_T</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in_wires</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">out_len</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">outLength</span><span class="tok-p">;</span>
+<span class="tok-w">    </span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">inLength</span><span class="tok-p">;</span>
+
+<span class="tok-w">    </span><span class="tok-cm">/* Your code here */</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-p">};</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In pseudocode, the precise plaintext algorithm for SIEVE IR conversion is as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>void plaintext_conversion(out_len, in_len, out_prime, in_prime, out_vals[], in_vals[])
+{
+  int_equiv = 0;
+  for(i from 0 to in_len)
+  {
+    int_equiv *= in_prime
+    int_equiv += in_vals[i]
+  }
+
+  for(i from 1 to out_len + 1)
+  {
+    out_vals[out_len - i] = int_equiv % out_prime;
+    int_equiv = int_equiv / out_prime; // division rounds down
+  }
+
+  // It is allowable for int_equiv to be non-zero here.
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once your conversion implementation is working you can begin allocation.
+The <code>circuit_parser->conversions</code> vector holds specifications for each conversion (<code>wtk::circuit::ConversionSpec</code> from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/circuit/Data.h"><code>#include &lt;wtk/circuit/Data.h&gt;</code></a>, and <code>wtk::circuit::Parser&lt;Number_T&gt;</code> from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/circuit/Parser.h"><code>#include &lt;wtk/circuit/Parser.h&gt;</code></a>).
+The appropriate <code>converter->convert(out_wires, in_wires)</code> method will be called when a convert gate is encountered.</p>
+</div>
+<div class="paragraph">
+<p>Conversions must be added to NAILS via the <code>interpreter.addConversion(/* ... */)</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">circuit</span><span class="tok-o">::</span><span class="tok-n">ConversionSpec</span><span class="tok-w"> </span><span class="tok-n">spec</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">];</span>
+
+<span class="tok-w">  </span><span class="tok-cm">/* Your code here */</span>
+
+<span class="tok-w">  </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addConversion</span><span class="tok-p">(</span><span class="tok-n">spec</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">my_converter</span><span class="tok-p">);</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

@@ -53,7 +53,7 @@
           
         
           
-            <a href="/wiztoolkit/docs/v1.0.1/"
+            <a href="/wiztoolkit/docs/v2.1.0/"
               
               >docs</a>
           
@@ -73,140 +73,69 @@
 <div class="sectionbody">
 <div class="paragraph">
 <p>This is a collection of tools, provided by team Wizkit, for working with the SIEVE IR.
-It In addition to a few command-line tools, it has an extensive C++ API for manipulating the SIEVE IR.
-This release of WizToolKit corresponds to version <code>1.0.0</code> of the SIEVE IR Specification.</p>
-</div>
-<div class="paragraph">
-<p>If you&#8217;re not familiar with the SIEVE IR, have a look at our <a href="https://stealthsoftwareinc.github.io/wizkit-blog/2021/09/20/introducing-the-sieve-ir.html">introduction to the SIEVE IR</a>.
-It represents ZK relations using circuits, and the instance and short-witness as input streams.</p>
+It In addition to a few command-line tools, it has an extensive C++ API for manipulating the SIEVE IR.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="command-line">Command-line</h2>
+<h2 id="documentation">Documentation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The following tools are available on the command-line from WizToolKit.</p>
+<p>The <a href="docs/v2.1.0/readme.html">WizToolKit Manual is available by clicking here</a>.
+Here are a few highlights.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="docs/v2.1.0/0_intro.html">Intro</a> An overview of WizToolKit and the IR</p>
+</li>
+<li>
+<p><a href="docs/v2.1.0/1_parsing.html">WizToolKit Parsers tutorial</a></p>
+</li>
+<li>
+<p><a href="docs/v2.1.0/2_nails.html">NAILS</a>: an interpreter API to bridge ZK backends into the Circuit-IR</p>
+</li>
+<li>
+<p><a href="docs/v2.1.0/3_plugins/0_intro.html">Plugins</a> the Circuit-IR plugins</p>
+</li>
+<li>
+<p>Tools</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="docs/v2.1.0/4_tools/firealarm.html">wtk-firealarm</a> A non-ZK interpreter for the SIEVE IR, useful for debugging.</p>
+</li>
+<li>
+<p><a href="docs/v2.1.0/4_tools/press.html">wtk-press</a> A format converter for the SIEVE IR (text to flatbuffer or flatbuffer to text).</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="docs/v2.1.0/5_testcases.html">Test case generation scripts</a></p>
+</li>
+<li>
+<p><a href="docs/v2.1.0/6_sample_backends/0_intro.html">Backend Sample Code</a> to get started with a backend implementation/integration.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installation">Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It uses <code>cmake</code> but a <code>Makefile</code> wraps everything up, downloads a few dependencies, calls tools which <code>cmake</code> can&#8217;t use, etc.
+Install should be as simple as <code>make</code> and <code>make install</code>.
+See the <a href="docs/v2.1.0/7_install.html">installation guide</a> for more info.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>wtk-firealarm</code> (checking and evaluating)</dt>
+<dt class="hdlist1">WARNING</dt>
 <dd>
-<p>Checks an individual IR resource for well-formedness. For a triple of relation, instance, and short-witness it checks for evaluation validity.</p>
-</dd>
-<dt class="hdlist1"><code>wtk-press</code> (format and feature conversions)</dt>
-<dd>
-<p>Converts between the text and binary formats of the IR. It can also replace IR <code>@switch</code> directives with a <em>multiplexer</em> implementation using <code>@loop</code>s and a <code>@function</code>.</p>
-</dd>
-<dt class="hdlist1"><code>wtk-viz</code> (visualization)</dt>
-<dd>
-<p>Visualize the IR by converting it to <a href="https://graphviz.org/">Graphviz</a>.</p>
-</dd>
-<dt class="hdlist1"><code>wtk-bolt</code> (example and testing)</dt>
-<dd>
-<p>Invokes the BOLT or PLASMASnooze interpreters without ZK. For use in testing or as an example. See <a href="docs/v1.0.1/backends.html#backends">WizToolKit for Backends</a> for more information on these.</p>
+<p>If you just ran <code>git pull</code>, and all of a sudden you can&#8217;t build anymore try <code>make deps-clean &amp;&amp; make</code>.</p>
 </dd>
 </dl>
-</div>
-<div class="paragraph">
-<p>For more information on these tools see <a href="docs/v1.0.1/commandline.html#commandline">WizToolKit on the command-line</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="parsing-the-ir">Parsing the IR</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>WizToolKit enables parsing both text and binary profiles of the SIEVE IR.
-The parsing API is designed for maximal flexibility, parsing the header first and then allowing the user to decide how to proceed.</p>
-</div>
-<div class="paragraph">
-<p>In addition to both IR-Formats, WizToolKit can parse a resource with either a streaming parser (when grammar is limited to IR-Simple) or a syntax-tree parser.
-It also allows the user to supply a numeric type for parsing field-element literals via a template parameter, and after parsing the header to possibly downgrade to <code>uint64_t</code> or <code>uint32_t</code> for the remaining IR body.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 60%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parser</th>
-<th class="tableblock halign-left valign-top">Format</th>
-<th class="tableblock halign-left valign-top">Comment</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ANTLR</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Text</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Uses the <a href="https://www.antlr.org/">ANTLR generator</a>. "Obviously" correct, parses line-numbers, slow</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">IRRegular</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Text</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fast, minimal memory use, no line-numbers</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FlatBuffer</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Binary</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://google.github.io/flatbuffers">FlatBuffer</a> parser</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>For more information see <a href="docs/v1.0.1/parsers.html#parsers">Parsing the IR</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="for-zk-backends">For ZK Backends</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For ZK Backends, WizToolKit provides a simple Backend API, and two interpreters to drive the API.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">BOLT</dt>
-<dd>
-<p>first builds an augmented representation of the relation while checking for well-formedness. Then it evaluates without needing any well-formedness checks or having to stop and translate indices to actual wires. This is ideal for relations which make heavy use of loops.</p>
-</dd>
-<dt class="hdlist1">PLASMASnooze</dt>
-<dd>
-<p>(A pun on FIREALARM) simply traverses the IR syntax-tree doing on-the-fly well-formedness checks.</p>
-</dd>
-</dl>
-</div>
-<div class="paragraph">
-<p>For more information see <a href="docs/v1.0.1/backends.html#backends">WizToolKit for ZK Backends</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="other-apis">Other APIs</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The entirety of the WizToolKit command-line is available as API, however not all of it is well documented.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="building">Building</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>WizToolKit uses CMake, Python3, Java (optional), and a number of other utilities during build, of course in addition to a C++ compiler.
-This all is orchestrated using <code>make</code>, and the familiar pattern should work.
-Build artifacts are typically deposited in the <code>target/</code> directoy.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>make
-make install</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>See the <a href="docs/v1.0.1/install.html#install">Install Guide</a> for details, and for a list of necessary dependencies.</p>
 </div>
 </div>
 </div>
@@ -214,16 +143,23 @@ make install</pre>
 <h2 id="licensing">Licensing</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The source code and other substantial material in this directory is Copyright &#169; 2020-2022 Stealth Software Technologies, Inc.</p>
+<p>Copyright &#169; 2020-2022 Stealth Software Technologies, Inc.
+Licensed to you under the <a href="./license.md">MIT License</a>.</p>
 </div>
 <div class="paragraph">
-<p>This version of WizToolKit has been approved for public release under the open-source <a href="license.md">MIT License</a>.</p>
+<p>This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087.
+The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.</p>
 </div>
 <div class="paragraph">
-<p><strong>Distribution Statement A</strong>: Approved for Public Release, Distribution Unlimited.</p>
+<p><strong>Distribution Statement "A":</strong> Approved for Public Release, Distribution Unlimited.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="contact">Contact</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>This material is based upon work supported by DARPA under Contract No. HR001120C0087.  Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of DARPA.</p>
+<p>For questions, comments, or bugs please contact <a href="mailto:kimee@stealthsoftwareinc.com">Kimberlee Model</a> via email or on SIEVE internal Slack.</p>
 </div>
 </div>
 </div>
@@ -237,7 +173,7 @@ make install</pre>
         </p>
       
       <p>
-        Copyright &copy; 2022, Stealth Software Technologies, Inc.
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
         All Rights Reserved.
       </p>
       

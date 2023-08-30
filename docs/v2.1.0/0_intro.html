@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Introduction to the WizToolKit Manual - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Introduction to the WizToolKit Manual | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Introduction to the WizToolKit Manual" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/0_intro.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/0_intro.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Introduction to the WizToolKit Manual" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Introduction to the WizToolKit Manual","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/0_intro.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a>
+      <ul class="sectlevel1">
+<li><a href="#settings-and-use-cases">Settings and Use-cases</a></li>
+<li><a href="#the-sieve-ir">The SIEVE IR</a></li>
+<li><a href="#wiztoolkit">WizToolKit</a></li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>Introduction to the WizToolKit Manual</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>WizToolKit is a system for working with the SIEVE IR, both on the command-line and in C++ or another language capable of interfacing with C/C++.
+WizToolKit is built to handle a variety of use cases and settings.</p>
+</div>
+<div class="paragraph">
+<p>In this introduction, we&#8217;ll go over a few aspects of the IR and how it is used.
+The reader is expected to have a passing familiarity with Zero Knowledge (ZK).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="settings-and-use-cases">Settings and Use-cases</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Due to the complexity, ZK Proof systems are often organized into a <em>frontend</em> (TA1, within the SIEVE Program) and a <em>backend</em> (TA2).
+The <em>frontend</em> converts a human readable statement into a machine readable statement (the IR).
+The <em>backend</em> then takes a machine readable statement and proves its truthfulness.
+Within the <em>backend</em> we have a few settings for how the statement is used.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Prover</dt>
+<dd>
+<p>The prover must convince the verifier of a statement&#8217;s truthfulness.</p>
+</dd>
+<dt class="hdlist1">Verifier</dt>
+<dd>
+<p>The verifier is either convinced or not convinced by the prover.</p>
+</dd>
+<dt class="hdlist1">Preprocessing</dt>
+<dd>
+<p>The backend may wish to perform certain tasks upon a <em>relation</em> before it can prove and verify.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="the-sieve-ir">The SIEVE IR</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The SIEVE IR is a format for arithmetic (and boolean) ZK circuits.
+There are two layers in the IR, the <em>Circuit-IR</em>, a somewhat low-level representation, and the <em>Translation-IR</em>, a higher level representation which can translate itself to the <em>Circuit-IR</em> or other IRs.
+For the time being, the <em>Translation-IR</em> is under development, and WizToolKit focuses on handling the <em>Circuit-IR</em>.</p>
+</div>
+<div class="paragraph">
+<p>The IR is composed of the following resources:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Input Streams</dt>
+<dd>
+<p>An input stream is a list of values which are the inputs to a circuit.
+In general there are two kinds of input streams.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>public_input</code> stream has values which are known to both the prover and verifier.</p>
+</li>
+<li>
+<p>The <code>private_input</code> stream has values which are known only to the prover.</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Circuit</dt>
+<dd>
+<p>The <code>circuit</code> is the <em>relation</em> for the <em>Circuit-IR</em>.
+The <em>relation</em> is likely the most noticable aspect of the IR, and as such gets a lot of attention from WizToolKit.
+The <em>Circuit-IR</em> uses numbered wires to connect gates together to form a Directed Acyclical Graph (DAG) with operations at each node.</p>
+</dd>
+<dt class="hdlist1">Translation</dt>
+<dd>
+<p>The <code>translation</code> resource is an alternative <em>relation</em> format for the <em>Translation-IR</em>.
+It is currently in <strong>development</strong>, and largely <strong>unimplemented</strong>.</p>
+</dd>
+<dt class="hdlist1">Configuration</dt>
+<dd>
+<p>The <code>configuration</code>, or "CCC" (Circuit Configuration Communication), conveys information backwards from the backend to the frontend.
+This allows the frontend to emit a circuit which is compatible with a particular backend, and hopefully also maximizes performance.
+It also is currently in <strong>development</strong>, and largely <strong>unimplemented</strong>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="wiztoolkit">WizToolKit</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>WizToolKit is a collection of many tools and libraries.</p>
+</div>
+<div class="paragraph">
+<p>If you want to jump right into developing a backend, start with the <a href="./7_install.html">installation guide</a> and one of our <a href="./6_sample_backends/0_intro.html">sample backends</a>.
+Otherwise, a good starting place would be with either <a href="./1_parsing.html">parsing</a> or the <a href="./2_nails.html">NAILS interpreter</a>.
+Next, you may wish to look at WizToolKit&#8217;s <a href="./3_plugins/0_intro.html">IR Plugin offerings</a>.
+For development and testing, WizToolKit provides the <a href="./4_tools/firealarm.html"><code>wtk-firealarm</code></a> Non-ZK IR interpreter and a bunch of <a href="./5_testcases.html">test case generation scripts</a>.</p>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

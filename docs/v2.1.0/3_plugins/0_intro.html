@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plugins Intro - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Plugins Intro | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Plugins Intro" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Plugins Intro" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Plugins Intro","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a>
+      <ul class="sectlevel1">
+<li><a href="#ir-plugins">IR Plugins</a></li>
+<li><a href="#implementing_plugins">Implementing Plugins in WizToolKit</a></li>
+<li><a href="#builtin-plugins">Builtin Plugins</a></li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>Plugins Intro</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter is organized into sub-chapters for each plugin.
+This introduction will go over the use of plugins at a broad level, then each sub-chapter will look at the specifics of a given plugin.</p>
+</div>
+<div class="paragraph">
+<p>In each sub-chapter, we will start with the plugin&#8217;s in-IR usage, then get into it&#8217;s C++ implementation.</p>
+</div>
+<div class="paragraph">
+<p>It should be noted that Plugins are, for the time being, a Circuit-IR feature.
+The use of plugins with the Translation-IR is not yet under development, and may use a somewhat different API from the Circuit-IR.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ir-plugins">IR Plugins</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A plugin allows a backend to implement functionality beyond the confines of the IR.
+This means that additional coordination is necessary between the backend and frontend.
+Users may take advantage of the <a href="#builtin-plugins">specified/builtin plugins</a>, use the <a href="https://raw.githubusercontent.com/sieve-zk/ir/main/v2.1.0/circuit-ir/circuit-ir-v2.1.0.pdf#section.6">Circuit Configuration Communication (CCC)</a>, or otherwise the plugin&#8217;s semantics and identifiers must be agreed to out of band.</p>
+</div>
+<div class="paragraph">
+<p>In the IR, a plugin is identified by a name.
+The name must be declared in the circuit header, between the <code>circuit</code> keyword and the first <code>@type</code> declaration.
+This gives the backend a chance to perform setup tasks.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>/* ... */
+circuit;
+
+@plugin my_plugin_1;
+
+@type /* ... */</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Multiple plugins may also be declared.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>/* ... */
+circuit;
+
+@plugin my_plugin_1;
+@plugin my_plugin_2;
+/* More plugins, as necessary */
+
+@type /* ... */</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Plugin functionality takes the place of a Circuit-IR function.
+The IR function-signature is used, as expected.
+However, rather than having a list of gates for its body, it has a plugin binding.
+The signature declares the plugin&#8217;s functionality to the IR, whilst the binding configures the backend-specific functionality.</p>
+</div>
+<div class="paragraph">
+<p>Here is an example.
+In the plugin binding, two identifiers are required&#8201;&#8212;&#8201;the plugin name and operation&#8201;&#8212;&#8201;then a mix of identifiers and numbers are allowed.
+The list is to be interpreted by the backend.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@function(function_name, @out: 0:4, @in: 0:4, 0:4)
+  @plugin(my_plugin_1, some_operation, a, 1, b, 2, c, 3);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Plugins also allow the definition of non-field types.
+These types are declared in the same section as field types, but rather than having a prime, they have a plugin binding.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@type field 7;
+@type @plugin(my_plugin_2, my_plugin_type, a, 1, b, 2, c, 3);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Plugin types may then be used as arguments to plugin functions.
+If it makes sense for the plugin&#8217;s functionality, they could also be used as inputs to gates.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementing_plugins">Implementing Plugins in WizToolKit</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the IR, plugins take the place of a function&#8217;s body.
+However, the WizToolKit interface does not entirely expose functions to implementors.
+Rather, it encapsulates the minutia of invocation while exposing a system to search and retrieve plugin functionality when needed.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/plugins/Plugin.h"><code>#include &lt;wtk/plugins/Plugin.h&gt;</code></a> interface exposes a <code>wtk::plugins::PluginsManager&lt;Number_T, Wire_Ts&#8230;&#8203;&gt;</code> for managing and, as needed, retrieving the appropriate plugins, as well as the <code>wtk::plugins::Plugin&lt;Number_T, Wire_T&gt;</code> interface to encapsulate a plugin.
+However, the heart of the interface is the <code>wtk::plugins::Operation&lt;Number_T&gt;</code> which may be subclassed to implement specific plugin operations.
+These classes form somewhat of a heirarchy which is traversed to retrieve the functionality referred to by a plugin binding.</p>
+</div>
+<div class="paragraph">
+<p>The following are the criteria used for retrieving plugin functionality.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Plugin Name</strong>: The first required parameter of the plugin-binding refers to the name of a group of associated functionality.</p>
+</li>
+<li>
+<p><strong>Dominant Type</strong>: This is determined from the function signature by looking at each input range and then each output range to find a type (e.g. field or prime) which is supported by the plugin.
+Typically all parameters to a plugin function will have all the same type, however this is not always the case.
+For this reason, the input types are scanned for the first input type which is supported by the named plugin.
+If the inputs do not turn up a supported type, outputs are scanned, and failing this an error occurs.
+The dominant type actually has two subcriteria:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><strong>Type Index</strong>: The index used within the IR to refer to a type</p>
+</li>
+<li>
+<p><strong><code>Wire_T</code> template</strong>: The template type used by the backend&#8217;s C++ code for wire storage.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>Operation</strong>: Once the plugin name and dominant type are selected, the second required parameter of the plugin-binding is used to select the appropriate functionality.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The following example shows a plugin heirarchy with <code>foo</code> and <code>bar</code> plugins, for each of the <code>BoolWire</code> and <code>ArithWire</code> <code>Wire_T</code> template arguments.
+Within the <code>FooPlugin&lt;Number, ArithWire&gt;</code> plugin, shown are <code>spam</code> and <code>eggs</code> operations for types with primes <em>7</em> and <em>13</em>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="plugins_heirarchy.png" alt="plugins heirarchy">
+</div>
+<div class="title">Figure 1. An example plugin heirarchy</div>
+</div>
+<div class="paragraph">
+<p>Configuring plugins is a multi-step process.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Instantiate a plugins manager.</p>
+</li>
+<li>
+<p>Allocate a plugin objects.</p>
+</li>
+<li>
+<p>Add types/backends to the plugins manager, these will propagate to the plugins.</p>
+</li>
+<li>
+<p>As required by the circuit, operations will be requested from plugins manager and delegated to the appropriate plugin.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>First, allocate a <code>wtk::plugins::PluginsManager&lt;Number_T, Wire_Ts&#8230;&#8203;&gt;</code> with your plaintext numeric type (<code>Number_T</code>) and the all the ZK wire types (<code>Wire_Ts&#8230;&#8203;</code>) you wish to use.
+For this example, we&#8217;ll continue with the <code>Number</code>, <code>BoolWire</code>, and <code>ArithWire</code> types.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">PluginsManager</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">plugins_manager</span><span class="tok-p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, check which plugins have been requested in the IR header.
+The list of plugins is a vector of strings which you can get from the circuit parser (<code>circuit_parser->plugins</code>, found in <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/circuit/Parser.h"><code>#include &lt;wtk/circuit/Parser.h&gt;</code></a>).
+You will need to allocate a plugin for both the <code>BoolWire</code> and <code>ArithWire</code> types.
+We have found a "loop and if" construct is most convenient for allocating plugins.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-s">&quot;foo&quot;</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">])</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">unique_ptr</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">Plugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;&gt;</span><span class="tok-w"> </span><span class="tok-n">bool_foo</span><span class="tok-w"> </span><span class="tok-o">=</span>
+<span class="tok-w">      </span><span class="tok-k">new</span><span class="tok-w"> </span><span class="tok-n">FooPlugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
+<span class="tok-w">    </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;foo&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">move</span><span class="tok-p">(</span><span class="tok-n">bool_foo</span><span class="tok-p">));</span>
+
+<span class="tok-w">    </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">unique_ptr</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">Plugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;&gt;</span><span class="tok-w"> </span><span class="tok-n">arith_foo</span><span class="tok-w"> </span><span class="tok-o">=</span>
+<span class="tok-w">      </span><span class="tok-k">new</span><span class="tok-w"> </span><span class="tok-n">FooPlugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
+<span class="tok-w">    </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;foo&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">move</span><span class="tok-p">(</span><span class="tok-n">arith_foo</span><span class="tok-p">));</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-w">  </span><span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-s">&quot;bar&quot;</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">])</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">unique_ptr</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">Plugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;&gt;</span><span class="tok-w"> </span><span class="tok-n">bool_bar</span><span class="tok-w"> </span><span class="tok-o">=</span>
+<span class="tok-w">      </span><span class="tok-k">new</span><span class="tok-w"> </span><span class="tok-n">BarPlugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
+<span class="tok-w">    </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;bar&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">move</span><span class="tok-p">(</span><span class="tok-n">bool_bar</span><span class="tok-p">));</span>
+
+<span class="tok-w">    </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">unique_ptr</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">Plugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;&gt;</span><span class="tok-w"> </span><span class="tok-n">arith_bar</span><span class="tok-w"> </span><span class="tok-o">=</span>
+<span class="tok-w">      </span><span class="tok-k">new</span><span class="tok-w"> </span><span class="tok-n">BarPlugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
+<span class="tok-w">    </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;bar&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">move</span><span class="tok-p">(</span><span class="tok-n">arith_bar</span><span class="tok-p">));</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-w">  </span><span class="tok-k">else</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;unrecognized plugin %s</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">].</span><span class="tok-n">c_str</span><span class="tok-p">());</span>
+<span class="tok-w">    </span><span class="tok-n">exit</span><span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">);</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, <a href="../2_nails.html#invoking_nails">as backends are added to the NAILS Interpreter</a>, also add each backend to the plugins manager.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-cm">/* Create the appropriate backend and streams */</span>
+
+<span class="tok-w">  </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addType</span><span class="tok-p">(</span><span class="tok-n">my_backend</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">public_in_stream</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">private_in_stream</span><span class="tok-p">);</span>
+<span class="tok-w">  </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addBackend</span><span class="tok-p">(</span><span class="tok-k">static_cast</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">type_idx</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-n">i</span><span class="tok-p">),</span><span class="tok-w"> </span><span class="tok-n">my_backend</span><span class="tok-p">);</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the circuit begins processing, as plugin-functions are encountered, your Plugin wil be requested to create (or retrieve preexisting) <code>wtk::plugins::Operation&lt;Number_T&gt;</code> objects.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="builtin-plugins">Builtin Plugins</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While you could implement the raw <code>wtk::plugins::Plugin&lt;Number_T, Wire_T&gt;</code>, we suggest using the <code>wtk::plugins::SimplePlugin&lt;Number_T, Wire_T&gt;</code> interface (see <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/plugins/SimplePlugin.h"><code>#include &lt;wtk/plugins/SimplePlugin.h&gt;</code></a> (TODO) or using one of the following built in plugin interfaces.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="./1_iter_v0.html"><code>iter_v0</code></a></p>
+</li>
+<li>
+<p><a href="./1_mux_v0.html"><code>mux_v0</code></a></p>
+</li>
+<li>
+<p><a href="./1_ram_arith_v0.html"><code>ram_arith_v0</code></a></p>
+</li>
+<li>
+<p><a href="./1_ram_bool_v0.html"><code>ram_arith_v0</code></a></p>
+</li>
+<li>
+<p><a href="./1_wizkit_vectors.html"><code>wizkit_vectors</code></a></p>
+</li>
+<li>
+<p><a href="./1_wizkit_arithmetic.html"><code>wizkit_arithmetic</code></a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

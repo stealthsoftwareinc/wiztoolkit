@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><code>wtk-firealarm</code> - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>wtk-firealarm | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="wtk-firealarm" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="wtk-firealarm" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"wtk-firealarm","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a>
+      <ul class="sectlevel1">
+<li><a href="#comand-line-arguments">Comand-line Arguments</a></li>
+<li><a href="#example-invocations">Example Invocations</a></li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1><code>wtk-firealarm</code></h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>wtk-firealarm</code> is a command line program for interpreting the SIEVE IR in a non-ZK setting.
+FIREALARM stands for <strong>F</strong>riendly <strong>IR</strong> <strong>E</strong>valuator <strong>A</strong>nd <strong>L</strong>ogic <strong>A</strong>ssertion and <strong>R</strong>ejection <strong>M</strong>achine.</p>
+</div>
+<div class="paragraph">
+<p>When given a single resource, <code>wtk-firealarm</code> will checks for well-formedness.
+For a circuit, this means that each wire is assigned before it is used, and that it is never reused ("topological ordering", and "single static assignment (SSA)"), along with other checks.
+For a public or private input stream, this simply means that each value in the stream is a field-element (e.g. does not exceed the field’s characteristic).</p>
+</div>
+<div class="paragraph">
+<p>When given all resources necessary for a statement, <code>wtk-firealarm</code> will evaluate the statement in a Non-ZK environment, indicating if the proof should be valid or not (evaluation validity).
+It can also generate a program trace at two levels of detail.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="comand-line-arguments">Comand-line Arguments</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre>wtk-firealarm [options]... [resources]...</pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Options</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Flag</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-t</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Produce a short trace which lists function boundaries, function inputs/outputs, and assertions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-T</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Produce a detailed trace (short trace and the extended witness).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-d</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Include details when reporting on gate counts.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--help</code> or <code>-h</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Print this help text.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--version</code> or <code>-v</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Print the version information.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="dlist">
+<div class="title">Resources</div>
+<dl>
+<dt class="hdlist1"><code>circuit</code></dt>
+<dd>
+<p>A Circuit-IR relation, exclusive with translation</p>
+</dd>
+<dt class="hdlist1"><code>translation</code></dt>
+<dd>
+<p>A Translation-IR relation, exclusive with circuit (coming soon)</p>
+</dd>
+<dt class="hdlist1"><code>public_input</code></dt>
+<dd>
+<p>A public input stream, must be paired with a private input stream of the same field, and the field must match one from the relation.</p>
+</dd>
+<dt class="hdlist1"><code>private_input</code></dt>
+<dd>
+<p>A private input stream, must be paired with a public input stream of the same field, and the field must match one from the relation.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-invocations">Example Invocations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To check a single resource for well-formedness.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>wtk-firealarm circuit_file.sieve
+
+wtk-firealarm translation_file.sieve  # coming soon
+
+wtk-firealarm public_input_file.sieve
+
+wtk-firealarm private_input_file.sieve</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To check a witnessed-statement for evaluation validity.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>wtk-firealarm circuit_file.sieve field_0_public_inputs.sieve field_0_private_inputs.sieve field_1_public_inputs.sieve field_1_private_inputs.sieve</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To generate a detailed trace (aka print out the extended witness) and a detailed report.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>wtk-firealarm -T -d circuit_file.sieve field_0_public_inputs.sieve field_0_private_inputs.sieve field_1_public_inputs.sieve field_1_private_inputs.sieve</pre>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

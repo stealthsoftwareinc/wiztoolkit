@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RAM Boolean v0 Plugin - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>RAM Boolean v0 Plugin | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="RAM Boolean v0 Plugin" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="RAM Boolean v0 Plugin" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"RAM Boolean v0 Plugin","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a></li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a>
+      <ul class="sectlevel1">
+<li><a href="#types">Types</a></li>
+<li><a href="#operations">Operations</a>
+<ul class="sectlevel2">
+<li><a href="#init"><code>init</code></a></li>
+<li><a href="#read"><code>read</code></a></li>
+<li><a href="#write"><code>write</code></a></li>
+</ul>
+</li>
+<li><a href="#implementing-the-ram_bool_v0-plugin">Implementing the <code>ram_bool_v0</code> Plugin</a>
+<ul class="sectlevel2">
+<li><a href="#implementing-your-own-ram-plugin">Implementing your own RAM Plugin</a></li>
+<li><a href="#fallback-ram-plugin">Fallback RAM Plugin</a></li>
+<li><a href="#instantiating-the-ram-plugin">Instantiating the RAM Plugin</a></li>
+</ul>
+</li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>RAM Boolean v0 Plugin</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>ram_bool_v0</code> plugin provides private indexed array access when using bit-vectors in Boolean ZK.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="types">Types</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>ram</code> type is a plugin type for a privately indexable array.
+It uses the following plugin parameters.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Plugin Name: <code>ram_bool_v0</code></p>
+</li>
+<li>
+<p>Type name: <code>ram</code></p>
+</li>
+<li>
+<p><em>Number</em>: type index for the index and element type</p>
+</li>
+<li>
+<p><em>Number</em>: number of bits in a RAM index</p>
+</li>
+<li>
+<p><em>Number</em>: number of bits in a RAM element</p>
+</li>
+<li>
+<p><em>Number</em>: number of allocations</p>
+</li>
+<li>
+<p><em>Number</em>: total size of all allocations (in elements)</p>
+</li>
+<li>
+<p><em>Number</em>: maximum size concurrently allocated buffers</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The first three parameters, type and bit-counts, should be self explanatory.
+The latter three are there to aid in allocation schemes which a backend may utilize.
+For example, if a program had two allocations, both with 64 elements but one is free&#8217;d before the other allocated, the type could be declared as such.
+For the sake of the example, we&#8217;ll use type 0, 8-bits of index precision, and 16-bits of element precision.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@type @plugin(ram_bool_v0, ram, 0, 8, 16, 2, 128, 64);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If, instead, both were allocated before one was free&#8217;d, the concurrent allocation size would be the same as the total.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@type @plugin(ram_bool_v0, ram, 0, 8, 16, 2, 128, 128);</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="operations">Operations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following operations are used with RAM.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>init</code></dt>
+<dd>
+<p>Create a new RAM buffer with specified size.</p>
+</dd>
+<dt class="hdlist1"><code>read</code></dt>
+<dd>
+<p>Retrieve and return the element at a specified index.</p>
+</dd>
+<dt class="hdlist1"><code>write</code></dt>
+<dd>
+<p>overwrite the value at the specified index.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Here is an example declaration of each.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// index/element is type 0, buffer is type 1, again 8-bit index and 16-bit element.
+
+// initialize a RAM buffer. Each element is given the input value as a start value.
+// The size is a constant given in the plugin binding.
+//                           buffer    fill
+@function(ram_init_64, @out: 1:1, @in: 0:16)
+//                           size
+  @plugin(ram_bool_v0, init, 64);
+
+// Read an element from the RAM buffer.
+//                        out        buffer index
+@function(ram_read, @out: 0:16, @in: 1:1,   0:8)
+  @plugin(ram_bool_v0, read);
+
+// Write an element into the RAM buffer.
+//                        buffer index element
+#function(ram_write, @in: 1:1,   0:8,  0:16)
+  @plugin(ram_bool_v0, read);</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="init"><code>init</code></h3>
+<div class="paragraph">
+<p>Initialize a new RAM buffer.
+For a given buffer type <code>b</code>, index type <code>i</code>, index bit-width <code>iw</code>, size <code>s</code>, and element bit-width <code>ew</code>, the following parameters are used.
+Note that <code>i</code> must represent a field with prime <em>2</em>.</p>
+</div>
+<div class="ulist">
+<div class="title">Function Signature</div>
+<ul>
+<li>
+<p>Output <code>b:1</code>: The newly created buffer</p>
+</li>
+<li>
+<p>Input <code>i:ew</code>: A value copied into each buffer element</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Plugin Binding</div>
+<ul>
+<li>
+<p>Plugin Name: <code>ram_bool_v0</code></p>
+</li>
+<li>
+<p>Operation: <code>init</code></p>
+</li>
+<li>
+<p><em>Number</em>: the size of the buffer.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="read"><code>read</code></h3>
+<div class="paragraph">
+<p>Read an element from the buffer.
+For a given buffer type <code>b</code>, index type <code>i</code>, index bit-width <code>iw</code>, size <code>s</code>, and element bit-width <code>ew</code>, the following parameters are used.
+Note that <code>i</code> must represent a field with prime <em>2</em>.
+Although the <code>read</code> operation does not have a parameter for the size, if the index exceeds the size declared when the buffer was initialized, an <code>@assert_zero</code> failure occurs.
+If this failure occurs, the backend may assign to the output value an unspecified value.</p>
+</div>
+<div class="ulist">
+<div class="title">Function Signature</div>
+<ul>
+<li>
+<p>Output <code>i:ew</code>: output value</p>
+</li>
+<li>
+<p>Input <code>b:1</code>: the buffer</p>
+</li>
+<li>
+<p>Input <code>i:iw</code>: the index</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Plugin Binding</div>
+<ul>
+<li>
+<p>Plugin Name: <code>ram_bool_v0</code></p>
+</li>
+<li>
+<p>Operation: <code>read</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="write"><code>write</code></h3>
+<div class="paragraph">
+<p>write an element into the buffer.
+For a given buffer type <code>b</code>, index type <code>i</code>, index bit-width <code>iw</code>, size <code>s</code>, and element bit-width <code>ew</code>, the following parameters are used.
+Note that <code>i</code> must represent a field with prime <em>2</em>.
+Although the <code>write</code> operation does not have a parameter for the size, if the index exceeds the size declared when the buffer was initialized, an <code>@assert_zero</code> failure occurs.
+If this failure occurs, the backend may assign an unspecified value to the indexed element.</p>
+</div>
+<div class="ulist">
+<div class="title">Function Signature</div>
+<ul>
+<li>
+<p>Input <code>b:1</code>: the buffer</p>
+</li>
+<li>
+<p>Input <code>i:iw</code>: the index</p>
+</li>
+<li>
+<p>Input <code>i:ew</code>: the input value</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Plugin Binding</div>
+<ul>
+<li>
+<p>Plugin Name: <code>ram_bool_v0</code></p>
+</li>
+<li>
+<p>Operation: <code>write</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementing-the-ram_bool_v0-plugin">Implementing the <code>ram_bool_v0</code> Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The RAM plugin is likely the trickiest plugin to implement, because it utilizes "IR Plugin Types".
+That means that an IR type will describe wires which aren&#8217;t arithmeic or boolean values.
+Instead, wires in the RAM buffer type carry RAM buffers.</p>
+</div>
+<div class="paragraph">
+<p>This means that in addition to implementing operations for <code>init</code>, <code>read</code>, and <code>write</code>, you need a <code>Buffer_T</code> template to take the place of <code>Wire_T</code>, and you need a <code>wtk::TypeBackend&lt;Number, Buffer_T&gt;</code> to allow NAILS to interact with your <code>Buffer_T</code>.
+Fortunately, whether you choose to implement your own RAM, or use the fallback implementation, WizToolKit has you covered.</p>
+</div>
+<div class="paragraph">
+<p>Both the arithmetic RAM interface and fallback implementation reside in the <a href="/src/main/cpp/wtk/plugins/BooleanRAM.h"><code>#include &lt;wtk/plugins/BooleanRAM.h&gt;</code></a> header.</p>
+</div>
+<div class="sect2">
+<h3 id="implementing-your-own-ram-plugin">Implementing your own RAM Plugin</h3>
+<div class="paragraph">
+<p>To implement your RAM plugin, you&#8217;ll need to start with your <code>Buffer_T</code> type.
+This type must follow the same rules as any other wire template used with NAILS: it must be default and move constructible.
+Of course, you will also need a <code>Wire_T</code> for the buffer&#8217;s private indices and elements.</p>
+</div>
+<div class="paragraph">
+<p>Next you&#8217;ll need to implement a <code>wtk::TypeBackend&lt;Number_T, Buffer_T&gt;</code>.
+Ordinarily, this has callbacks for <code>@add</code> and <code>@mul</code> gates, however, such operations are nonsensical with RAM.
+Instead, subclass the <code>wtk::plugins::BoolRAMBackend&lt;Number_T, Buffer_T, Wire_T&gt;</code>, which indicates to NAILS that such gates are unsupported (and implements no-ops in the unused callbacks).
+You must provide a constructor with the wire&#8217;s type and backend, along with the bit-widths, and implement the <code>check()</code> method to indicate if proof errors occurred.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyBoolRAMBackend</span>
+<span class="tok-w">  </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">BoolRAMBackend</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-n">MyRAMBackend</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">type_idx</span><span class="tok-w"> </span><span class="tok-n">type</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TypeBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">backend</span><span class="tok-p">,</span>
+<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">wire_idx</span><span class="tok-w"> </span><span class="tok-n">idx_bits</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">wire_idx</span><span class="tok-w"> </span><span class="tok-n">elt_bits</span><span class="tok-p">)</span>
+<span class="tok-w">    </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">BoolRAMBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span>
+<span class="tok-w">        </span><span class="tok-n">type</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">backend</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">idx_bits</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">elt_bits</span><span class="tok-p">);</span>
+
+<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">failure</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-nb">false</span><span class="tok-p">;</span>
+
+<span class="tok-w">  </span><span class="tok-c1">// Returns false if any errors are encountered, true otherwise</span>
+<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-nf">check</span><span class="tok-p">()</span><span class="tok-w"> </span><span class="tok-k">override</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-o">!</span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">failure</span><span class="tok-p">;</span>
+<span class="tok-w">    </span><span class="tok-c1">// alternatively, report failures through this-&gt;wireBackend-&gt;assertZero()</span>
+<span class="tok-w">    </span><span class="tok-c1">// and always return true;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-p">};</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You&#8217;ll need to implement the three RAM operations: <code>init</code>, <code>read</code>, and <code>write</code>.
+These have convenient superclasses which handle signature and argument checking and provide easy-to-implement callbacks.
+Within each operation, the <code>Wire_T*</code> parameters are list pointers with index or element bit-width.
+The bit-widths, and the backend, may be accessed as attributes of the <code>operation&#8594;ramBackend()</code> helper.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyRAMInit</span>
+<span class="tok-w">  </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">RAMInitOperation</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">init</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">wire_idx</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">size</span><span class="tok-p">,</span>
+<span class="tok-w">      </span><span class="tok-n">MyBuffer</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">buffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">fill</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-cm">/**</span>
+<span class="tok-cm">     * Instantiate the buffer with the stated size. Then assign each</span>
+<span class="tok-cm">     * element the fill value</span>
+<span class="tok-cm">     */</span>
+
+<span class="tok-w">    </span><span class="tok-c1">// fill has length</span>
+<span class="tok-w">    </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">ramBackend</span><span class="tok-p">()</span><span class="tok-o">-&gt;</span><span class="tok-n">elementBits</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-p">};</span>
+
+<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyRAMRead</span>
+<span class="tok-w">  </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">RAMReadOperation</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">read</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out</span><span class="tok-p">,</span>
+<span class="tok-w">      </span><span class="tok-n">MyBuffer</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">buffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">idx</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-cm">/* implement: out = buffer[idx]; */</span>
+
+<span class="tok-w">    </span><span class="tok-c1">// out has bit-length</span>
+<span class="tok-w">    </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">ramBackend</span><span class="tok-p">()</span><span class="tok-o">-&gt;</span><span class="tok-n">elementBits</span><span class="tok-p">;</span>
+
+<span class="tok-w">    </span><span class="tok-c1">// idx has bit-length</span>
+<span class="tok-w">    </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">ramBackend</span><span class="tok-p">()</span><span class="tok-o">-&gt;</span><span class="tok-n">indexBits</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-p">};</span>
+
+<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyRAMWrite</span>
+<span class="tok-w">  </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">RAMReadOperation</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">write</span><span class="tok-p">(</span><span class="tok-n">MyBuffer</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">buffer</span><span class="tok-p">,</span>
+<span class="tok-w">      </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">idx</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-cm">/* implement: obuffer[idx] = in; */</span>
+
+<span class="tok-w">    </span><span class="tok-c1">// idx has bit-length</span>
+<span class="tok-w">    </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">ramBackend</span><span class="tok-p">()</span><span class="tok-o">-&gt;</span><span class="tok-n">indexBits</span><span class="tok-p">;</span>
+
+<span class="tok-w">    </span><span class="tok-c1">// in has bit-length</span>
+<span class="tok-w">    </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">ramBackend</span><span class="tok-p">()</span><span class="tok-o">-&gt;</span><span class="tok-n">elementBits</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-p">};</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Lastly, you&#8217;ll want to implement the <code>wtk::plugins::BoolRAMPlugin&lt;Number_T, Buffer_T, Wire_T&gt;</code> superclass, which is essentially a factory for your operations.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fallback-ram-plugin">Fallback RAM Plugin</h3>
+<div class="paragraph">
+<p>WizToolKit provides a buffer, <code>wtk::plugins::FallbackBoolRAMBuffer&lt;Wire_T&gt;</code>, backend, <code>wtk::plugins::FallbackBoolRAMBackend&lt;Number_T, Wire_T&gt;</code>, and plugin, <code>wtk::plugins::FallbackBoolRAMPlugin&lt;Number_T, Wire_T&gt;</code>, the latter two using the afformentioned buffer to fill the middle <code>Buffer_T</code> template.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="instantiating-the-ram-plugin">Instantiating the RAM Plugin</h3>
+<div class="paragraph">
+<p>To instantiate an instance of the RAM plugin, allocate both a plugin object and a RAM backend object.
+Pass the plugin object to your plugins manager and the backend to both the plugins manager and NAILS interpreter.</p>
+</div>
+<div class="paragraph">
+<p>Although there is no Boolean RAM demo at this time, you can check out <a href="../6_sample_backends/3_simple_plugins.html">the Arithmetic RAM sample instead</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+

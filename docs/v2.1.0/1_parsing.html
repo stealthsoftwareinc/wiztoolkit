@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parsing the IR - WizToolKit</title>
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/fonts.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/layout.css" />
+    <link rel="stylesheet"
+        href="/wiztoolkit/assets/css/content.css" />
+
+    <link rel="shortcut icon" type="image/png"
+        href="/wiztoolkit/assets/icons/tetra-solid-32x32.png" />
+
+    <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Parsing the IR | WizToolKit</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Parsing the IR" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/1_parsing.html" />
+<meta property="og:url" content="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/1_parsing.html" />
+<meta property="og:site_name" content="WizToolKit" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Parsing the IR" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"Parsing the IR","url":"https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/1_parsing.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <script>0</script>
+  </head>
+  <body>
+    <header>
+      <nav id="topNav">
+        <a href="#main" id="jumpMain">Jump to Main</a>
+        <a href="https://www.stealthsoftwareinc.com" id="logoImg">
+          <img
+            src="/wiztoolkit/assets/icons/tetra-solid-100x100.png"
+            alt="Stealth Software Technologies Home Page" /></a>
+        <a href="/wiztoolkit/" id="titleLink">WizToolKit</a>
+        <span id="spacer">&nbsp;</span>
+        
+          
+            <a href="/wiztoolkit/"
+              
+              >about</a>
+          
+        
+          
+            <a href="/wiztoolkit/docs/v2.1.0/"
+              
+              >docs</a>
+          
+        
+          
+            <a href="https://github.com/stealthsoftwareinc/wiztoolkit"
+              
+              >source</a>
+          
+        
+      </nav>
+    </header>
+    <nav id=docsNav>
+  <div>
+    <h2 class="eyebrow">Docs Nav</h2>
+    <p>
+      <label for="version_select">Change Version:</label> <select name="version_select" onchange="location = this.value;"><option selected value="/wiztoolkit/docs/v2.1.0/">v2.1.0</option><option  value="/wiztoolkit/docs/v1.0.1/">v1.0.1</option></select>
+    </p>
+
+    
+    <ul><li><a href="/wiztoolkit/docs/v2.1.0/">WizToolKit Manual</a><ul><li><a href="/wiztoolkit/docs/v2.1.0/0_intro.html">Introduction to the WizToolKit Manual</a></li><li class="curr_page"><a href="/wiztoolkit/docs/v2.1.0/1_parsing.html">Parsing the IR</a>
+      <ul class="sectlevel1">
+<li><a href="#parser_organizer">Organizing Multiple Files/Parsers</a></li>
+<li><a href="#common_api">Common API</a>
+<ul class="sectlevel2">
+<li><a href="#translation">Parsing Translation-IR</a></li>
+<li><a href="#circuit">Parsing Circuit-IR</a></li>
+<li><a href="#input_streams">Parsing Input Streams</a></li>
+<li><a href="#configuration">Parsing the CCC</a></li>
+</ul>
+</li>
+<li><a href="#irregular">IRRegular Parser for Text</a></li>
+<li><a href="#flatbuffer">FlatBuffer Parser for Binary</a></li>
+</ul>
+    </li><li><a href="/wiztoolkit/docs/v2.1.0/2_nails.html">NAILS Circuit-IR Interpreter</a></li><li>3_plugins<ul><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html">Plugins Intro</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_extended_arithmetic.html">The Extended Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html">Iteration v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_mux_v0.html">The Mux v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html">RAM Arithmetic Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_bool_v0.html">RAM Boolean v0 Plugin</a></li><li><a href="/wiztoolkit/docs/v2.1.0/3_plugins/1_wizkit_vectors.html">The Wizkit Vectors Plugin</a></li></ul></li><li>4_tools<ul><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/firealarm.html"><code>wtk-firealarm</code></a></li><li><a href="/wiztoolkit/docs/v2.1.0/4_tools/press.html"><code>wtk-press</code></a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/5_testcases.html">Generating Test Cases with WizToolKit</a></li><li>6_sample_backends<ul><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/0_intro.html">Sample Backend Code</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/1_simple.html">Simple Arithmetic Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html">Arithmetic and Boolean Demo Backend</a></li><li><a href="/wiztoolkit/docs/v2.1.0/6_sample_backends/3_simple_plugins.html">Simple Arithmetic Demo Backend with Plugins</a></li></ul></li><li><a href="/wiztoolkit/docs/v2.1.0/7_install.html">Installing WizToolKit</a></li></ul></li></ul>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <h1>Parsing the IR</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A key functionality of WizToolKit is parsing the IR, converting it from a byte-sequence representation to an in-memory representation.
+Because the IR has two formats, WizToolKit has a <a href="#common_api">common parser API</a> with the <a href="#irregular">IRRegular implementation for text</a> and the <a href="#flatbuffer">FlatBuffer implementation for binary</a>.
+Further, the IR is composed of many resources, or files.
+In different settings, one or more of the resources may be needed concurrently.
+For this reason, we suggest starting with our <a href="#parser_organizer">Parser Organizer</a> helper.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="parser_organizer">Organizing Multiple Files/Parsers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The latest IR revision calls for many resources, which are composed in a few ways.
+The <code>wtk::utils::ParserOrganizer&lt;Parser_T, Number_T&gt;</code> class (from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/utils/ParserOrganizer.h"><code>#include &lt;wtk/utils/ParserOrganizer.h&gt;</code></a>) can open a number of resources and organize them into one of a few settings.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Preprocessing</dt>
+<dd>
+<p>In this setting a <code>circuit</code> resource is provided without any input streams.
+This allows a backend to process the relation on its own before the proof.
+For example, to convert it to an alternate format or generate correlated randomness.</p>
+</dd>
+<dt class="hdlist1">Prover</dt>
+<dd>
+<p>In this setting a <code>circuit</code> resource is provided.
+For each declared <code>@type field</code> both the <code>public_input</code> and <code>private_input</code> resources are provided.</p>
+</dd>
+<dt class="hdlist1">Verifier</dt>
+<dd>
+<p>In this setting a <code>circuit</code> resource is proved.
+For each declared <code>@type field</code> just the <code>public_input</code> is provided.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>In the <em>prover</em> and <em>verifier</em> settings, non field types (such as <code>@type @plugin(/* &#8230;&#8203; */)</code>) may or may not have <code>public_input</code> or <code>private_input</code> streams.
+Organization only enforces their presence upon field types.</p>
+</div>
+<div class="paragraph">
+<p>To instantiate an organizer, two templates are required.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Parser_T</code> The parser implementation being used. For example <code>wtk::irregular::Parser&lt;Number_T&gt;</code></p>
+</li>
+<li>
+<p><code>Number_T</code> The C++ numeric type used for representing numbers while parsing.
+Various backends will prefer different types here, hence it must be a template.
+For example, some backends may require unlimited precision types, such as GMP&#8217;s <code>mpz_class</code>, while others may suffice with a fixed-width type such as <code>uint64_t</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Here is an example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">ParserOrganizer</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">irregular</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To open resources, call the <code>organizer.open(char const*)</code> function.
+Note that the passed <code>char const*</code> is retained and may be used later, so it should have a lifetime longer than the <code>organizer</code>.
+This is likely the case anyways, for example if you were to call <code>organizer.open(argv[i])</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">file_names</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">open</span><span class="tok-p">(</span><span class="tok-n">file_names</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">]);</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, call <code>organizer.organize()</code> to get the <code>wtk::utils::Setting</code> (also from <code>#include &lt;wtk/utils/ParserOrganizer.h&gt;</code>) and indicate success or failure.
+<code>wtk::utils::Setting</code> is the following enumeration.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wtk::utils::Setting::failure</code></p>
+</li>
+<li>
+<p><code>wtk::utils::Setting::preprocess</code></p>
+</li>
+<li>
+<p><code>wtk::utils::Setting::verifier</code></p>
+</li>
+<li>
+<p><code>wtk::utils::Setting::prover</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Once <code>organize()</code> completes successfully, attributes of the <code>organizer</code> are set with various parser objects and file names.
+Now you can access the circuit directly and the streams are co-indexed with the circuit&#8217;s type list.
+See <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/utils/ParserOrganizer.h"><code>#include &lt;wtk/utils/ParserOrganizer.h&gt;</code></a> for more details.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-w"> </span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">organize</span><span class="tok-p">();</span>
+<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-o">::</span><span class="tok-n">failure</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-k">return</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-p">}</span>
+
+<span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-w"> </span><span class="tok-c1">// the parser for the circuit&#39;s body</span>
+<span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitName</span><span class="tok-w">       </span><span class="tok-c1">// the circuit&#39;s file name</span>
+
+<span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-o">::</span><span class="tok-n">verifier</span><span class="tok-p">)</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">publicStream</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-c1">// the input stream for the type&#39;s public_input</span>
+<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">publicName</span><span class="tok-p">;</span><span class="tok-w">   </span><span class="tok-c1">// the file name for the type&#39;s public_input</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-w">  </span><span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-o">::</span><span class="tok-n">prover</span><span class="tok-p">)</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">publicStream</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-c1">// the input stream for the type&#39;s public_input</span>
+<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">publicName</span><span class="tok-p">;</span><span class="tok-w">   </span><span class="tok-c1">// the file name for the type&#39;s public_input</span>
+
+<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">privateStream</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-c1">// the input stream for the type&#39;s private_input</span>
+<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">privateName</span><span class="tok-p">;</span><span class="tok-w">   </span><span class="tok-c1">// the file name for the type&#39;s private_input</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See <a href="#circuit">Parsing Circuit-IR</a> and <a href="#input_streams">Parsing Input Streams</a> for more details on working with each parser object.
+However, you might insead want to check out <a href="./2_nails.html">the NAILS IR interpreter</a> for handling IR semantics and passing off ZK semantics to a backend.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="common_api">Common API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>WizToolKit has a common API for opening all resources.
+the <code>wtk::Parser&lt;Number_T&gt;</code> (from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/Parser.h"><code>#include &lt;wtk/Parser.h&gt;</code></a>) is an abstract class which is instantiated by all parser implementations.
+It parses the header and then can hand off responsibility to an appropriate helper to parse resource-specific data.</p>
+</div>
+<div class="paragraph">
+<p>Each <code>wtk::Parser&lt;Number_T&gt;</code> object is tied to a single file.
+Instantiate one parser for each file you need to parse.</p>
+</div>
+<div class="paragraph">
+<p>The <code>Number_T</code> template parameter must be fulfilled by a numeric type supporting a bit of arithmetic (enough to parse numeric strings in decimal and hexadecimal).
+It could be fulfilled by <code>unsigned long</code>, however for large fields this may overflow.
+We recommend using a big-number library to fulfill the <code>Number_T</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>wtk::ResourceType</code> enum indicates what kind of resource is parsed.
+It has values for the different IR resources (<code>circuit</code>, <code>translation</code>, <code>public_in</code>, etc).
+The <code>parser.parseHeader()</code> function will parse the header and then set the <code>parser.type</code> attribute, indicating which resource it is reading.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows a function which parses the header and switches off to a helper parser for various resources.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">parser_function</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">)</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parseHeader</span><span class="tok-p">())</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
+<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+
+<span class="tok-w">  </span><span class="tok-k">switch</span><span class="tok-p">(</span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">type</span><span class="tok-p">)</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">ResourceType</span><span class="tok-o">::</span><span class="tok-no">translation</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TranslationParser</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">translation_parser</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">translation</span><span class="tok-p">();</span>
+
+<span class="tok-w">    </span><span class="tok-cm">/* Your Code Here */</span>
+
+<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">ResourceType</span><span class="tok-o">::</span><span class="tok-no">circuit</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">circuit</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">circuit</span><span class="tok-p">();</span>
+
+<span class="tok-w">    </span><span class="tok-cm">/* Your Code Here */</span>
+
+<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">ResourceType</span><span class="tok-o">::</span><span class="tok-no">public_in</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">public_in_stram</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">publicIn</span><span class="tok-p">();</span>
+
+<span class="tok-w">    </span><span class="tok-cm">/* Your Code Here */</span>
+
+<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-w">  </span><span class="tok-cm">/* ... */</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the above example, the <code>xx_parser</code> will retain ownership of the helper parsers, so you don&#8217;t need to worry about freeing them.
+They will get free&#8217;d when the <code>parser</code> is free&#8217;d.</p>
+</div>
+<div class="sect2">
+<h3 id="translation">Parsing Translation-IR</h3>
+<div class="paragraph">
+<p>Coming Soon</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="circuit">Parsing Circuit-IR</h3>
+<div class="paragraph">
+<p>The <code>wtk::circuit::Parser</code> abstract class will parse the Circuit-IR for you (See <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/circuit/Parser.h"><code>#include &lt;wtk/circuit/Parser.h&gt;</code></a>).
+Start off by parsing the circuit header using <code>circuit_parser&#8594;parseCircuitHeader()</code>.
+This will fill <code>circuit_parser->plugins</code>, <code>->types</code>, and <code>->conversions</code> with circuit&#8217;s plugins, types, and conversion specifications.
+Use these attributes to prepare to encounter these items in the body of the circuit.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parseCircuitHeader</span><span class="tok-p">())</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
+<span class="tok-w">  </span><span class="tok-k">return</span><span class="tok-p">;</span>
+<span class="tok-p">}</span>
+
+<span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Your Code Here */</span><span class="tok-w"> </span><span class="tok-p">}</span>
+
+<span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Your Code Here */</span><span class="tok-w"> </span><span class="tok-p">}</span>
+
+<span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Your Code Here */</span><span class="tok-w"> </span><span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Parsing the body is handled via a callback interface: the <code>wtk::circuit::Handler&lt;Number_T&gt;</code> (from <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/circuit/Handler.h"><code>#include &lt;wtk/circuit/Handler.h&gt;</code></a>).
+The <code>handler</code> makes use of the typedefs <code>wtk::wire_idx</code> (<code>uint64_t</code>) for wire numbers and <code>wtk::type_idx</code> (<code>uint8_t</code>) for type indexes (see <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/indexes.h"><code>#include &lt;wtk/indexes.h&gt;</code></a>).
+Most gates have a callback to handle them for example <code>handler->mulGate(out_wire, left_in_wire, right_in_wire, type)</code>.</p>
+</div>
+<div class="paragraph">
+<p>Function declarations will use multiple callbacks to handle the entire body.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>First <code>handler->beginFunction(func_signature)</code> is called, delivering the function&#8217;s name and inputs/outputs.
+The <code>wtk::circuit::FunctionSignature</code> type can be found in <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/circuit/Data.h"><code>#include &lt;wtk/circuit/Data.h&gt;</code></a>.</p>
+</li>
+<li>
+<p>Then <code>handler->regularFunction()</code> is called indicating that a regular, or non-plugin, function follows.</p>
+</li>
+<li>
+<p>Other gate callbacks are called as appropriate to define the function&#8217;s body (such as <code>handler->mulGate(/* ... */)</code>.
+Note that the IR&#8217;s grammar forbids nested function declarations.</p>
+</li>
+<li>
+<p>Finally <code>handler->endFunction()</code> is called.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The handler is passed to <code>circuit_parser->parse(handler)</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">CircuitHandlerChildClass</span><span class="tok-w"> </span><span class="tok-nf">handler</span><span class="tok-p">(</span><span class="tok-cm">/* Your Code Here */</span><span class="tok-p">);</span>
+
+<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">circuit_handler</span><span class="tok-o">-&gt;</span><span class="tok-n">parse</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">handler</span><span class="tok-p">))</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-n">print</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
+<span class="tok-w">  </span><span class="tok-k">return</span><span class="tok-p">;</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">NOTE</dt>
+<dd>
+<p>Rather than implementing the Circuit-IR callbacks, you might prefer to use <a href="2_nails.html">the <code>wtk::nails</code> API for interpreting the IR and passing it off to a backend</a>.</p>
+</dd>
+<dt class="hdlist1">NOTE</dt>
+<dd>
+<p>I might change the exact details of parsing the circuit&#8217;s header.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="input_streams">Parsing Input Streams</h3>
+<div class="paragraph">
+<p>Each field in a relation is expected to be accompanied by a pair of input streams: one for public inputs and another for private inputs.
+These input streams have the same format.
+The <code>wtk::InputStream&lt;Number_T&gt;</code> helper parser is defined to parse these resources.
+It can be found in <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/Parser.h"><code>#include &lt;wtk/Parser.h&gt;</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>Retrieve an input stream from the parser using either <code>parser->publicIn()</code> or <code>parser->privateIn()</code>.
+Read the stream&#8217;s header to check what prime it uses with <code>in_stream->parseStreamHeader()</code>.
+Then consume items from the stream with <code>in_stream->next(&value)</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in_stream</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">publicIn</span><span class="tok-p">();</span>
+
+<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">in_stream</span><span class="tok-o">-&gt;</span><span class="tok-n">parseStreamHeader</span><span class="tok-p">())</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
+<span class="tok-w">  </span><span class="tok-k">return</span><span class="tok-p">;</span>
+<span class="tok-p">}</span>
+
+<span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;stream prime: %lu&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_stream</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-p">);</span>
+
+<span class="tok-nl">wtk</span><span class="tok-p">:</span><span class="tok-n">StreamStatus</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-p">;</span>
+<span class="tok-k">do</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-w"> </span><span class="tok-n">value</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">in_stream</span><span class="tok-o">-&gt;</span><span class="tok-n">next</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">value</span><span class="tok-p">);</span>
+<span class="tok-w">  </span><span class="tok-k">switch</span><span class="tok-p">(</span><span class="tok-n">status</span><span class="tok-p">)</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">StreamStatus</span><span class="tok-o">::</span><span class="tok-no">error</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
+<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">StreamStatus</span><span class="tok-o">::</span><span class="tok-no">end</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">print</span><span class="tok-p">(</span><span class="tok-s">&quot;end of stream</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">)</span>
+<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">StreamStatus</span><span class="tok-o">::</span><span class="tok-no">success</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-p">{</span>
+<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;line %zu, value %lu&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_stream</span><span class="tok-o">-&gt;</span><span class="tok-n">lineNum</span><span class="tok-p">(),</span><span class="tok-w"> </span><span class="tok-n">value</span><span class="tok-p">);</span>
+<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-w">  </span><span class="tok-p">}</span>
+<span class="tok-p">}</span><span class="tok-w"> </span><span class="tok-k">while</span><span class="tok-p">(</span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">StreamStatus</span><span class="tok-o">::</span><span class="tok-n">success</span><span class="tok-p">);</span></code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">NOTE</dt>
+<dd>
+<p>I might change the exact details of parsing the stream&#8217;s header.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuration">Parsing the CCC</h3>
+<div class="paragraph">
+<p>Coming Soon</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="irregular">IRRegular Parser for Text</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>wtk::irregular::Parser&lt;Number_T&gt;</code> is defined in <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/main/cpp/wtk/irregular/Parser.h"><code>#include &lt;wtk/irregular/Parser.h&gt;</code></a> and implements the <code>wtk::Parser&lt;Number_T&gt;</code> class.
+Initialization is handled with a default constructor, then the <code>open(file_name)</code> method may be used.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">irregular</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">irregular_parser</span><span class="tok-p">;</span>
+
+<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">irregular_parser</span><span class="tok-p">.</span><span class="tok-n">open</span><span class="tok-p">(</span><span class="tok-s">&quot;file_name&quot;</span><span class="tok-p">))</span>
+<span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
+<span class="tok-w">  </span><span class="tok-k">return</span><span class="tok-p">;</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="flatbuffer">FlatBuffer Parser for Binary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Coming Soon.</p>
+</div>
+</div>
+</div>
+</main>
+
+    <footer>
+      
+        <p id="distributionStatement">
+          <strong>Distribution Statement A:</strong> Approved for Public Release, Distribution Unlimited.
+        </p>
+      
+      <p>
+        Copyright &copy; 2023, Stealth Software Technologies, Inc.
+        All Rights Reserved.
+      </p>
+      
+        <p id="acknowledgement">
+          This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA) under Contract No. HR001120C0087. The views, opinions, and/or findings expressed are those of the author(s) and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.
+        </p>
+      
+
+      <a href="https://www.stealthsoftwareinc.com" id="bottomLogoImg">
+        <img
+          src="/wiztoolkit/assets/icons/tetra-solid-400x100.png"
+          alt="Stealth Software Technologies Home Page" /></a>
+
+      
+    </footer>
+  </body>
+</html>
+
