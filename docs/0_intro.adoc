@@ -1,0 +1,49 @@
+= Introduction to the WizToolKit Manual
+
+WizToolKit is a system for working with the SIEVE IR, both on the command-line and in pass:[C++] or another language capable of interfacing with pass:[C/C++].
+WizToolKit is built to handle a variety of use cases and settings.
+
+In this introduction, we'll go over a few aspects of the IR and how it is used.
+The reader is expected to have a passing familiarity with Zero Knowledge (ZK).
+
+== Settings and Use-cases
+Due to the complexity, ZK Proof systems are often organized into a _frontend_ (TA1, within the SIEVE Program) and a _backend_ (TA2).
+The _frontend_ converts a human readable statement into a machine readable statement (the IR).
+The _backend_ then takes a machine readable statement and proves its truthfulness.
+Within the _backend_ we have a few settings for how the statement is used.
+
+Prover:: The prover must convince the verifier of a statement's truthfulness.
+Verifier:: The verifier is either convinced or not convinced by the prover.
+Preprocessing:: The backend may wish to perform certain tasks upon a _relation_ before it can prove and verify.
+
+== The SIEVE IR
+The SIEVE IR is a format for arithmetic (and boolean) ZK circuits.
+There are two layers in the IR, the _Circuit-IR_, a somewhat low-level representation, and the _Translation-IR_, a higher level representation which can translate itself to the _Circuit-IR_ or other IRs.
+For the time being, the _Translation-IR_ is under development, and WizToolKit focuses on handling the _Circuit-IR_.
+
+The IR is composed of the following resources:
+
+Input Streams:: An input stream is a list of values which are the inputs to a circuit.
+In general there are two kinds of input streams.
+
+ - The `public_input` stream has values which are known to both the prover and verifier.
+ - The `private_input` stream has values which are known only to the prover.
+
+Circuit:: The `circuit` is the _relation_ for the _Circuit-IR_.
+The _relation_ is likely the most noticable aspect of the IR, and as such gets a lot of attention from WizToolKit.
+The _Circuit-IR_ uses numbered wires to connect gates together to form a Directed Acyclical Graph (DAG) with operations at each node.
+
+Translation:: The `translation` resource is an alternative _relation_ format for the _Translation-IR_.
+It is currently in *development*, and largely *unimplemented*.
+
+Configuration:: The `configuration`, or "CCC" (Circuit Configuration Communication), conveys information backwards from the backend to the frontend.
+This allows the frontend to emit a circuit which is compatible with a particular backend, and hopefully also maximizes performance.
+It also is currently in *development*, and largely *unimplemented*.
+
+== WizToolKit
+WizToolKit is a collection of many tools and libraries.
+
+If you want to jump right into developing a backend, start with the xref:./7_install.adoc[installation guide] and one of our xref:./6_sample_backends/0_intro.adoc[sample backends].
+Otherwise, a good starting place would be with either xref:./1_parsing.adoc[parsing] or the xref:./2_nails.adoc[NAILS interpreter].
+Next, you may wish to look at WizToolKit's xref:./3_plugins/0_intro.adoc[IR Plugin offerings].
+For development and testing, WizToolKit provides the xref:./4_tools/firealarm.adoc[`wtk-firealarm`] Non-ZK IR interpreter and a bunch of xref:./5_testcases.adoc[test case generation scripts].

@@ -1,1159 +1,809 @@
 #! /usr/bin/python3
 
-# Copyright (C) 2020 Stealth Software Technologies, Inc.
+# Copyright (C) 2020-2022 Stealth Software Technologies, Inc.
 
-# This is a python helper to print out C++ code which evaluates some DFAs.
-# A state-machine graph is built in python memory, and then serialized into
-# a C++ function which has a loop and a bunch of if/cases statements to
-# match text against the DFA.
-#
-# Each DFA generated is represented by an (internal) enum of states, along
-# with a (public) function function with the encoding of state transitions.
-#
-# NOTE: that certain lines of this program use bitwise operations as logicals
-# for the reason that they avoid short-circuit evaluation. In this case,
-# because each comparison is so small and has no side-effects, short-circuit
-# is slightly slower, I'm guessing because it hurts branch-prediction.
-# In cases where bitwise operations are used, the code generator correctly
-# inserts additional parenthesis to avoid operator precedence issues.
+import os
 
-AllAutomatas = list()
-AutomataName = str()
+# Helper library for generating DFAs
+from dfa import *
 
-#* The Automata class represents a state in a DFA, as either an accepting
-#* or non-accepting state, and a list of allowable transitions. Each
-#* transition represents a condition as well as a pointer to the next state.
-#* Each Automata object has an ID unique to its state-graph. Along with a 
+ih = open("target/generated/wtk/irregular/automatas.i.h", "w")
 
-class Automata:
-  def __init__(self):
-    self.accept = False
-    self.acceptVal = "false"
-    self.transitions = list()
-    self.num = len(AllAutomatas)
-    AllAutomatas.append(self)
-  def findCharTrans(self, c):
-    for t in self.transitions:
-      if t.ttype == "char" and t.character == c:
-        return t
-    return None
-  #* Inserts a sequence of states which would match an exact string.
-  def insertString(self, string, acceptVal = "true"):
-    if len(string) == 0:
-      self.setAccept(acceptVal)
-      return
-    trans = self.findCharTrans(string[0])
-    if trans is None:
-      trans = CharTransition(Automata(), False, string[0])
-      self.transitions.append(trans)
-    trans.nextState.insertString(string[1:len(string)], acceptVal)
-  def toString(self):
-    return AutomataName + str(self.num)
-  #* Returns a list of transitions who's next state is this state.
-  def selfReferences(self):
-    ret = list()
-    for i in self.transitions:
-      if i.nextState is self:
-        ret.append(i)
-    return ret
-  #* Returns a list of transitions who's next state is not this state.
-  def nonSelfReferences(self):
-    ret = list()
-    for i in self.transitions:
-      if i.nextState is not self:
-        ret.append(i)
-    return ret
-  #* Indicates if this automata has a transition which references itself.
-  def hasSelfReference(self):
-    for i in self.transitions:
-      if i.nextState is self:
-        return True
-    return False
-  #* Sets this state to accept.
-  def setAccept(self, acceptVal = "true"):
-    self.accept = True
-    self.acceptVal = acceptVal
+ih.write("#ifndef WIZTOOLKIT_AUTOMATA_H_\n#define WIZTOOLKIT_AUTOMATA_H_\n\n")
+ih.write("#include <cstddef>\n\n")
+ih.write("#include <wtk/indexes.h>\n")
+ih.write("#include <wtk/utils/hints.h>\n\n")
+ih.write("#include <wtk/irregular/AutomataCtx.h>\n\n")
 
-#* The transition is a condition which guards a next state.
-#* This is an abstract class which encapsulates just the state
-#* and a negation of the condition.
-#*
-#* The abstract condition() method must return a C++ expression to match
-#* the condition for the next state.
-class Transition:
-  def __init__(self, ns, neg, t):
-    self.nextState = ns
-    self.negate = neg
-    self.ttype = t
-  #* Prints a C++ if-statement which handles the condition and changes
-  #* the state to the next state.
-  def toString(self):
-    ret = str()
-    ret = ret + "      if(" + self.condition() +  ") {\n"
-    ret = ret + "        state = " + self.nextState.toString() + ";\n"
-    ret = ret + "        ctx->place += " + str(self.numAdvance()) + ";\n"
-    ret = ret + "        break;\n      }\n"
-    return ret
-  def numAdvance(self):
-    return 1
+ih.write("#define LOG_IDENTIFIER \"automatas\"\n")
+ih.write("#include <stealth_logging.h>\n")
 
-#* A char transition has a condition which matches an exact character.
-class CharTransition(Transition):
-  def __init__(self, ns, neg, c):
-    Transition.__init__(self, ns, neg, "char")
-    self.character = c
-  def condition(self, offset = 0):
-    ret = str() + "ctx->buffer[ctx->place + " + str(offset) + "] "
-    if self.negate:
-      ret = ret + "!= "
-    else:
-      ret = ret + "== "
-    ret = ret + "\'" + self.character + "\'"
-    return ret
-
-#* The range transition's condition matches a range of characters,
-#* for example 0 through 9.
-class RangeTransition(Transition):
-  def __init__(self, ns, neg, s, e):
-    Transition.__init__(self, ns, neg, "range")
-    self.start = s
-    self.end = e
-  def condition(self, offset = 0):
-    ret = str() + "(ctx->buffer[ctx->place + " + str(offset) + "] "
-    if self.negate:
-      ret = ret + "< "
-    else:
-      ret = ret + ">= "
-    ret = ret + "\'" + self.start + "\') "
-    if self.negate:
-      ret = ret + "| "
-    else:
-      ret = ret + "& "
-    ret = ret + "(ctx->buffer[ctx->place + " + str(offset) + "] "
-    if self.negate:
-      ret = ret + "> "
-    else:
-      ret = ret + "<= "
-    ret = ret + "\'" + self.end + "\')"
-    return ret
-
-#* The lookahead transition matches a sequence of states each with a single,
-#* acyclic, and non-accepting transition. Typically transitions are entered
-#* without lookahead, and lookaheads are determined just before the DFA is
-#* serialized.
-#*
-#* Lookaheads are used to reduce the loop iterations used by a DFA.
-class LookaheadTransition(Transition):
-  def __init__(self, ns):
-    Transition.__init__(self, ns, False, "lookahead")
-    self.lookaheads = list()
-  def condition(self):
-    ret = "(" + self.lookaheads[0].condition() + ")"
-    if len(self.lookaheads) > 2:
-      # first and second letters can short circuit, because if the first
-      # letter is wrong then probably it is a different transition.
-      ret = ret + "\n          && ((" + self.lookaheads[1].condition(1) + ")"
-      for offset in range(2, len(self.lookaheads)):
-        # remaining characters should not short circuit, because if the first
-        # letter matched, then a subsequent non-match would be a parse
-        # failure, which doesn't need to be as fast.
-        ret = ret + "\n            & ("
-        ret = ret + self.lookaheads[offset].condition(offset) + ")"
-      ret = ret + ")"
-    else:
-        ret = ret + " && (" + self.lookaheads[1].condition(1) + ")"
-    return ret
-  def numAdvance(self):
-    return len(self.lookaheads)
-
-def numIncomingTransitions(state):
-  incomingTransitions = 0
-  for automata in AllAutomatas:
-    for transition in automata.transitions:
-      if transition.nextState is state:
-        incomingTransitions = incomingTransitions + 1
-  return incomingTransitions
-
-#* This function converts sequences of single state transitions into
-#* lookahead transitions, which are bunched into a single condition.
-#* It also removes states whose conditions are always checked by
-#* prior lookahead conditions.
-def lookahead():
-  i = 0
-  while i < len(AllAutomatas):
-    automata = AllAutomatas[i]
-    for j in range(0, len(automata.transitions)):
-      transition = automata.transitions[j]
-      nextState = transition.nextState
-      lookaheadTrans = LookaheadTransition(nextState)
-      lookaheadTrans.lookaheads.append(transition)
-      # TODO: this needs a proper cycle checking currently 
-      while 1 >= numIncomingTransitions(nextState) \
-          and 1 == len(nextState.transitions) \
-          and nextState.transitions[0].nextState is not nextState \
-          and nextState.transitions[0].nextState is not automata \
-          and not nextState.accept \
-          and not automata.accept:
-        nextTrans = nextState.transitions[0]
-        if nextTrans.ttype == "lookahead":
-          lookaheadTrans.lookaheads.extend(nextTrans.lookaheads)
-        else:
-          lookaheadTrans.lookaheads.append(nextTrans)
-        if nextState in AllAutomatas:
-          AllAutomatas.remove(nextState)
-        nextState = nextTrans.nextState
-      lookaheadTrans.nextState = nextState
-      if len(lookaheadTrans.lookaheads) > 1:
-        automata.transitions[j] = lookaheadTrans
-    i = i + 1
-
-#* Prints out a list of the states, called by printAutomata.
-def printStates():
-  ret = str()
-  ret = ret + "enum " + AutomataName + "States {\n"
-  for a in AllAutomatas:
-    ret = ret + "  " + a.toString() +",\n"
-  ret = ret + "};\n"
-  return ret
-
-#* Prints out an automata function. if "body" is false, then just a
-#* function header is printed, otherwise the whole function is given.
-#* "rtype" is the return type of the function, and "fail" is the value
-#* returned when a parse failure is encountered.
-def printAutomata(body, rtype = "bool", fail = "false"):
-  ret = str()
-  if body:
-    lookahead()
-    ret = printStates()
-  ret = ret + "\nALWAYS_INLINE static inline "
-  ret = ret + rtype + " " + AutomataName + "(AutomataCtx* ctx"
-  ret = ret + ") noexcept"
-  if not body:
-    ret = ret + ";\n"
-    return ret
-  ret = ret + " {\n"
-  ret = ret + "  " + AutomataName + "States state = \n"
-  ret = ret + "    " + AllAutomatas[0].toString() + ";\n"
-  ret = ret + "  while (true) {\n"
-  ret = ret + "    switch(state) {\n"
-  # This loop prints each state.
-  for a in AllAutomatas:
-    ret = ret + "    case " + a.toString() + ": {\n"
-    # If the loop has transitions to itself, it can make small loop to
-    # avoid the bigger loop with more checks.
-    # TODO: can lookaheads be self-refs??
-    selfRefs = a.selfReferences()
-    if len(selfRefs) > 0:
-      first = True
-      for sr in selfRefs:
-        if first and len(selfRefs) == 1:
-          ret = ret + "      while(" + sr.condition()
-        elif first:
-          ret = ret + "      while((" + sr.condition() + ")"
-        else:
-          ret = ret + "\n          || (" + sr.condition() + ")"
-        first = False
-      ret = ret + ") {\n"
-      ret = ret + "        ++ctx->place;\n"
-      ret = ret + "      };\n"
-    # All other transitions (including lookaheads) just change the state
-    # and iterate the big loop.
-    for t in a.nonSelfReferences():
-      ret = ret + t.toString()
-    # If all possible transitions are exhausted, then either accept or
-    # reject the input.
-    if a.accept:
-      ret = ret + "      return " + a.acceptVal + ";\n"
-    else:
-      ret = ret + "      log_error(\"DFA state " + a.toString()
-      ret = ret + " rejected \'%c\' \'%.16s...\'\\n\", "
-      ret = ret + "ctx->buffer[ctx->place], &ctx->buffer[ctx->place + 1]);\n"
-      ret = ret + "      return " + fail + ";\n"
-    ret = ret + "    }\n"
-  ret = ret + "    }\n"
-  ret = ret + "  }\n"
-  # I'm pretty sure this is unreachable, but C++ requests a return here.
-  ret = ret + "  return " + fail + ";\n"
-  ret = ret + "}\n\n"
-  return ret
-
-# ==== Write includes and headers ====
-
-th = open("target/generated/wtk/irregular/Automatas.t.h", "w")
-h = open("target/generated/wtk/irregular/Automatas.h", "w");
-
-th.write("namespace wtk {\n")
-th.write("namespace irregular {\n\n")
-
-h.write("#ifndef WIZTOOLKIT_AUTOMATA_H_\n#define WIZTOOLKIT_AUTOMATA_H_\n\n")
-h.write("#include <string>\n\n")
-h.write("#include <wtk/IRParameters.h>\n")
-h.write("#include <wtk/utils/hints.h>\n\n")
-h.write("#include <wtk/irregular/AutomataCtx.h>\n")
-h.write("#include <wtk/irregular/ParseEnums.h>\n\n")
-
-h.write("namespace wtk {\n")
-h.write("namespace irregular {\n\n")
-
-# =======================
-# ==== Common Tokens ====
-# =======================
+ih.write("namespace wtk {\n")
+ih.write("namespace irregular {\n\n")
 
 # ==== Whitespace ====
 
-AutomataName = "whitespace"
-AllAutomatas = list()
+whitespace = DFA("whitespace")
+whitespace.setAcceptEof()
+ws = whitespace.root()
+ws.setAccept()
+ws.character(" ", ws)
+ws.character("\\n", ws)
+ws.lastTransition().addAction("ctx->lineNum++;")
+ws.character("\\r", ws)
+ws.character("\\t", ws)
 
-whitespace = Automata()
-whitespace.setAccept()
-whitespace.transitions.append(CharTransition(whitespace, False, " "));
-whitespace.transitions.append(CharTransition(whitespace, False, "\\n"));
-whitespace.transitions.append(CharTransition(whitespace, False, "\\r"));
-whitespace.transitions.append(CharTransition(whitespace, False, "\\t"));
+cmmt1 = whitespace.newState()
+cmmt2 = whitespace.newState()
+cmmt3 = whitespace.newState()
+cmmt4 = whitespace.newState()
 
-cmmt1 = Automata()
-cmmt2 = Automata()
+ws.character("/", cmmt1)
+cmmt1.character("/", cmmt2)
+cmmt1.character("*", cmmt3)
 
-whitespace.transitions.append(CharTransition(cmmt1, False, "/"))
-cmmt1.transitions.append(CharTransition(cmmt2, False, "/"))
+cmmt2.character("\\n", cmmt2, True)
+cmmt2.character("\\n", ws)
+cmmt2.lastTransition().addAction("ctx->lineNum++;")
 
-cmmt2.transitions.append(CharTransition(cmmt2, True, "\\n"))
-cmmt2.transitions.append(CharTransition(whitespace, False, "\\n"))
+cmmt3.character("*", cmmt3, True)
+cmmt3.lastTransition().addAction(
+    "if(ctx->buffer[ctx->place] == '\\n') { ctx->lineNum++; }")
+cmmt3.character("*", cmmt4)
+cmmt4.character("*", cmmt4)
+cmmt4.character("/", ws)
+cmmt4.character("/", cmmt3, True)
+cmmt4.lastTransition().addAction(
+    "if(ctx->buffer[ctx->place] == '\\n') { ctx->lineNum++; }")
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+whitespace.optimize()
+ih.write(whitespace.toCpp())
 
-# ==== Numeric Literals ====
+# ==== Numbers ====
 
-def numericAutomata(automata, returns):
-  numLit = Automata()
-  numLit0 = Automata()
-  numLit0.setAccept(returns["dec"])
+def numeric(dfa, root, Number_T, val = "val", rval = "true"):
+  numLit = root
 
-  automata.transitions.append(CharTransition(numLit0, False, "0"))
+  # "0"
+  numLit0 = dfa.newState()
+  numLit.character("0", numLit0)
+  numLit.lastTransition().addAction("*" + val + " = " + Number_T + "(0);")
+  numLit0.setAccept(rval)
 
-  numLitX = Automata()
-  numLitXn = Automata()
-  numLitXn.setAccept(returns["hex"])
+  # hex
+  numLitX = dfa.newState()
+  numLitXn = dfa.newState()
+  numLitXn.setAccept(rval)
 
-  numLit0.transitions.append(CharTransition(numLitX, False, "x"))
-  numLit0.transitions.append(CharTransition(numLitX, False, "X"))
+  numLit0.character("x", numLitX)
+  numLit0.character("X", numLitX)
 
-  numLitX.transitions.append(RangeTransition(numLitXn, False, "0", "9"))
-  numLitX.transitions.append(RangeTransition(numLitXn, False, "A", "F"))
-  numLitX.transitions.append(RangeTransition(numLitXn, False, "a", "f"))
+  numLitX.range("0", "9", numLitXn)
+  numLitX.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(ctx->buffer[ctx->place] - '0');")
+  numLitX.range("a", "f", numLitXn)
+  numLitX.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(0xA + ctx->buffer[ctx->place] - 'a');")
+  numLitX.range("A", "F", numLitXn)
+  numLitX.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(0xA + ctx->buffer[ctx->place] - 'A');")
 
-  numLitXn.transitions.append(RangeTransition(numLitXn, False, "0", "9"))
-  numLitXn.transitions.append(RangeTransition(numLitXn, False, "A", "F"))
-  numLitXn.transitions.append(RangeTransition(numLitXn, False, "a", "f"))
+  numLitXn.range("0", "9", numLitXn)
+  numLitXn.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(" + Number_T + "(*" + val + " << 4) | " + Number_T + "(0x0 + ctx->buffer[ctx->place] - '0'));")
+  numLitXn.range("a", "f", numLitXn)
+  numLitXn.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(" + Number_T + "(*" + val + " << 4) | " + Number_T + "(0xA + ctx->buffer[ctx->place] - 'a'));")
+  numLitXn.range("A", "F", numLitXn)
+  numLitXn.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(" + Number_T + "(*" + val + " << 4) | " + Number_T + "(0xA + ctx->buffer[ctx->place] - 'A'));")
 
-  numLitO = Automata()
-  numLitOn = Automata()
-  numLitOn.setAccept(returns["oct"])
+  # oct
+  numLitO = dfa.newState()
+  numLitOn = dfa.newState()
+  numLitOn.setAccept(rval)
 
-  numLit0.transitions.append(CharTransition(numLitO, False, "o"))
+  numLit0.character("o", numLitO)
 
-  numLitO.transitions.append(RangeTransition(numLitOn, False, "0", "7"))
-  numLitOn.transitions.append(RangeTransition(numLitOn, False, "0", "7"))
+  numLitO.range("0", "7", numLitOn)
+  numLitO.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(ctx->buffer[ctx->place] - '0');")
+  numLitOn.range("0", "7", numLitOn)
+  numLitOn.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(" + Number_T + "(*" + val + " << 3) | " + Number_T + "(ctx->buffer[ctx->place] - '0'));")
 
-  numLitB = Automata()
-  numLitBn = Automata()
-  numLitBn.setAccept(returns["bin"])
+  # bin
+  numLitB = dfa.newState()
+  numLitBn = dfa.newState()
+  numLitBn.setAccept(rval)
 
-  numLit0.transitions.append(CharTransition(numLitB, False, "b"))
-  numLit0.transitions.append(CharTransition(numLitB, False, "B"))
+  numLit0.character("b", numLitB)
+  numLit0.character("B", numLitB)
 
-  numLitB.transitions.append(RangeTransition(numLitBn, False, "0", "1"))
-  numLitBn.transitions.append(RangeTransition(numLitBn, False, "0", "1"))
+  numLitB.range("0", "1", numLitBn)
+  numLitB.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(ctx->buffer[ctx->place] - '0');")
+  numLitBn.range("0", "1", numLitBn)
+  numLitBn.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(" + Number_T + "(*" + val + " << 1) | " + Number_T + "(ctx->buffer[ctx->place] - '0'));")
 
-  numLitDec = Automata()
-  numLitDec.setAccept(returns["dec"])
+  # dec
+  numLitDec = dfa.newState()
+  numLitDec.setAccept(rval)
+  numLit.range("1", "9", numLitDec)
+  numLit.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(ctx->buffer[ctx->place] - '0');")
+  numLitDec.range("0", "9", numLitDec)
+  numLitDec.lastTransition().addAction(
+      "*" + val + " = " + Number_T + "(" + Number_T + "(*" + val + " * 10) + " + Number_T + "(ctx->buffer[ctx->place] - '0'));")
 
-  automata.transitions.append(RangeTransition(numLitDec, False, '1', '9'))
-  numLitDec.transitions.append(RangeTransition(numLitDec, False, '0', '9'))
+number = DFA("number")
+number.addTemplate("Number_T")
+number.addArgument("Number_T* RESTRICT const val")
+numeric(number, number.root(), "Number_T", "val")
+number.optimize()
+ih.write(number.toCpp())
 
-AutomataName = "numericLiteral"
-AllAutomatas = list()
+# ==== Indexes ====
 
-numReturns = dict()
-numReturns["dec"] = "NumericBase::dec"
-numReturns["hex"] = "NumericBase::hex"
-numReturns["bin"] = "NumericBase::bin"
-numReturns["oct"] = "NumericBase::oct"
+index = DFA("index")
+index.addArgument("wire_idx* RESTRICT const val")
+dollar = index.newState()
+index.root().character("$", dollar)
+numeric(index, dollar, "wire_idx", "val")
+index.optimize()
+ih.write(index.toCpp())
 
-numLit = Automata()
-numericAutomata(numLit, numReturns)
+# ==== Type or Wire ====
 
-th.write(printAutomata(True, "NumericBase", "NumericBase::invalid"))
-h.write(printAutomata(False, "NumericBase", "NumericBase::invalid"))
+typeOrWire = DFA("typeOrWire", "TypeOrWire", "invalid")
 
-# =============================
-# ==== Header/front matter ====
-# =============================
+typeOrWire.addArgument("type_idx* RESTRICT const type")
+numeric(typeOrWire, typeOrWire.root(), "type_idx", "type", "type")
 
-# ==== Version ====
+typeOrWire.addArgument("wire_idx* RESTRICT const wire")
+dollar = typeOrWire.newState()
+typeOrWire.root().character("$", dollar)
+numeric(typeOrWire, dollar, "wire_idx", "wire", "wire")
 
-AutomataName = "versionKw"
-AllAutomatas = list()
+typeOrWire.optimize()
+ih.write(typeOrWire.toCpp())
 
-version = Automata()
-version.insertString("version");
+# ==== Identifiers ====
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+def identifierize(dfa, arg, rval):
+  id_1 = dfa.newState()
+  id_1.setAccept(rval)
 
+  dfa.root().range("a", "z", id_1)
+  dfa.root().range("A", "Z", id_1)
+  dfa.root().character("_", id_1)
 
-# ==== Field (Keyword) ====
+  id_1.range("a", "z", id_1)
+  id_1.range("A", "Z", id_1)
+  id_1.range("0", "9", id_1)
+  id_1.character("_", id_1)
 
-AutomataName = "fieldKw"
-AllAutomatas = list()
+  id_n = dfa.newState()
+  id_n.setAccept(rval)
+  id_n.range("a", "z", id_n)
+  id_n.range("A", "Z", id_n)
+  id_n.range("0", "9", id_n)
+  id_n.character("_", id_n)
 
-field = Automata()
-field.insertString("field")
+  id_dot = dfa.newState()
+  id_1.character(".", id_dot)
+  id_n.character(".", id_dot)
+  id_dot.range("a", "z", id_n)
+  id_dot.range("A", "Z", id_n)
+  id_dot.character("_", id_n)
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+  id_colon1 = dfa.newState()
+  id_colon2 = dfa.newState()
+  id_1.character(":", id_colon1)
+  id_n.character(":", id_colon1)
+  id_colon1.character(":", id_colon2)
+  id_colon2.range("a", "z", id_n)
+  id_colon2.range("A", "Z", id_n)
+  id_colon2.character("_", id_n)
 
-# ==== Decimal Literal (for version) ====
+  dfa.addFinishAction( \
+      arg + "->assign(ctx->buffer + ctx->mark, ctx->place - ctx->mark);", rval)
 
-AutomataName = "decLiteral"
-AllAutomatas = list()
+identifier = DFA("identifier")
+identifier.addArgument("std::string* RESTRICT const idnt")
+identifierize(identifier, "idnt", "true")
 
-decLiteral = Automata()
-decLiteral0 = Automata()
-decLiteral0.setAccept()
-decLiteral19 = Automata()
-decLiteral19.setAccept()
-decLiteral.transitions.append(CharTransition(decLiteral0, False, "0"))
-decLiteral.transitions.append(RangeTransition(decLiteral19, False, "1", "9"))
-decLiteral19.transitions.append(RangeTransition(decLiteral19, False, "0", "9"))
+identifier.optimize()
+ih.write(identifier.toCpp())
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+# ==== Version (keyword) ====
 
-# ==== Dot (Separator) ====
+version = DFA("versionKw")
+version.insertString("version")
+version.optimize()
+ih.write(version.toCpp())
 
-AutomataName = "dot"
-AllAutomatas = list()
+# ==== Dot (operator) ====
 
-dot = Automata()
+dot = DFA("dotOp")
 dot.insertString(".")
+dot.optimize()
+ih.write(dot.toCpp())
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+# ==== Dash (operator) ====
 
-# ==== Semicolon (Operator) ====
+dash = DFA("dashOp")
+dash.insertString("-")
+dash.optimize()
+ih.write(dash.toCpp())
 
-AutomataName = "semiColon"
-AllAutomatas = list()
+# ==== Semi Colon (Operator) ====
 
-semiColon = Automata()
+semiColon = DFA("semiColonOp")
 semiColon.insertString(";")
+semiColon.optimize()
+ih.write(semiColon.toCpp())
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+# ==== Dash or Semi Colon (Operators) ====
 
+dashOrSemi = DFA("dashOrSemiColonOps", "DashOrSemiColon", "invalid")
+dashOrSemi.insertString("-", "dash")
+dashOrSemi.insertString(";", "semiColon")
+dashOrSemi.optimize()
+ih.write(dashOrSemi.toCpp())
 
-# ==== Characteristic (Keyword) ====
+# ==== Resource Type (Keywords) ====
 
-AutomataName = "characteristicKw"
-AllAutomatas = list()
+resourceType = DFA("resourceTypeKws", "ResourceType", "invalid")
+resourceType.insertString("translation", "translation")
+resourceType.insertString("circuit", "circuit")
+resourceType.insertString("public_input", "publicIn")
+resourceType.insertString("private_input", "privateIn")
+resourceType.insertString("configuration", "configuration")
+resourceType.optimize()
+ih.write(resourceType.toCpp())
 
-characteristic = Automata()
-characteristic.insertString("characteristic")
+# ==== Plugin or Type (Keywords) ====
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+pluginOrType = DFA("pluginOrType", "PluginOrType", "invalid")
+pluginOrType.insertString("@plugin", "plugin")
+pluginOrType.insertString("@type", "type")
+pluginOrType.optimize()
+ih.write(pluginOrType.toCpp())
 
-# ==== Degree (Keyword) ====
+# ==== Field or Ring or Plugin (Keywords) ====
 
-AutomataName = "degreeKw"
-AllAutomatas = list()
+fieldOrRingOrPlugin = \
+    DFA("fieldOrRingOrPluginKws", "FieldOrRingOrPlugin", "invalid")
+fieldOrRingOrPlugin.insertString("field", "field")
+fieldOrRingOrPlugin.insertString("ring", "ring")
+fieldOrRingOrPlugin.insertString("@plugin", "plugin")
+fieldOrRingOrPlugin.optimize()
+ih.write(fieldOrRingOrPlugin.toCpp())
 
-degree = Automata()
-degree.insertString("degree")
+# ==== Type or Convert or Begin (Keywords) ====
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+typeOrConvertOrBegin = \
+  DFA("typeOrConvertOrBeginKws", "TypeOrConvertOrBegin", "invalid")
+typeOrConvertOrBegin.insertString("@type", "type")
+typeOrConvertOrBegin.insertString("@convert", "convert")
+typeOrConvertOrBegin.insertString("@begin", "begin")
+typeOrConvertOrBegin.optimize()
+ih.write(typeOrConvertOrBegin.toCpp())
 
-# ==== Resource (Keywords) ====
+# ==== Type (Keyword) ====
 
-AutomataName = "resourceName"
-AllAutomatas = list()
+typeKw = DFA("typeKw");
+typeKw.insertString("@type");
+typeKw.optimize()
+ih.write(typeKw.toCpp())
 
-resourceName = Automata()
-resourceName.insertString("relation", "Resource::relation")
-resourceName.insertString("instance", "Resource::instance")
-resourceName.insertString("short_witness", "Resource::shortWitness")
+# ==== Field or Ring (Keywords) ====
 
-th.write(printAutomata(True, "Resource", "Resource::invalid"))
-h.write(printAutomata(False, "Resource", "Resource::invalid"))
+fieldOrRingKws = DFA("fieldOrRingKws", "FieldOrRingKws", "invalid");
+fieldOrRingKws.insertString("field", "field");
+fieldOrRingKws.insertString("ring", "ring");
+fieldOrRingKws.optimize()
+ih.write(fieldOrRingKws.toCpp())
 
-# ==== Gate Set (Keyword) ====
+# ==== Convert or Begin (Keywords) ====
 
-AutomataName = "gate_setKw"
-AllAutomatas = list()
-
-gate_set = Automata()
-gate_set.insertString("gate_set")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== Colon (Operator) ====
-
-AutomataName = "colon"
-AllAutomatas = list()
-
-colon = Automata()
-colon.insertString(":")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== Gate Set First Words (Keywords) ====
-
-AutomataName = "gate_setFirst"
-AllAutomatas = list()
-
-gate_setFirst = Automata()
-gate_setFirst.insertString("arithmetic", "GateSetFirst::arithmetic")
-gate_setFirst.insertString("boolean", "GateSetFirst::boolean")
-gate_setFirst.insertString("@add", "GateSetFirst::add")
-gate_setFirst.insertString("@addc", "GateSetFirst::addc")
-gate_setFirst.insertString("@mul", "GateSetFirst::mul")
-gate_setFirst.insertString("@mulc", "GateSetFirst::mulc")
-gate_setFirst.insertString("@and", "GateSetFirst::and_")
-gate_setFirst.insertString("@xor", "GateSetFirst::xor_")
-gate_setFirst.insertString("@not", "GateSetFirst::not_")
-
-th.write(printAutomata(True, "GateSetFirst", "GateSetFirst::invalid"))
-h.write(printAutomata(False, "GateSetFirst", "GateSetFirst::invalid"))
-
-# ==== Comma or SemiColon (symbols) ====
-
-AutomataName = "commaOrSemiColon"
-AllAutomatas = list()
-
-commaOrSemiColon = Automata()
-commaOrSemiColon.insertString(",", "CommaOrSemiColon::comma")
-commaOrSemiColon.insertString(";", "CommaOrSemiColon::semiColon")
-
-th.write(printAutomata(True, "CommaOrSemiColon", "CommaOrSemiColon::invalid"))
-h.write(printAutomata(False, "CommaOrSemiColon", "CommaOrSemiColon::invalid"))
-
-# ==== Gate Set Arithmetic Words (Keywords) ====
-
-AutomataName = "gate_setArith"
-AllAutomatas = list()
-
-gate_setAriths = Automata()
-gate_setAriths.insertString("@add", "GateSetArith::add")
-gate_setAriths.insertString("@addc", "GateSetArith::addc")
-gate_setAriths.insertString("@mul", "GateSetArith::mul")
-gate_setAriths.insertString("@mulc", "GateSetArith::mulc")
-
-th.write(printAutomata(True, "GateSetArith", "GateSetArith::invalid"))
-h.write(printAutomata(False, "GateSetArith", "GateSetArith::invalid"))
-
-# ==== Gate Set Boolean Words (Keywords) ====
-
-AutomataName = "gate_setBool"
-AllAutomatas = list()
-
-gate_setBools = Automata()
-gate_setBools.insertString("@and", "GateSetBool::and_")
-gate_setBools.insertString("@xor", "GateSetBool::xor_")
-gate_setBools.insertString("@not", "GateSetBool::not_")
-
-th.write(printAutomata(True, "GateSetBool", "GateSetBool::invalid"))
-h.write(printAutomata(False, "GateSetBool", "GateSetBool::invalid"))
-
-# ==== Features (Keyword) ====
-
-AutomataName = "featuresKw"
-AllAutomatas = list()
-
-features = Automata()
-features.insertString("features")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== Features First Words (Keywords) ====
-
-AutomataName = "featureFirst"
-AllAutomatas = list()
-
-featuresFirst = Automata()
-featuresFirst.insertString("simple", "FeatureFirst::simple")
-featuresFirst.insertString("@function", "FeatureFirst::function")
-featuresFirst.insertString("@for", "FeatureFirst::for_loop")
-featuresFirst.insertString("@switch", "FeatureFirst::switch_case")
-
-th.write(printAutomata(True, "FeatureFirst", "FeatureFirst::invalid"))
-h.write(printAutomata(False, "FeatureFirst", "FeatureFirst::invalid"))
-
-# ==== Features Rest Words (Keywords) ====
-
-AutomataName = "featureRest"
-AllAutomatas = list()
-
-featuresRest = Automata()
-featuresRest.insertString("@function", "FeatureRest::function")
-featuresRest.insertString("@for", "FeatureRest::for_loop")
-featuresRest.insertString("@switch", "FeatureRest::switch_case")
-
-th.write(printAutomata(True, "FeatureRest", "FeatureRest::invalid"))
-h.write(printAutomata(False, "FeatureRest", "FeatureRest::invalid"))
-
-# =================================
-# ==== Streaming API Specifics ====
-# =================================
+convertOrBegin = \
+  DFA("convertOrBeginKws", "ConvertOrBegin", "invalid")
+convertOrBegin.insertString("@convert", "convert")
+convertOrBegin.insertString("@begin", "begin")
+convertOrBegin.optimize()
+ih.write(convertOrBegin.toCpp())
 
 # ==== Begin (Keyword) ====
 
-AutomataName = "beginKw"
-AllAutomatas = list()
+beginKw = DFA("beginKw")
+beginKw.insertString("@begin")
+beginKw.optimize()
+ih.write(beginKw.toCpp())
 
-begin = Automata()
-begin.insertString("@begin")
+# ==== Colon (Operator) ====
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-
-# ==== Directive Identification ====
-
-AutomataName = "streamingDirective"
-AllAutomatas = list()
-directive = Automata()
-directive.insertString("$", "StreamingDirectiveTypes::gate")
-directive.insertString("@delete", "StreamingDirectiveTypes::delete_")
-directive.insertString("@assert_zero", "StreamingDirectiveTypes::assert_zero")
-directive.insertString("@end", "StreamingDirectiveTypes::end")
-
-th.write(printAutomata(
-    True, "StreamingDirectiveTypes", "StreamingDirectiveTypes::invalid"))
-h.write(printAutomata(
-    False, "StreamingDirectiveTypes", "StreamingDirectiveTypes::invalid"))
-
-# ==== Left Arrow (Operator) ====
-
-AutomataName = "leftArrow"
-AllAutomatas = list()
-
-lArrow = Automata()
-lArrow.insertString("<-")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== Arithmetic Streaming Directives ====
-
-AutomataName = "arithStreamingDirective"
-AllAutomatas = list()
-arithDirective = Automata()
-arithDirective.insertString("@add", "ArithStreamingDirectives::add")
-arithDirective.insertString("@mul", "ArithStreamingDirectives::mul")
-arithDirective.insertString("@addc", "ArithStreamingDirectives::addc")
-arithDirective.insertString("@mulc", "ArithStreamingDirectives::mulc")
-arithDirective.insertString(
-    "@short_witness", "ArithStreamingDirectives::witness")
-arithDirective.insertString("@instance", "ArithStreamingDirectives::instance")
-arithDirective.insertString("<", "ArithStreamingDirectives::assign")
-arithDirective.insertString("$", "ArithStreamingDirectives::copy")
-
-th.write(printAutomata(
-    True, "ArithStreamingDirectives", "ArithStreamingDirectives::invalid"))
-h.write(printAutomata(
-    False, "ArithStreamingDirectives", "ArithStreamingDirectives::invalid"))
-
-# ==== Boolean Streaming Directives ====
-
-AutomataName = "boolStreamingDirective"
-AllAutomatas = list()
-boolDirective = Automata()
-boolDirective.insertString("@xor", "BoolStreamingDirectives::xor_")
-boolDirective.insertString("@and", "BoolStreamingDirectives::and_")
-boolDirective.insertString("@not", "BoolStreamingDirectives::not_")
-boolDirective.insertString(
-    "@short_witness", "BoolStreamingDirectives::witness")
-boolDirective.insertString("@instance", "BoolStreamingDirectives::instance")
-boolDirective.insertString("<", "BoolStreamingDirectives::assign")
-boolDirective.insertString("$", "BoolStreamingDirectives::copy")
-
-th.write(printAutomata(
-    True, "BoolStreamingDirectives", "BoolStreamingDirectives::invalid"))
-h.write(printAutomata(
-    False, "BoolStreamingDirectives", "BoolStreamingDirectives::invalid"))
+colon = DFA("colonOp")
+colon.insertString(":")
+colon.optimize()
+ih.write(colon.toCpp())
 
 # ==== Left Parenthesis (Operator) ====
 
-AutomataName = "leftParen"
-AllAutomatas = list()
-
-lParen = Automata()
-lParen.insertString("(")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== Wire Number Begin ====
-
-AutomataName = "wireNumberBegin"
-AllAutomatas = list()
-
-identBegin = Automata()
-identBegin.insertString("$")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== Comma (Separator) ====
-
-AutomataName = "comma"
-AllAutomatas = list()
-
-comma = Automata()
-comma.insertString(",")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== Field Literal Begin ====
-
-AutomataName = "fieldLiteralBegin"
-AllAutomatas = list()
-
-fieldLitBegin = Automata()
-fieldLitBegin.insertString("<")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== Field Literal End ====
-
-AutomataName = "fieldLiteralEnd"
-AllAutomatas = list()
-
-fieldLitEnd = Automata()
-fieldLitEnd.insertString(">")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+lparen = DFA("lparenOp")
+lparen.insertString("(")
+lparen.optimize()
+ih.write(lparen.toCpp())
 
 # ==== Right Parenthesis (Operator) ====
 
-AutomataName = "rightParen"
-AllAutomatas = list()
+rparen = DFA("rparenOp")
+rparen.insertString(")")
+rparen.optimize()
+ih.write(rparen.toCpp())
 
-rParen = Automata()
-rParen.insertString(")")
+# ==== Comma (Operator) ====
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+comma = DFA("commaOp")
+comma.insertString(",")
+comma.optimize()
+ih.write(comma.toCpp())
 
-# ==== Comma or Right Parenthesis (Conditional Operators) ====
+# ==== Out (Keyword) ====
 
-AutomataName = "commaOrRightParen"
-AllAutomatas = list()
+outKw = DFA("outKw")
+outKw.insertString("@out")
+outKw.optimize()
+ih.write(outKw.toCpp())
 
-commaOrCloseParen = Automata()
-commaOrCloseParen.insertString(",", "CommaOrRightParen::comma")
-commaOrCloseParen.insertString(")", "CommaOrRightParen::rightParen")
+# ==== In (Keyword) ====
 
-th.write(printAutomata(
-    True, "CommaOrRightParen", "CommaOrRightParen::invalid"))
-h.write(printAutomata(
-    False, "CommaOrRightParen", "CommaOrRightParen::invalid"))
+inKw = DFA("inKw")
+inKw.insertString("@in")
+inKw.optimize()
+ih.write(inKw.toCpp())
 
-# ==== Literal or End (used in instance/short witness streams) ====
+# ==== Top Scope Item Start Start (Mixed) ====
 
-AutomataName = "literalOrEnd"
-AllAutomatas = list()
+topScopeItemStart = DFA("topScopeItemStart", "TopScopeItemStart", "invalid")
 
-literalOrEnd = Automata()
-literalOrEnd.insertString("<", "LiteralOrEnd::literal")
-literalOrEnd.insertString("@end", "LiteralOrEnd::end")
+# Gates which start with an output wire (standard gates and call)
+topScopeItemStart.addArgument("wire_idx* RESTRICT const index")
+dollar = topScopeItemStart.newState()
+topScopeItemStart.root().character("$", dollar)
+numeric(topScopeItemStart, dollar, "wire_idx", "index", "wireIdx")
 
-th.write(printAutomata(True, "LiteralOrEnd", "LiteralOrEnd::invalid"))
-h.write(printAutomata(False, "LiteralOrEnd", "LiteralOrEnd::invalid"))
+# Gates which start with a type index (just convert)
+topScopeItemStart.addArgument("type_idx* RESTRICT const out_type")
+numeric(topScopeItemStart,
+    topScopeItemStart.root(), "type_idx", "out_type", "typeIdx")
 
-# ============================
-# ==== Tree API Specifics ====
-# ============================
+# Gates which start with a keyword
+topScopeItemStart.insertString("@assert_zero", "assertZero")
+topScopeItemStart.insertString("@new", "new_")
+topScopeItemStart.insertString("@delete", "delete_")
+topScopeItemStart.insertString("@call", "call")
+topScopeItemStart.insertString("@function", "function")
+topScopeItemStart.insertString("@end", "end")
+topScopeItemStart.optimize()
+ih.write(topScopeItemStart.toCpp())
 
-# ==== Tree Directive Start (global scope) ====
+# ==== Arrow (Operator) ====
 
-AutomataName = "treeDirectiveGlobalStart"
-AllAutomatas = list()
+arrow = DFA("arrowOp")
+arrow.insertString("<-")
+arrow.optimize()
+ih.write(arrow.toCpp())
 
-literalOrEnd = Automata()
-literalOrEnd.insertString("$", "TreeDirectiveGlobalStart::wireNumber")
-literalOrEnd.insertString(
-    "@assert_zero", "TreeDirectiveGlobalStart::assertZero")
-literalOrEnd.insertString("@delete", "TreeDirectiveGlobalStart::delete_")
-literalOrEnd.insertString("@call", "TreeDirectiveGlobalStart::call")
-literalOrEnd.insertString("@anon_call", "TreeDirectiveGlobalStart::anonCall")
-literalOrEnd.insertString("@for", "TreeDirectiveGlobalStart::forLoop")
-literalOrEnd.insertString(
-    "@switch", "TreeDirectiveGlobalStart::switchStatement")
-literalOrEnd.insertString("@end", "TreeDirectiveGlobalStart::end")
-literalOrEnd.insertString("@function", "TreeDirectiveGlobalStart::function")
+# ==== Standard Gate Operations (Mixed) ====
 
-th.write(printAutomata(
-    True, "TreeDirectiveGlobalStart", "TreeDirectiveGlobalStart::invalid"))
-h.write(printAutomata(
-    False, "TreeDirectiveGlobalStart", "TreeDirectiveGlobalStart::invalid"))
+standardGates = DFA("standardGateOps", "StandardGateOps", "invalid")
 
-# ==== Identifier ====
+# named gates
+standardGates.insertString("@add", "add")
+standardGates.insertString("@mul", "mul")
+standardGates.insertString("@addc", "addc")
+standardGates.insertString("@mulc", "mulc")
+standardGates.insertString("@public", "public_")
+standardGates.insertString("@private", "private_")
+standardGates.insertString("@call", "call")
 
-def name(automata, rval):
-  indexVar = Automata()
-  indexVar.setAccept(rval)
+# copy without type
+standardGates.addArgument("wire_idx* RESTRICT const copy_wire")
+dollar = standardGates.newState()
+standardGates.root().character("$", dollar)
+numeric(standardGates, dollar, "wire_idx", "copy_wire", "copy_wire")
 
-  automata.transitions.append(RangeTransition(indexVar, False, 'a', 'z'))
-  automata.transitions.append(RangeTransition(indexVar, False, 'A', 'Z'))
-  automata.transitions.append(CharTransition(indexVar, False, '_'))
+# copy or assign with type
+standardGates.addArgument("type_idx* RESTRICT const copy_type")
+numeric(standardGates,
+    standardGates.root(), "type_idx", "copy_type", "copy_type")
 
-  indexVar.transitions.append(RangeTransition(indexVar, False, 'a', 'z'))
-  indexVar.transitions.append(RangeTransition(indexVar, False, 'A', 'Z'))
-  indexVar.transitions.append(RangeTransition(indexVar, False, '0', '9'))
-  indexVar.transitions.append(CharTransition(indexVar, False, '_'))
-
-  doubleColon = Automata()
-  indexVar.transitions.append(CharTransition(doubleColon, False, ':'))
-  doubleColon.transitions.append(CharTransition(automata, False, ':'))
-
-  indexVar.transitions.append(CharTransition(automata, False, '.'))
-
-AutomataName = "identifier"
-AllAutomatas = list()
-
-identifier = Automata()
-name(identifier, "true")
+# assign without type
+standardGates.insertString("<", "lchevron")
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== out (keyword) ====
-AutomataName = "outKw"
-AllAutomatas = list()
-
-literalOrEnd = Automata()
-literalOrEnd.insertString("@out")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== in (keyword) ====
-AutomataName = "inKw"
-AllAutomatas = list()
-
-literalOrEnd = Automata()
-literalOrEnd.insertString("@in")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== instance (keyword) ====
-AutomataName = "instanceKw"
-AllAutomatas = list()
-
-literalOrEnd = Automata()
-literalOrEnd.insertString("@instance")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== short witness (keyword) ====
-AutomataName = "shortWitnessKw"
-AllAutomatas = list()
-
-literalOrEnd = Automata()
-literalOrEnd.insertString("@short_witness")
-
-th.write(printAutomata(True))
-h.write(printAutomata(False))
-
-# ==== Tree Directive Start (non-global scope) ====
-
-AutomataName = "treeDirectiveStart"
-AllAutomatas = list()
-
-literalOrEnd = Automata()
-literalOrEnd.insertString("$", "TreeDirectiveStart::wireNumber")
-literalOrEnd.insertString(
-    "@assert_zero", "TreeDirectiveStart::assertZero")
-literalOrEnd.insertString("@delete", "TreeDirectiveStart::delete_")
-literalOrEnd.insertString("@call", "TreeDirectiveStart::call")
-literalOrEnd.insertString("@anon_call", "TreeDirectiveStart::anonCall")
-literalOrEnd.insertString("@for", "TreeDirectiveStart::forLoop")
-literalOrEnd.insertString(
-    "@switch", "TreeDirectiveStart::switchStatement")
-literalOrEnd.insertString("@end", "TreeDirectiveStart::end")
-
-th.write(printAutomata(
-    True, "TreeDirectiveStart", "TreeDirectiveStart::invalid"))
-h.write(printAutomata(
-    False, "TreeDirectiveStart", "TreeDirectiveStart::invalid"))
-
-# ==== Directives with a Single Output Wire ====
-
-AutomataName = "singleOutputDirective"
-AllAutomatas = list()
-
-listRangeOrArrow = Automata()
-listRangeOrArrow.insertString("@add", "SingleOutputDirective::add")
-listRangeOrArrow.insertString("@mul", "SingleOutputDirective::mul")
-listRangeOrArrow.insertString("@and", "SingleOutputDirective::and_")
-listRangeOrArrow.insertString("@xor", "SingleOutputDirective::xor_")
-listRangeOrArrow.insertString("@addc", "SingleOutputDirective::addc")
-listRangeOrArrow.insertString("@mulc", "SingleOutputDirective::mulc")
-listRangeOrArrow.insertString("@not", "SingleOutputDirective::not_")
-listRangeOrArrow.insertString(
-    "@short_witness", "SingleOutputDirective::witness")
-listRangeOrArrow.insertString("@instance", "SingleOutputDirective::instance")
-listRangeOrArrow.insertString("<", "SingleOutputDirective::assign")
-listRangeOrArrow.insertString("$", "SingleOutputDirective::copy")
-listRangeOrArrow.insertString("@call", "SingleOutputDirective::call")
-listRangeOrArrow.insertString("@anon_call", "SingleOutputDirective::anonCall")
-listRangeOrArrow.insertString("@for", "SingleOutputDirective::forLoop")
-listRangeOrArrow.insertString(
-    "@switch", "SingleOutputDirective::switchStatement")
+standardGates.optimize()
+ih.write(standardGates.toCpp())
 
-th.write(printAutomata(
-    True, "SingleOutputDirective", "SingleOutputDirective::invalid"))
-h.write(printAutomata(
-    False, "SingleOutputDirective", "SingleOutputDirective::invalid"))
+# ==== Left Chevron (Operator) ====
 
-# ==== Wire List or Range or Left Arrow ====
+lchevron = DFA("lchevronOp")
+lchevron.insertString("<")
+lchevron.optimize()
+ih.write(lchevron.toCpp())
 
-AutomataName = "wireListSeparatorsA"
-AllAutomatas = list()
+# ==== Right Chevron (Operator) ====
 
-listRangeOrArrow = Automata()
-listRangeOrArrow.insertString("<-", "WireListSeparators::end")
-listRangeOrArrow.insertString(",", "WireListSeparators::list")
-listRangeOrArrow.insertString("...", "WireListSeparators::range")
+rchevron = DFA("rchevronOp")
+rchevron.insertString(">")
+rchevron.optimize()
+ih.write(rchevron.toCpp())
 
-th.write(printAutomata(
-    True, "WireListSeparators", "WireListSeparators::invalid"))
-h.write(printAutomata(
-    False, "WireListSeparators", "WireListSeparators::invalid"))
+# ==== Type or Rparen (Mixed) ====
 
-# ==== Wire List or Left Arrow ====
+typeOrRparen = DFA("typeOrRparen", "TypeOrRparen", "invalid")
 
-AutomataName = "wireListSeparatorsB"
-AllAutomatas = list()
+# Type
+typeOrRparen.addArgument("type_idx* RESTRICT const type")
+numeric(typeOrRparen, typeOrRparen.root(), "type_idx", "type", "type")
 
-listOrArrow = Automata()
-listOrArrow.insertString("<-", "WireListSeparators::end")
-listOrArrow.insertString(",",  "WireListSeparators::list")
+# Rparen
+typeOrRparen.insertString(")", "rparen")
 
-th.write(printAutomata(
-    True, "WireListSeparators", "WireListSeparators::invalid"))
-h.write(printAutomata(
-    False, "WireListSeparators", "WireListSeparators::invalid"))
+typeOrRparen.optimize()
+ih.write(typeOrRparen.toCpp())
 
-# ==== Wire List or Close Parenthesis ====
+# ==== Copy Operation (Mixed) ====
 
-AutomataName = "wireListSeparatorsC"
-AllAutomatas = list()
+copyOp = DFA("copyOp", "CopyOp", "invalid")
 
-listOrArrow = Automata()
-listOrArrow.insertString(")", "WireListSeparators::end")
-listOrArrow.insertString(",",  "WireListSeparators::list")
+# copy
+copyOp.addArgument("wire_idx* RESTRICT const left")
+dollar = copyOp.newState()
+copyOp.root().character("$", dollar)
+numeric(copyOp, dollar, "wire_idx", "left", "copy")
 
-th.write(printAutomata(
-    True, "WireListSeparators", "WireListSeparators::invalid"))
-h.write(printAutomata(
-    False, "WireListSeparators", "WireListSeparators::invalid"))
+# assign
+copyOp.insertString("<", "assign")
 
-# ==== Wire List or Range or Close Parenthesis ====
+copyOp.optimize()
+ih.write(copyOp.toCpp())
 
-AutomataName = "wireListSeparatorsD"
-AllAutomatas = list()
+# ==== Ranged List (Operators) ====
 
-listOrArrow = Automata()
-listOrArrow.insertString(")", "WireListSeparators::end")
-listOrArrow.insertString(",",  "WireListSeparators::list")
-listOrArrow.insertString("...",  "WireListSeparators::range")
+# A
+rangedListA = DFA("rangedListA", "RangedListA", "invalid")
+rangedListA.insertString("<-", "arrow")
+rangedListA.insertString("...", "range")
+rangedListA.insertString(",", "list")
 
-th.write(printAutomata(
-    True, "WireListSeparators", "WireListSeparators::invalid"))
-h.write(printAutomata(
-    False, "WireListSeparators", "WireListSeparators::invalid"))
+rangedListA.optimize()
+ih.write(rangedListA.toCpp())
 
-# ==== Wire List or Range ====
+# B
+rangedListB = DFA("rangedListB", "RangedListB", "invalid")
+rangedListB.insertString("<-", "arrow")
+rangedListB.insertString(",", "list")
 
-AutomataName = "wireListSeparatorsE"
-AllAutomatas = list()
+rangedListB.optimize()
+ih.write(rangedListB.toCpp())
 
-listOrArrow = Automata()
-listOrArrow.insertString(",",  "WireListSeparators::list")
-listOrArrow.insertString("...",  "WireListSeparators::range")
+# C
+rangedListC = DFA("rangedListC", "RangedListC", "invalid")
+rangedListC.insertString(")", "rparen")
+rangedListC.insertString("...", "range")
+rangedListC.insertString(",", "list")
 
-th.write(printAutomata(
-    True, "WireListSeparators", "WireListSeparators::invalid"))
-h.write(printAutomata(
-    False, "WireListSeparators", "WireListSeparators::invalid"))
+rangedListC.optimize()
+ih.write(rangedListC.toCpp())
 
-# ==== Wire Number or Instance ====
+# D
+rangedListD = DFA("rangedListD", "RangedListD", "invalid")
+rangedListD.insertString(")", "rparen")
+rangedListD.insertString("...", "range")
 
-AutomataName = "wireNumberOrInstance"
-AllAutomatas = list()
+rangedListD.optimize()
+ih.write(rangedListD.toCpp())
 
-wireNumOrIns = Automata()
-wireNumOrIns.insertString("$", "WireNumberOrInstance::wireNumber")
-wireNumOrIns.insertString("@instance", "WireNumberOrInstance::instance")
+# E
+rangedListE = DFA("rangedListE", "RangedListE", "invalid")
+rangedListE.insertString(")", "rparen")
+rangedListE.insertString(",", "list")
 
-th.write(printAutomata(
-    True,  "WireNumberOrInstance", "WireNumberOrInstance::invalid"))
-h.write(printAutomata(
-    False, "WireNumberOrInstance", "WireNumberOrInstance::invalid"))
+rangedListE.optimize()
+ih.write(rangedListE.toCpp())
 
+# F
+rangedListF = DFA("rangedListF", "RangedListF", "invalid")
+rangedListF.insertString("@out", "out")
+rangedListF.insertString("@in", "in")
 
-# ==== Wire Number or Feature ====
+rangedListF.optimize()
+ih.write(rangedListF.toCpp())
 
-AutomataName = "wireNumberOrFunction"
-AllAutomatas = list()
+# G
+rangedListG = DFA("rangedListG", "RangedListG", "invalid")
+rangedListG.insertString("@in", "in")
 
-wireNumOrFunc = Automata()
-wireNumOrFunc.insertString("$", "WireNumberOrFunction::wireNumber")
-wireNumOrFunc.insertString("@call", "WireNumberOrFunction::call")
-wireNumOrFunc.insertString("@anon_call", "WireNumberOrFunction::anonCall")
+rangedListG.addArgument("type_idx* RESTRICT const type")
+numeric(rangedListG, rangedListG.root(), "type_idx", "type", "type")
 
-th.write(printAutomata(
-    True,  "WireNumberOrFunction", "WireNumberOrFunction::invalid"))
-h.write(printAutomata(
-    False, "WireNumberOrFunction", "WireNumberOrFunction::invalid"))
+rangedListG.optimize()
+ih.write(rangedListG.toCpp())
 
-# ==== Iterator Expression ====
+# H
+rangedListH = DFA("rangedListH", "RangedListH", "invalid")
+rangedListH.insertString("<-", "arrow")
+rangedListH.insertString("...", "range")
 
-AutomataName = "iterExprBase"
-AllAutomatas = list()
+rangedListH.optimize()
+ih.write(rangedListH.toCpp())
 
-iterExprNumeric = dict()
-iterExprNumeric["dec"] = "IterExprBase::dec"
-iterExprNumeric["hex"] = "IterExprBase::hex"
-iterExprNumeric["bin"] = "IterExprBase::bin"
-iterExprNumeric["oct"] = "IterExprBase::oct"
+# I
+rangedListI = DFA("rangedListI", "RangedListI", "invalid")
+rangedListI.insertString("@private", "private_count")
+rangedListI.insertString("@public", "public_count")
 
-iterExprBase = Automata()
-numericAutomata(iterExprBase, iterExprNumeric)
+rangedListI.addTemplate("Number_T")
+rangedListI.addArgument("Number_T* RESTRICT const number")
+numeric(rangedListI, rangedListI.root(), "Number_T", "number", "number")
 
-name(iterExprBase, "IterExprBase::name");
-iterExprBase.insertString("(", "IterExprBase::expr");
+rangedListI.addArgument("std::string* RESTRICT const ident")
+identifierize(rangedListI, "ident", "identifier")
 
-th.write(printAutomata(True, "IterExprBase", "IterExprBase::invalid"))
-h.write(printAutomata(False, "IterExprBase", "IterExprBase::invalid"))
+rangedListI.optimize()
+ih.write(rangedListI.toCpp())
 
-# ==== Iterator Expression Operations (Operators) ====
+# J
+rangedListJ = DFA("rangedListJ", "RangedListJ", "invalid")
+rangedListJ.insertString("@public", "public_count")
 
-AutomataName = "iterExprOp"
-AllAutomatas = list()
+rangedListJ.addArgument("type_idx* RESTRICT const type")
+numeric(rangedListJ, rangedListJ.root(), "type_idx", "type", "type")
 
-iterExprOp = Automata()
-iterExprOp.insertString("+", "IterExprOp::add")
-iterExprOp.insertString("-", "IterExprOp::sub")
-iterExprOp.insertString("*", "IterExprOp::mul")
-iterExprOp.insertString("/", "IterExprOp::div")
+rangedListJ.optimize()
+ih.write(rangedListJ.toCpp())
 
-th.write(printAutomata(True, "IterExprOp", "IterExprOp::invalid"))
-h.write(printAutomata(False, "IterExprOp", "IterExprOp::invalid"))
+# K
+rangedListK = DFA("rangedListK", "RangedListK", "invalid")
+rangedListK.insertString("...", "range")
+rangedListK.insertString(",", "list")
+rangedListK.insertString(";", "end")
 
-# ==== IR1 For Loop First/Last (keywords) ====
+rangedListK.optimize()
+ih.write(rangedListK.toCpp())
 
-AutomataName = "firstKw"
-AllAutomatas = list()
+# L
+rangedListL = DFA("rangedListL", "RangedListL", "invalid")
+rangedListL.insertString(",", "list")
+rangedListL.insertString(";", "end")
 
-fromKw = Automata()
-fromKw.insertString("@first");
+rangedListL.optimize()
+ih.write(rangedListL.toCpp())
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+# ==== Convert (Keyword) ====
 
-AutomataName = "lastKw"
-AllAutomatas = list()
+convert = DFA("convertKw")
+convert.insertString("@convert")
 
-toKw = Automata()
-toKw.insertString("@last");
+convert.optimize()
+ih.write(convert.toCpp())
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+# ==== Modulus and NoModulus (keywords) ====
 
-# ==== Function Type (call or anon call) ====
+modOrNoMod = DFA("modulusKws", "ModulusKws", "invalid")
+modOrNoMod.insertString("@no_modulus", "no_modulus")
+modOrNoMod.insertString("@modulus", "modulus")
 
-AutomataName = "functionType"
-AllAutomatas = list()
+modOrNoMod.optimize()
+ih.write(modOrNoMod.toCpp())
 
-functionType = Automata()
-functionType.insertString("@call", "FunctionType::call")
-functionType.insertString("@anon_call", "FunctionType::anonCall")
+# ==== Call (Keyword) ====
 
-th.write(printAutomata(True, "FunctionType", "FunctionType::invalid"))
-h.write(printAutomata(False, "FunctionType", "FunctionType::invalid"))
+callKw = DFA("callKw")
+callKw.insertString("@call")
 
-# ==== Directives with a Multiple Output Wires ====
+callKw.optimize()
+ih.write(callKw.toCpp())
 
-AutomataName = "multiOutputDirective"
-AllAutomatas = list()
+# ==== Call or Private or Public or Copy (keywords) ====
 
-listRangeOrArrow = Automata()
-listRangeOrArrow.insertString("@call", "MultiOutputDirective::call")
-listRangeOrArrow.insertString("@anon_call", "MultiOutputDirective::anonCall")
-listRangeOrArrow.insertString("@for", "MultiOutputDirective::forLoop")
-listRangeOrArrow.insertString(
-    "@switch", "MultiOutputDirective::switchStatement")
+rangeOutDirectives = DFA("rangeOutDirectives", "RangeOutDirectives", "invalid")
+rangeOutDirectives.addArgument("wtk::type_idx* t")
+rangeOutDirectives.addArgument("wtk::wire_idx* w")
+rangeOutDirectives.insertString("@call", "call")
+rangeOutDirectives.insertString("@public", "public_")
+rangeOutDirectives.insertString("@private", "private_")
+wire = rangeOutDirectives.newState()
+rangeOutDirectives.root().character("$", wire)
+numeric(rangeOutDirectives, rangeOutDirectives.root(), \
+    "wtk::type_idx", "t", "type")
+numeric(rangeOutDirectives, wire, "wtk::wire_idx", "w", "wire")
 
-th.write(printAutomata(
-    True, "MultiOutputDirective", "MultiOutputDirective::invalid"))
-h.write(printAutomata(
-    False, "MultiOutputDirective", "MultiOutputDirective::invalid"))
+rangeOutDirectives.optimize()
+ih.write(rangeOutDirectives.toCpp())
 
-# ==== End (Keyword) ====
 
-AutomataName = "endKw"
-AllAutomatas = list()
+# ==== Range (Operator) ====
 
-end = Automata()
-end.insertString("@end")
+rangeOp = DFA("rangeOp")
+rangeOp.insertString("...")
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+rangeOp.optimize()
+ih.write(rangeOp.toCpp())
 
-# ==== Case (Keyword) ====
+# ==== Function Scope First Item Start (Mixed) ====
 
-AutomataName = "caseKw"
-AllAutomatas = list()
+funcFirstStart = DFA( \
+    "funcScopeFirstItemStart", "FuncScopeFirstItemStart", "invalid")
 
-caseKw = Automata()
-caseKw.insertString("@case")
+# Standard gates
+funcFirstStart.addArgument("wire_idx* RESTRICT const wireIdx")
+dollar = funcFirstStart.newState()
+funcFirstStart.root().character("$", dollar)
+numeric(funcFirstStart, dollar, "wire_idx", "wireIdx", "wireIdx")
 
-th.write(printAutomata(True))
-h.write(printAutomata(False))
+# Compound gates
+funcFirstStart.addArgument("type_idx* RESTRICT const typeIdx")
+numeric(funcFirstStart, funcFirstStart.root(), \
+    "type_idx", "typeIdx", "typeIdx")
 
-# ==== Case Or End (Keywords) ====
+# Keyword starts
+funcFirstStart.insertString("@assert_zero", "assertZero")
+funcFirstStart.insertString("@new", "new_")
+funcFirstStart.insertString("@delete", "delete_")
+funcFirstStart.insertString("@call", "call")
+funcFirstStart.insertString("@end", "end")
+funcFirstStart.insertString("@plugin", "plugin")
 
-AutomataName = "caseOrEnd"
-AllAutomatas = list()
 
-caseOrEnd = Automata()
-caseOrEnd.insertString("@case", "CaseOrEnd::case_")
-caseOrEnd.insertString("@end", "CaseOrEnd::end")
+funcFirstStart.optimize()
+ih.write(funcFirstStart.toCpp())
 
-th.write(printAutomata(True, "CaseOrEnd", "CaseOrEnd::invalid"))
-h.write(printAutomata(False, "CaseOrEnd", "CaseOrEnd::invalid"))
+# ==== Function Scope First Item Start (Mixed) ====
+
+funcItemStart = DFA("funcScopeItemStart", "FuncScopeItemStart", "invalid")
+
+# Standard gates
+funcItemStart.addArgument("wire_idx* RESTRICT const wireIdx")
+dollar = funcItemStart.newState()
+funcItemStart.root().character("$", dollar)
+numeric(funcItemStart, dollar, "wire_idx", "wireIdx", "wireIdx")
+
+# Compound gates
+funcItemStart.addArgument("type_idx* RESTRICT const typeIdx")
+numeric(funcItemStart, funcItemStart.root(), "type_idx", "typeIdx", "typeIdx")
+
+# Keyword starts
+funcItemStart.insertString("@assert_zero", "assertZero")
+funcItemStart.insertString("@new", "new_")
+funcItemStart.insertString("@delete", "delete_")
+funcItemStart.insertString("@call", "call")
+funcItemStart.insertString("@end", "end")
+
+
+funcItemStart.optimize()
+ih.write(funcItemStart.toCpp())
+
+# ==== Function Body Gate Start (Mixed) ====
+
+gateStart = DFA("funcGateStart", "FuncGateStart", "invalid")
+
+# Standard gates
+gateStart.addArgument("wire_idx* RESTRICT const index")
+dollar = gateStart.newState()
+gateStart.root().character("$", dollar)
+numeric(gateStart, dollar, "wire_idx", "index", "standard")
+
+# Compound gates
+gateStart.addArgument("size_t* RESTRICT const o_field")
+numeric(gateStart, gateStart.root(), "size_t", "o_field", "compound")
+
+# Keyword starts
+gateStart.insertString("@assert_zero", "assertZero")
+gateStart.insertString("@new", "new_")
+gateStart.insertString("@delete", "delete_")
+gateStart.insertString("@call", "call")
+gateStart.insertString("@end", "end")
+
+gateStart.optimize()
+ih.write(gateStart.toCpp())
+
+# ==== Left Chevron or End (mixed) ====
+lchevronOrEnd = DFA("lchevronOrEnd", "LchevronOrEnd", "invalid")
+lchevronOrEnd.insertString("<", "lchevron")
+lchevronOrEnd.insertString("@end", "end")
+
+lchevronOrEnd.optimize()
+ih.write(lchevronOrEnd.toCpp())
+
+# ==== Number then Nullterm (helper for flatbuffer) ====
+num_nterm = DFA("numberThenNterm")
+num_nterm.addTemplate("Number_T")
+num_nterm.addArgument("Number_T* RESTRICT const val")
+numeric(num_nterm, num_nterm.root(), "Number_T", "val")
+
+num_nterm_term = num_nterm.newState()
+num_nterm_term.setAccept()
+for state in num_nterm.states[0:-1]:
+  if state.accept:
+    state.accept = False
+    state.returnVal = num_nterm.defaultReturn
+    state.character("\\0", num_nterm_term)
+
+num_nterm.optimize()
+ih.write(num_nterm.toCpp())
+
+# ==== Number then Optional Nullterm (helper for flatbuffer) ====
+num_opt_nterm = DFA("numberOptNterm", "NumberOptNterm", "invalid")
+num_opt_nterm.addTemplate("Number_T")
+num_opt_nterm.addArgument("Number_T* RESTRICT const val")
+numeric(num_opt_nterm, num_opt_nterm.root(), "Number_T", "val", "opt")
+
+num_opt_nterm_term = num_opt_nterm.newState()
+num_opt_nterm_term.setAccept("nterm")
+for state in num_opt_nterm.states[0:-1]:
+  if state.accept:
+    state.character("\\0", num_opt_nterm_term)
+
+num_opt_nterm.optimize()
+ih.write(num_opt_nterm.toCpp())
+
+# ==== Identifier then Nullterm (helper for flatbuffer) ====
+identifier_nterm = DFA("identifierThenNterm")
+identifier_nterm.addArgument("std::string* RESTRICT const idnt")
+identifierize(identifier_nterm, "idnt", "true")
+
+identifier_nterm_term = identifier_nterm.newState()
+identifier_nterm_term.setAccept()
+for state in identifier_nterm.states[0:-1]:
+  if state.accept:
+    state.accept = False
+    state.returnVal = identifier_nterm.defaultReturn
+    state.character("\\0", identifier_nterm_term)
+
+identifier_nterm.finishActions["true"] = []
+identifier_nterm.addFinishAction( \
+    "idnt->assign(ctx->buffer + ctx->mark, ctx->place - (ctx->mark + 1));", "true")
+
+identifier_nterm.optimize()
+ih.write(identifier_nterm.toCpp())
+
+# ==== Identifier or Number, then Nullterm (helper for flatbuffer) ====
+id_num_nterm = DFA("idOrNumThenNterm", "IdOrNumThenNterm", "invalid")
+id_num_nterm.addTemplate("Number_T")
+id_num_nterm.addArgument("std::string* RESTRICT const idnt")
+id_num_nterm.addArgument("Number_T* RESTRICT const num")
+
+identifierize(id_num_nterm, "idnt", "identifier")
+numeric(id_num_nterm, id_num_nterm.root(), "Number_T", "num", "number")
+
+id_num_nterm_id_nterm = id_num_nterm.newState()
+id_num_nterm_id_nterm.setAccept("identifier")
+id_num_nterm_num_nterm = id_num_nterm.newState()
+id_num_nterm_num_nterm.setAccept("number")
+for state in identifier_nterm.states[0:-2]:
+  if state.accept:
+    state.accept = False
+    if state.returnVal == "identifier":
+      state.character("\\0", id_num_nterm_id_nterm)
+    else:
+      state.character("\\0", id_num_nterm_num_nterm)
+    state.returnVal = id_num_nterm.defaultReturn
+
+# I dunno why the prior function needs its nullterm'd length adjusted
+# but this one doesn't *shrug*
+
+id_num_nterm.optimize()
+ih.write(id_num_nterm.toCpp())
 
 # ==== Trailer ====
-th.write("} } // namespace wtk::irregular\n")
-h.write("\n} } // namespace wtk::irregular\n")
 
-h.write("\n#define LOG_IDENTIFIER \"wtk::irregular\"")
-h.write("\n#include <stealth_logging.h>\n")
-h.write("\n#include <wtk/irregular/Automatas.t.h>\n")
-h.write("\n#define LOG_UNINCLUDE")
-h.write("\n#include <stealth_logging.h>\n")
-h.write("\n#endif//WIZTOOLKIT_AUTOMATA_H_\n")
+ih.write("} } // namespace wtk::irregular\n\n")
+
+ih.write("#define LOG_UNINCLUDE\n")
+ih.write("#include <stealth_logging.h>\n")
+
+ih.write("#endif//WIZTOOLKIT_AUTOMATA_H_\n")

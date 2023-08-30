@@ -1,0 +1,10 @@
+#
+# Copyright (C) 2023, Stealth Software Technologies, Inc.
+#
+
+FROM nixos/nix:latest
+
+RUN nix-channel --update nixpkgs \
+    && nix-env --upgrade '*' \
+    && nix-env --install cmake flatbuffers gtest openssl python3 \
+    && nix-collect-garbage --delete-old

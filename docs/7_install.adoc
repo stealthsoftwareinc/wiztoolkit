@@ -1,0 +1,235 @@
+= Installing WizToolKit
+:revdate: 2023-02-08
+:source-highlighter: pygments
+ifndef::src-rel-dir[]
+:src-rel-dir: 
+endif::[]
+
+WARNING:: If you just ran `git pull`, and all of a sudden you can't build anymore try `make deps-clean && make`.
+
+== Linux and Unix derivitives
+We've compiled a list of installation instructions for a few common systems.
+
+=== RedHat/CentOS-Stream/Rocky/Alma 8
+These systems are regularly tested by CI.
+Starting from a 'minimal installation', You will need to install these dependencies with `yum`.
+
+[source,bash]
+----
+yum install \
+  epel-release \
+  yum-utils
+yum config-manager --set-enabled powertools
+yum install \
+  git \
+  tar \
+  make \
+  wget \
+  unzip \
+  cmake \
+  gcc-c++ \
+  diffutils \
+  which \
+  python39 \
+  python3-numpy \
+  openssl \
+  openssl-devel
+----
+
+Once installed, you can invoke make as normal.
+Keep in mind, that `make` will download additional dependencies.
+
+[source,bash]
+----
+make
+make install
+----
+
+=== RedHat/CentOS 7
+These systems are tested regularly in CI.
+Starting with a 'minimal installation' You will need to install these dependencies with `yum`.
+
+[source,bash]
+----
+yum install epel-release
+yum install \
+  git \
+  tar \
+  make \
+  wget \
+  unzip \
+  cmake3 \
+  gcc-c++ \
+  diffutils \
+  which \
+  python3 \
+  python3-numpy \
+  openssl \
+  openssl-devel
+----
+
+To use `make`, you will need to disable ANTLR.
+Keep in mind, that `make` will download additional dependencies.
+
+[source,bash]
+----
+make CMAKE_CMD=cmake3
+make install
+----
+
+=== Ubuntu 18.04 LTS
+This platform is regularly tested in CI. To install dependencies
+
+[source,bash]
+----
+apt-get install \
+  git \
+  build-essential \
+  make \
+  wget \
+  unzip \
+  cmake \
+  g++ \
+  python3 \
+  python3-numpy \
+  libssl-dev
+----
+
+Build is as normal.
+Keep in mind, that `make` will download additional dependencies.
+
+[source,bash]
+----
+make
+make install
+----
+
+=== Ubuntu 20.04 LTS
+This platform is regularly tested in CI. To install dependencies
+
+[source,bash]
+----
+apt-get install \
+  git \
+  build-essential \
+  make \
+  wget \
+  unzip \
+  cmake \
+  g++ \
+  python3 \
+  python3-numpy \
+  libssl-dev
+----
+
+Build is as normal.
+Keep in mind, that `make` will download additional dependencies.
+
+[source,bash]
+----
+make
+make install
+----
+
+== Windows 10
+[.line-through]#We are not able to regularly test this platform as of yet, but we do some manual testing on occasion.#
+[.line-through]#This platform has not been tested in almost a year, but I've done my best to modify the instructions as best I can.#
+I'm fairly certain that I've used a few syscalls (namely `mmap`) which Windows does not implement.
+
+We find that windows builds are best done within the https://www.msys2.org[MSYS2's] MinGW64 environment.
+After installing MSYS2, launch _"MSYS2 MinGW 64-bit"_ from the "start-button".
+
+To install the necessary dependencies use `pacman`.
+
+[source,bash]
+----
+pacman -S --needed \
+  tar \
+  git \
+  wget \
+  make \
+  unzip \
+  diffutil \
+  mingw-w64-x86_64-gcc \
+  mingw-w64-x86_64-make \
+  mingw-w64-x86_64-cmake \
+  mingw-w64-x86_64-openssl
+----
+
+Then you will need to invoke `make` with the correct variables.
+
+* `make` should be invoked as normal, but when it invokes make it should use `mingw32-make`.
+* CMake should use the `'MinGW Makefiles'` generator.
+* The C++ compiler should be `/mingw64/bin/x86_64-w64-mingw32-g++.exe`
+
+To do all this, the following `make` command is best.
+Keep in mind, that `make` will download additional dependencies.
+
+[source,bash]
+----
+make MAKE_CMD=mingw32-make CMAKE_GENERATOR='MinGW Makefiles' CXX=/mingw64/bin/x86_64-w64-mingw32-g++.exe
+make MAKE_CMD=mingw32-make CMAKE_GENERATOR='MinGW Makefiles' CXX=/mingw64/bin/x86_64-w64-mingw32-g++.exe install
+----
+
+To use WizToolKit commandline tools beyond the realm of MSYS2, (for example from `cmd.exe`) you will need to add to your `PATH`.
+Then you can invoke `wtk-` commands by their absolute path (or add their path to the `PATH` as well).
+
+[source,cmd]
+----
+PATH=%PATH%;C:\msys64\mingw64\bin;C:\msys64\mingw64\lib
+C:\msys64\usr\local\bin\wtk-firealarm.exe
+----
+
+== Generic Build Guide
+
+=== Dependencies
+The build system for WizToolKit depends on a number of tools.
+
+* GNU Make: for task orchestration
+* CMake: for C++ build orchestration
+* C\++ Compiler (tested against `g++` and `clang++`)
+* `wget`: for downloading dependencies
+* Python 3: for generating portions of the IRRegular text parser (required only at build time). And for running the test suite.
+** The test suite requires NumPy >= 1.16
+* ``pkg-config``: is required by CMake, and apparently not always installed by default on Ubuntu.
+* OpenSSL libcrypto and ``sst::bignum``:
+** OpenSSL should be provided by the system.
+** ``sst::bignum`` is downloaded automatically.
+** Only the WizToolKit _command line tools_ (xref:./4_tools/firealarm.adoc[`wtk-firealarm`] and xref:./4_tools/press.adoc[`wtk-press`]) use the unlimited precision number library ``openssl/bn.h`` and C++ wrapper ``sst::bignum``.
+** the WizToolKit _API_ **does not** link to these library.
+* Stealth logging: For reporting errors and other conditions at runtime.
+** this is used by the WizToolKit API.
+** downloaded automatically at build time.
+* https://google.github.io/googletest/[Google Test]: for running unit tests.
+** downloaded automatically at build time.
+** Only used during testing.
+* https://google.github.io/flatbuffers[FlatBuffers 2.0.0]: to implement the binary format of the IR specification via the xref:{src-rel-dir}/src/main/cpp/wtk/flatbuffer/Parser.h[FlatBuffer Parser].
+** may be disabled with ``make ENABLE_FLATBUFFER=0``
+
+=== Make Targets and Options
+After downloading  or ``git clone``ing a WizToolKit package, to quickly install run the following commands.
+
+[source,bash]
+----
+make
+make install # as root
+----
+
+The makefile has the following more specific targets,
+
+* ``deps``: calls scripts to download all the non-system dependencies.
+* ``gen_parser``: calls scripts which do code-generation for the parser implementations.
+* ``configure``: calls CMake to configure the C++ build system. The following environment variables are respected.
+** ``BUILD_TYPE``: indicates whether to use ``Debug`` or ``Release`` mode. Defaults to ``Release``.
+** ``PREFIX``: is the installation prefix to use when calling ``install``. Defaults to ``/usr/local``.
+** ``CXX``: to change the compiler
+** ``CMAKE_CMD``: to change the program name used for CMake (for example `cmake3`).
+** ``ENABLE_FLATBUFFER``: Enables the use of the flatbuffer parser (1 is enabled, 0 is disabled, default is 1).
+** ``ENABLE_GTEST``: Enables the GTest unit test suite (1 is enabled, 0 is disabled, default is 1).
+* ``build``: calls CMake generate make files.
+* ``test``: (default target) will run the unit tests.
+* ``regression-test``: will run the regression tests.
+* ``static-analysis``: will run `clang-tidy` for static analysis.
+* ``install``: installs all WizToolKit files to the system.
+* ``clean``: will remove all build files.
+* ``deps-clean``: will remove all dependencies and build files.

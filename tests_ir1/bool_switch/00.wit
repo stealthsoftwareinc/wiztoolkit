@@ -1,7 +1,0 @@
-version 1.0.1;
-field characteristic 2 degree 1;
-short_witness
-@begin
-  <0>;
-  <0>;
-@end

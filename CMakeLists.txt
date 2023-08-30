@@ -1,37 +1,26 @@
-cmake_minimum_required(VERSION 3.0)
-project(wiztoolkit)
+cmake_minimum_required(VERSION 3.1)
+project(wiztoolkit VERSION 2.0.0)
 
-if(${ENABLE_ANTLR} EQUAL 0)
-  set(ANTLR_CXX_FLAGS "")
-else()
-  set(ANTLR_CXX_FLAGS " \
-    -Wno-conversion \
-    -Wno-unknown-pragmas \
-    -Wno-attributes \
-    -Wno-implicit-fallthrough")
-endif()
-
-if(${ENABLE_FLATBUFFER} EQUAL 0)
-  set(FLATBUFFER_CXX_FLAGS "")
-else()
-  set(FLATBUFFER_CXX_FLAGS " \
-    -Wno-conversion")
-endif()
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS_RELEASE " -DNDEBUG -O2 -Werror ")
-set(CMAKE_CXX_FLAGS_PROFILE " -DNDEBUG -pg -O2 -Werror ")
-set(CMAKE_CXX_FLAGS_CI " -Werror ")
-set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} \
-  --std=c++11 \
-  -Wall \
-  -Wextra \
-  -Wconversion \
-  -Wcast-align \
-  ${ANTLR_CXX_FLAGS} \
-  ${FLATBUFFER_CXX_FLAGS} \
-  -DENABLE_ANTLR=${ENABLE_ANTLR} \
-  -DENABLE_FLATBUFFER=${ENABLE_FLATBUFFER} \
-  ")
+set(CMAKE_CXX_FLAGS_DEBUG " -O0 -g -DLOG_OPT_FILE_LINE " )
+set(CMAKE_CXX_FLAGS_CI " -O1 -Werror ")
+
+
+list(APPEND wtk_cxx_flags
+  -Wall
+  -Wextra
+  -Wconversion
+  -Wsign-conversion
+  -Wcast-align
+)
+
+if(${ENABLE_FLATBUFFER} EQUAL 1)
+  list(APPEND wtk_cxx_flags -Wno-sign-conversion)
+endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	if(NOT DEFINED OPENSSL_ROOT_DIR)
@@ -47,16 +36,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	endif()
 endif()
 
-
-if(${ENABLE_ANTLR} EQUAL 1)
-  FILE(GLOB gen_antlr_cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/target/generated/wtk/antlr/*.cpp
-  )
-
-  FILE(GLOB gen_antlr_h
-    ${CMAKE_CURRENT_SOURCE_DIR}/target/generated/wtk/antlr/*.h
-  )
-endif()
+find_package(OpenSSL REQUIRED)
 
 FILE(GLOB gen_irregular_cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/target/generated/wtk/irregular/*.cpp
@@ -72,4 +52,9 @@ if(${ENABLE_FLATBUFFER} EQUAL 1)
   )
 endif()
 
-add_subdirectory(src)
+add_subdirectory(src/deps)
+add_subdirectory(src/main/cpp)
+
+if(${ENABLE_GTEST} EQUAL 1)
+  add_subdirectory(src/test/cpp)
+endif()

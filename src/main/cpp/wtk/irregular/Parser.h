@@ -1,127 +1,134 @@
 /**
- * Copyright (C) 2021 Stealth Software Technologies, Inc.
+ * Copyright (C) 2022, Stealth Software Technologies, Inc.
  */
 
-#ifndef WTK_IRREGULAR_PARSER_H_
-#define WTK_IRREGULAR_PARSER_H_
+#ifndef WTK_IRREGULAR_PARSER_
+#define WTK_IRREGULAR_PARSER_
 
 #include <cstddef>
+#include <cstdio>
+#include <vector>
 #include <memory>
 
+#include <wtk/indexes.h>
 #include <wtk/Parser.h>
-#include <wtk/ArithmeticStreamHandler.h>
-#include <wtk/BooleanStreamHandler.h>
-#include <wtk/IRTree.h>
-#include <wtk/IRParameters.h>
-#include <wtk/utils/hints.h>
-#include <wtk/utils/NumUtils.h>
 
-#include <wtk/irregular/Automatas.h>
+#include <wtk/circuit/Handler.h>
+#include <wtk/circuit/Parser.h>
+
 #include <wtk/irregular/AutomataCtx.h>
-
-#include <wtk/irregular/TextIRTree.t.h>
-#include <wtk/irregular/TextTreeParser.t.h>
 
 namespace wtk {
 namespace irregular {
 
 template<typename Number_T>
-class TextInputStream : public InputStream<Number_T>
-{
-  AutomataCtx& ctx;
-
-public:
-  TextInputStream(AutomataCtx& c) : ctx(c) { }
-
-  wtk::StreamStatus next(Number_T* num) override;
-};
+class TranslationParser;
 
 template<typename Number_T>
-class ArithmeticParser : public wtk::ArithmeticParser<Number_T>
-{
-  AutomataCtx& ctx;
+class CircuitParser;
 
-  // helper attributes for holding sub-parsers.
-  std::unique_ptr<TextTreeParser<Number_T>> treeParser = nullptr;
-  std::unique_ptr<TextInputStream<Number_T>> inputStream = nullptr;
+template<typename Number_T>
+class InputStream;
 
-  // class member avoids alloc/deallocing unbounded integer types.
-  Number_T constValue = Number_T(0);
-
-  // Pointers to gate set/feature toggles
-  wtk::GateSet* gateSet;
-  wtk::FeatureToggles* featureToggles;
-
-public:
-  ArithmeticParser(AutomataCtx& c, wtk::GateSet* gs, wtk::FeatureToggles* ft)
-    : ctx(c), gateSet(gs), featureToggles(ft) { }
-
-  bool parseStream(wtk::ArithmeticStreamHandler<Number_T>* handler) override;
-
-  TextIRTree<Number_T>* parseTree() override;
-
-  TextInputStream<Number_T>* instance() override;
-
-  TextInputStream<Number_T>* shortWitness() override;
-};
-
-class BooleanParser : public wtk::BooleanParser
-{
-  AutomataCtx& ctx;
-
-  // helper attributes for holding sub-parsers.
-  std::unique_ptr<TextTreeParser<uint8_t>> treeParser = nullptr;
-  std::unique_ptr<TextInputStream<uint8_t>> inputStream = nullptr;
-
-  // Pointers to gate set/feature toggles
-  wtk::GateSet* gateSet;
-  wtk::FeatureToggles* featureToggles;
-
-public:
-  BooleanParser(AutomataCtx& c, wtk::GateSet* gs, wtk::FeatureToggles* ft)
-    : ctx(c), gateSet(gs), featureToggles(ft) { }
-
-  bool parseStream(wtk::BooleanStreamHandler* handler) override;
-
-  TextIRTree<uint8_t>* parseTree() override;
-
-  TextInputStream<uint8_t>* instance() override;
-
-  TextInputStream<uint8_t>* shortWitness() override;
-};
+template<typename Number_T>
+class ConfigurationParser;
 
 template<typename Number_T>
 class Parser : public wtk::Parser<Number_T>
 {
-  AutomataCtx ctx;
+  std::unique_ptr<AutomataCtx> ctx;
+
+  std::unique_ptr<TranslationParser<Number_T>> translationParser;
+  std::unique_ptr<CircuitParser<Number_T>> circuitParser;
+  std::unique_ptr<InputStream<Number_T>> inputStream;
+  std::unique_ptr<ConfigurationParser<Number_T>> configurationParser;
 
 public:
 
-  Parser(FILE* f) : ctx(f) { }
-  Parser(std::string& f_name) : ctx(fopen(f_name.c_str(), "r")) { }
+  /**
+   * Open the parser using the given filename.
+   */
+  bool open(char const* const fname);
 
-  // Overridden parsing functions
-  bool parseHeader() override;
-  bool parseResource() override;
-  bool parseParameters() override;
+  /**
+   * Open the parser using a FILE* object.
+   * The optional filename parameter is for error-reporting
+   */
+  bool open(FILE* const f, char const* const fname = "<FILE*>");
 
-  ArithmeticParser<Number_T>* arithmetic() override;
-  ArithmeticParser<uint64_t>* arithmetic64() override;
-  ArithmeticParser<uint32_t>* arithmetic32() override;
+  bool parseHeader() final;
 
-  BooleanParser* boolean() override;
+  TranslationParser<Number_T>* translation() final;
 
-  virtual ~Parser() = default;
+  CircuitParser<Number_T>* circuit() final;
 
-private:
-  std::unique_ptr<ArithmeticParser<Number_T>> arithmeticNumParser = nullptr;
-  std::unique_ptr<ArithmeticParser<uint64_t>> arithmetic64Parser = nullptr;
-  std::unique_ptr<ArithmeticParser<uint32_t>> arithmetic32Parser = nullptr;
+  InputStream<Number_T>* publicIn() final;
 
-  std::unique_ptr<BooleanParser> booleanParser = nullptr;
+  InputStream<Number_T>* privateIn() final;
+
+  ConfigurationParser<Number_T>* configuration() final;
+
+  Parser() = default;
+  Parser(Parser const& copy) = delete;
+  Parser(Parser&& /* move */) = default;
+  Parser& operator=(Parser const& copy) = delete;
+  Parser& operator=(Parser&& move) = default;
+  ~Parser() = default;
+};
+
+template<typename Number_T>
+class TranslationParser : public wtk::TranslationParser<Number_T>
+{
+  AutomataCtx* const ctx;
+public:
+
+  TranslationParser(AutomataCtx* const c) : ctx(c) { }
+};
+
+template<typename Number_T>
+class CircuitParser : public wtk::circuit::Parser<Number_T>
+{
+  AutomataCtx* const ctx;
+public:
+
+  CircuitParser(AutomataCtx* const c) : ctx(c) { }
+
+  bool parseCircuitHeader() final;
+
+  bool parse(wtk::circuit::Handler<Number_T>* const handler) final;
+
+  ~CircuitParser() = default;
+};
+
+template<typename Number_T>
+class InputStream : public wtk::InputStream<Number_T>
+{
+  AutomataCtx* const ctx;
+
+  size_t line = 0;
+public:
+
+  bool parseStreamHeader() final;
+
+  InputStream(AutomataCtx* const c) : ctx(c) { }
+
+  wtk::StreamStatus next(Number_T* num) final;
+
+  size_t lineNum() final;
+};
+
+template<typename Number_T>
+class ConfigurationParser : public wtk::ConfigurationParser<Number_T>
+{
+  AutomataCtx* const ctx;
+public:
+
+  ConfigurationParser(AutomataCtx* const c) : ctx(c) { }
 };
 
 } } // namespace wtk::irregular
+
+#include <wtk/irregular/automatas.i.h>
 
 #define LOG_IDENTIFIER "wtk::irregular"
 #include <stealth_logging.h>
@@ -131,4 +138,4 @@ private:
 #define LOG_UNINCLUDE
 #include <stealth_logging.h>
 
-#endif//WTK_IRREGULAR_TEXT_PARSER_H_
+#endif//WTK_IRREGULAR_PARSER_

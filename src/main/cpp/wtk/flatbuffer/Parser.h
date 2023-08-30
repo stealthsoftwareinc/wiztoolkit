@@ -1,28 +1,33 @@
 /**
- * Copyright (C) 2021 Stealth Software Technologies, Inc.
+ * Copyright (C) 2023, Stealth Software Technologies, Inc.
  */
+
+#ifndef WTK_FLATBUFFER_PARSER_
+#define WTK_FLATBUFFER_PARSER_
 
 #include <cstddef>
 #include <cstdint>
-#include <cstdio>
-#include <cinttypes>
-#include <string>
-#include <vector>
+#include <cerrno>
+#include <cstring>
+#include <memory>
 
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/mman.h>
+
+#include <wtk/indexes.h>
 #include <wtk/Parser.h>
-#include <wtk/IRTree.h>
 #include <wtk/utils/hints.h>
 
+#include <wtk/circuit/Handler.h>
+#include <wtk/circuit/Parser.h>
+
 #include <wtk/flatbuffer/sieve_ir_generated.h>
-#include <wtk/flatbuffer/FBIRTree.t.h>
-#include <wtk/flatbuffer/TreeParser.t.h>
-#include <wtk/flatbuffer/FlatNumberHelper.t.h>
+#include <wtk/irregular/AutomataCtx.h>
 
-#define LOG_IDENTIFIER "wtk::flatbuffer"
-#include <stealth_logging.h>
-
-#ifndef WTK_FLATBUFFER_PARSER_H_
-#define WTK_FLATBUFFER_PARSER_H_
+#include <flatbuffers/flatbuffers.h>
 
 namespace wtk {
 namespace flatbuffer {
@@ -30,139 +35,159 @@ namespace flatbuffer {
 using namespace wtk_gen_flatbuffer;
 
 template<typename Number_T>
-struct InstanceInputStream : public wtk::InputStream<Number_T>
-{
-private:
-  // vector of flatbuffers
-  std::vector<Instance const*> buffers;
-  // index of the flatbuffer
-  size_t buffer_idx = 0;
-  // index of the instance inside the flatbuffer
-  size_t instance_idx = 0;
-
-public:
-  bool load(std::vector<Root const*>& roots);
-
-  StreamStatus next(Number_T* num) override;
-};
+class TranslationParser;
 
 template<typename Number_T>
-struct WitnessInputStream : public wtk::InputStream<Number_T>
-{
-private:
-  // vector of flatbuffers
-  std::vector<Witness const*> buffers;
-  // index of the flatbuffer
-  size_t buffer_idx = 0;
-  // index of the instance inside the flatbuffer
-  size_t witness_idx = 0;
-
-public:
-  bool load(std::vector<Root const*>& roots);
-
-  StreamStatus next(Number_T* num) override;
-};
+class CircuitParser;
 
 template<typename Number_T>
-struct ArithmeticParser : public wtk::ArithmeticParser<Number_T>
-{
-private:
-  std::vector<Root const*>& roots;
-  GateSet* gateSet;
-  FeatureToggles* toggles;
-
-  std::unique_ptr<InstanceInputStream<Number_T>> instanceStream = nullptr;
-  std::unique_ptr<WitnessInputStream<Number_T>> witnessStream = nullptr;
-
-  std::unique_ptr<TreeParser<Number_T>> treeParser = nullptr;
-
-public:
-  ArithmeticParser(
-      std::vector<Root const*>& roots, GateSet* gs, FeatureToggles* ft);
-
-  bool parseStream(wtk::ArithmeticStreamHandler<Number_T>* handler) override;
-
-  FBIRTree<Number_T>* parseTree() override;
-
-  InstanceInputStream<Number_T>* instance() override;
-
-  WitnessInputStream<Number_T>* shortWitness() override;
-};
-
-struct BooleanParser : public wtk::BooleanParser
-{
-private:
-  std::vector<Root const*>& roots;
-  GateSet* gateSet;
-  FeatureToggles* toggles;
-
-  std::unique_ptr<InstanceInputStream<uint8_t>> instanceStream = nullptr;
-  std::unique_ptr<WitnessInputStream<uint8_t>> witnessStream = nullptr;
-
-  std::unique_ptr<TreeParser<uint8_t>> treeParser = nullptr;
-
-public:
-  BooleanParser(
-      std::vector<Root const*>& roots, GateSet* gs, FeatureToggles* ft);
-
-  bool parseStream(wtk::BooleanStreamHandler* handler) override;
-
-  FBIRTree<uint8_t>* parseTree() override;
-
-  InstanceInputStream<uint8_t>* instance() override;
-
-  WitnessInputStream<uint8_t>* shortWitness() override;
-};
+class PublicInputStream;
 
 template<typename Number_T>
-struct Parser : public wtk::Parser<Number_T>
+class PrivateInputStream;
+
+template<typename Number_T>
+class ConfigurationParser;
+
+struct FlatbufferCtx
 {
-private:
-  // Name of the file
-  std::string fileName;
+  char const* fileName = nullptr;
 
-  // File and buffer for the flatbuffer.
-  FILE* file = nullptr;
-  size_t bufferSize = 0;
-  uint8_t* buffer = nullptr;
-
-  // Indicates if file reading failed. Causes API to return failures.
-  bool failure = false;
-
-  // list of flatbuffer root pointers and sizes.
-  // Note, the spec defines a flatbuffer size using 32-bits because flatbuffer
-  // defines its size as 32-bits, so sizes here are 32-bits.
   std::vector<uint32_t> sizes;
   std::vector<Root const*> roots;
+};
 
-  // parsers for each IR variety
-  std::unique_ptr<BooleanParser> boolParser;
-  std::unique_ptr<ArithmeticParser<Number_T>> arithParser;
-  std::unique_ptr<ArithmeticParser<uint64_t>> arith64Parser;
-  std::unique_ptr<ArithmeticParser<uint32_t>> arith32Parser;
+template<typename Number_T>
+class Parser : public wtk::Parser<Number_T>
+{
+  FILE* file = nullptr;
+  int fileDescriptor = -1;
+  size_t fileSize = 0;
+
+  uint8_t* buffer = nullptr;
+
+  FlatbufferCtx ctx;
+
+  std::unique_ptr<TranslationParser<Number_T>> translationParser;
+  std::unique_ptr<CircuitParser<Number_T>> circuitParser;
+  std::unique_ptr<PublicInputStream<Number_T>> publicInputStream;
+  std::unique_ptr<PrivateInputStream<Number_T>> privateInputStream;
+  std::unique_ptr<ConfigurationParser<Number_T>> configurationParser;
 
 public:
-  Parser(std::string& f_name);
+
+  /**
+   * Open the parser using the given filename.
+   */
+  bool open(char const* const fname);
+
+  /**
+   * Open the parser with an existing FILE*, and use the optional file name
+   * for error reporting.
+   */
+  bool open(FILE* const file, char const* const fname = "<FILE*>");
+
+private:
+  bool openHelper();
+
+public:
+
+  bool parseHeader() final;
+
+  TranslationParser<Number_T>* translation() final;
+
+  CircuitParser<Number_T>* circuit() final;
+
+  InputStream<Number_T>* publicIn() final;
+
+  InputStream<Number_T>* privateIn() final;
+
+  ConfigurationParser<Number_T>* configuration() final;
+
+  Parser() = default;
+  Parser(Parser const& copy) = delete;
+  Parser(Parser&& move);
+  Parser& operator=(Parser const& copy) = delete;
+  Parser& operator=(Parser&& move);
   ~Parser();
+};
 
-  bool parseHeader() override;
+template<typename Number_T>
+class TranslationParser : public wtk::TranslationParser<Number_T>
+{
+public:
 
-  bool parseResource() override;
+  TranslationParser() { }
+};
 
-  bool parseParameters() override;
+template<typename Number_T>
+class CircuitParser : public wtk::circuit::Parser<Number_T>
+{
+  FlatbufferCtx* const ctx;
 
-  BooleanParser* boolean() override;
+  bool parseGate(
+      Gate const* const, wtk::circuit::Handler<Number_T>* const handler);
 
-  ArithmeticParser<Number_T>* arithmetic() override;
-  ArithmeticParser<uint64_t>* arithmetic64() override;
-  ArithmeticParser<uint32_t>* arithmetic32() override;
+public:
+  CircuitParser(FlatbufferCtx* const c) : ctx(c) { }
+
+  bool parseCircuitHeader() final;
+
+  bool parse(wtk::circuit::Handler<Number_T>* const handler) final;
+
+  ~CircuitParser() = default;
+};
+
+template<typename Number_T>
+class PublicInputStream : public wtk::InputStream<Number_T>
+{
+  FlatbufferCtx* const ctx;
+
+  size_t bufferIdx = 0;
+  flatbuffers::uoffset_t streamIdx = 0;
+
+public:
+
+  bool parseStreamHeader() final;
+
+  PublicInputStream(FlatbufferCtx* const c) : ctx(c) { }
+
+  wtk::StreamStatus next(Number_T* num) final;
+};
+
+template<typename Number_T>
+class PrivateInputStream : public wtk::InputStream<Number_T>
+{
+  FlatbufferCtx* const ctx;
+
+  size_t bufferIdx = 0;
+  flatbuffers::uoffset_t streamIdx = 0;
+
+public:
+
+  bool parseStreamHeader() final;
+
+  PrivateInputStream(FlatbufferCtx* const c) : ctx(c) { }
+
+  wtk::StreamStatus next(Number_T* num) final;
+};
+
+template<typename Number_T>
+class ConfigurationParser : public wtk::ConfigurationParser<Number_T>
+{
+public:
+
+  ConfigurationParser() { }
 };
 
 } } // namespace wtk::flatbuffer
+
+#define LOG_IDENTIFIER "wtk::flatbuffer"
+#include <stealth_logging.h>
 
 #include <wtk/flatbuffer/Parser.t.h>
 
 #define LOG_UNINCLUDE
 #include <stealth_logging.h>
 
-#endif//WTK_FLATBUFFER_PARSER_H_
+#endif//WTK_FLATBUFFER_PARSER_

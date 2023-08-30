@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020 Stealth Software Technologies, Inc.
+ * Copyright (C) 2020-2023 Stealth Software Technologies, Inc.
  */
 
 #ifndef WTK_UTILS_NUM_UTILS_H_
@@ -10,8 +10,7 @@
 #include <string>
 
 #include <wtk/utils/hints.h>
-
-/* NTS: charge indirect for this, plan to move it. */
+#include <wtk/indexes.h>
 
 namespace wtk {
 namespace utils {
@@ -58,6 +57,18 @@ ALWAYS_INLINE static inline void oct_to_uint(
 template<typename Number_T>
 ALWAYS_INLINE static inline void bin_to_uint(
     char const* start, char const* end, Number_T& num);
+
+/**
+ * Certain unlimited precision number libraries (I'm looking at you GMP++) are
+ * incapable of static_cast to fixed-width numbers. So this is a hack to allow
+ * template-specialization with appropriate casts.
+ */
+template<typename Number_T>
+  ALWAYS_INLINE static inline size_t cast_size(Number_T const& number);
+template<typename Number_T>
+  ALWAYS_INLINE static inline wtk::wire_idx cast_wire(Number_T const& number);
+template<typename Number_T>
+  ALWAYS_INLINE static inline wtk::type_idx cast_type(Number_T const& number);
 
 } } // namespace wtk::utils
 

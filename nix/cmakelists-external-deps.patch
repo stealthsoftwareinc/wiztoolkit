@@ -1,0 +1,65 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a7bb0b0..a9e9e79 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -18,7 +18,7 @@ list(APPEND wtk_cxx_flags
+   -Wcast-align
+ )
+ 
+-if(${ENABLE_FLATBUFFER} EQUAL 1)
++if("${ENABLE_FLATBUFFER}" EQUAL 1)
+   list(APPEND wtk_cxx_flags -Wno-sign-conversion)
+ endif()
+ 
+@@ -46,7 +46,7 @@ FILE(GLOB gen_irregular_h
+   ${CMAKE_CURRENT_SOURCE_DIR}/target/generated/wtk/irregular/*.h
+ )
+ 
+-if(${ENABLE_FLATBUFFER} EQUAL 1)
++if("${ENABLE_FLATBUFFER}" EQUAL 1)
+   FILE(GLOB gen_flatbuffer_h
+     ${CMAKE_CURRENT_SOURCE_DIR}/target/generated/wtk/flatbuffer/*.h
+   )
+@@ -55,6 +55,6 @@ endif()
+ add_subdirectory(src/deps)
+ add_subdirectory(src/main/cpp)
+ 
+-if(${ENABLE_GTEST} EQUAL 1)
++if("${ENABLE_GTEST}" EQUAL 1)
+   add_subdirectory(src/test/cpp)
+ endif()
+diff --git a/src/deps/CMakeLists.txt b/src/deps/CMakeLists.txt
+index ea55eb9..b3fd5f9 100644
+--- a/src/deps/CMakeLists.txt
++++ b/src/deps/CMakeLists.txt
+@@ -1,9 +1,5 @@
+ cmake_minimum_required(VERSION 3.1)
+ 
+-if(${ENABLE_GTEST} EQUAL 1)
+-  add_subdirectory(gtest EXCLUDE_FROM_ALL)
+-endif()
+-
+ add_subdirectory(logging)
+ 
+ include_directories(
+@@ -17,7 +13,3 @@ add_library(sst_bignum
+ target_link_libraries(sst_bignum
+   OpenSSL::Crypto
+ )
+-
+-if(${ENABLE_FLATBUFFER} EQUAL 1)
+-  add_subdirectory(flatbuffer)
+-endif()
+diff --git a/src/main/cpp/CMakeLists.txt b/src/main/cpp/CMakeLists.txt
+index 4e50076..c59562d 100644
+--- a/src/main/cpp/CMakeLists.txt
++++ b/src/main/cpp/CMakeLists.txt
+@@ -131,7 +131,7 @@ list(APPEND press_main
+   wtk/press/main.cpp
+ )
+ 
+-if(${ENABLE_FLATBUFFER} EQUAL 1)
++if("${ENABLE_FLATBUFFER}" EQUAL 1)
+   LIST(APPEND flatbuffer_h
+     wtk/flatbuffer/Parser.h
+     wtk/flatbuffer/Parser.t.h

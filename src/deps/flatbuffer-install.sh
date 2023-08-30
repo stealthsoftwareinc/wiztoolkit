@@ -13,11 +13,13 @@ if [-d flatbuffer/ ] ; then
   rm -rf flatbuffer/
 fi
 
+FLATBUFFER_VERSION='2.0.0'
+
 wget -O flatbuffer.tar.gz \
-  https://github.com/google/flatbuffers/archive/refs/tags/v2.0.0.tar.gz
+  https://github.com/google/flatbuffers/archive/refs/tags/v${FLATBUFFER_VERSION}.tar.gz
 
 tar -xzf flatbuffer.tar.gz
-mv flatbuffers-2.0.0/ flatbuffer/
+mv flatbuffers-${FLATBUFFER_VERSION}/ flatbuffer/
 rm flatbuffer.tar.gz
 
 cd flatbuffer/

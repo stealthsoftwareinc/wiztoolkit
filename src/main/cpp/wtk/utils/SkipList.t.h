@@ -51,15 +51,23 @@ SkipList<Number_T>::SkipList(SkipList<Number_T> const& copy)
 }
 
 template<typename Number_T>
-bool SkipList<Number_T>::integrityCheck()
+SkipList<Number_T>& SkipList<Number_T>::operator=(
+    SkipList<Number_T> const& copy)
 {
-  Range<Number_T>* place = this->list.get();
+  this->~SkipList();
+  new(this)SkipList<Number_T>(copy);
+}
+
+template<typename Number_T>
+bool SkipList<Number_T>::integrityCheck() const
+{
+  Range<Number_T> const* place = this->list.get();
 
   while(place != nullptr)
   {
     if(place->last < place->first) { return false; }
 
-    Range<Number_T>* next = place->next.get();
+    Range<Number_T> const* next = place->next.get();
     if(next != nullptr && place->first <= next->last + 1)
     {
       return false;
@@ -72,22 +80,32 @@ bool SkipList<Number_T>::integrityCheck()
 }
 
 template<typename Number_T>
-void SkipList<Number_T>::print()
+std::string SkipList<Number_T>::toString() const
 {
-  Range<Number_T>* place = this->list.get();
+  Range<Number_T> const* place = this->list.get();
+  std::string ret;
 
   while(place != nullptr)
   {
-    printf("[%s, %s] ", dec(place->last).c_str(), dec(place->first).c_str());
+    ret += "[" + dec(place->last) + ", " + dec(place->first) + "] ";
     place = place->next.get();
   }
-  printf("\n");
+
+  return ret;
 }
 
 template<typename Number_T>
-bool SkipList<Number_T>::has(Number_T n)
+void SkipList<Number_T>::print() const
 {
-  Range<Number_T>* place = this->list.get();
+  Range<Number_T> const* place = this->list.get();
+
+  printf("%s\n", this->toString().c_str());
+}
+
+template<typename Number_T>
+bool SkipList<Number_T>::has(Number_T const n) const
+{
+  Range<Number_T> const* place = this->list.get();
 
   while(place != nullptr)
   {
@@ -100,9 +118,9 @@ bool SkipList<Number_T>::has(Number_T n)
 }
 
 template<typename Number_T>
-bool SkipList<Number_T>::has(Number_T first, Number_T last)
+bool SkipList<Number_T>::has(Number_T const first, Number_T const last) const
 {
-  Range<Number_T>* place = this->list.get();
+  Range<Number_T> const* place = this->list.get();
 
   while(place != nullptr)
   {
@@ -120,11 +138,12 @@ bool SkipList<Number_T>::has(Number_T first, Number_T last)
 }
 
 template<typename Number_T>
-bool SkipList<Number_T>::hasAll(Number_T first, Number_T last)
+bool SkipList<Number_T>::hasAll(
+    Number_T const first, Number_T const last) const
 {
   if(first > last) { return false; }
 
-  Range<Number_T>* place = this->list.get();
+  Range<Number_T> const* place = this->list.get();
 
   while(place != nullptr)
   {
@@ -140,14 +159,15 @@ bool SkipList<Number_T>::hasAll(Number_T first, Number_T last)
 }
 
 template<typename Number_T>
-bool SkipList<Number_T>::insert(Number_T n)
+bool SkipList<Number_T>::insert(Number_T const n)
 {
   if(this->list == nullptr) // its the first range
   {
     this->list = std::unique_ptr<Range<Number_T>>(new Range<Number_T>(n));
     return true;
   }
-  if(n > this->list->last + 1) // its before the first range
+  // its before the first range
+  if(n > this->list->last + 1 && this->list->last + 1 > this->list->last)
   {
     std::unique_ptr<Range<Number_T>> next = std::move(this->list);
     this->list = std::unique_ptr<Range<Number_T>>(new Range<Number_T>(n));
@@ -161,7 +181,7 @@ bool SkipList<Number_T>::insert(Number_T n)
 
     while(place != nullptr)
     {
-      if(n == place->last + 1) // extend the last.
+      if(n == place->last + 1 && n > place->last) // extend the last.
       {
         place->last = n;
         return true;
@@ -212,7 +232,7 @@ bool SkipList<Number_T>::insert(Number_T n)
 }
 
 template<typename Number_T>
-bool SkipList<Number_T>::insert(Number_T first, Number_T last)
+bool SkipList<Number_T>::insert(Number_T const first, Number_T const last)
 {
   // invalid input range
   if(first > last) { return false; }
@@ -223,7 +243,8 @@ bool SkipList<Number_T>::insert(Number_T first, Number_T last)
         new Range<Number_T>(last, first));
     return true;
   }
-  if(first > this->list->last + 1) // before the first range
+  // before the first range
+  if(first > this->list->last + 1 && this->list->last + 1 > this->list->last)
   {
     std::unique_ptr<Range<Number_T>> next = std::move(this->list);
     this->list = std::unique_ptr<Range<Number_T>>(
@@ -238,7 +259,7 @@ bool SkipList<Number_T>::insert(Number_T first, Number_T last)
 
     while(place != nullptr)
     {
-      if(first == place->last + 1) // extend the last.
+      if(first == place->last + 1 && first > place->last) // extend the last.
       {
         place->last = last;
         return true;
@@ -300,7 +321,7 @@ bool SkipList<Number_T>::insert(Number_T first, Number_T last)
 }
 
 template<typename Number_T>
-bool SkipList<Number_T>::remove(Number_T n)
+bool SkipList<Number_T>::remove(Number_T const n)
 {
   Range<Number_T>* place = this->list.get();
 
@@ -336,7 +357,7 @@ bool SkipList<Number_T>::remove(Number_T n)
 }
 
 template<typename Number_T>
-bool SkipList<Number_T>::remove(Number_T first, Number_T last)
+bool SkipList<Number_T>::remove(Number_T const first, Number_T const last)
 {
   Range<Number_T>* place = this->list.get();
   std::unique_ptr<Range<Number_T>>* prev = &this->list;
@@ -381,8 +402,8 @@ bool SkipList<Number_T>::remove(Number_T first, Number_T last)
 // SkipLists are normally reverse stored, but for forEach we want forward
 // traversal, So this unreverses them.
 template<typename Number_T>
-void for_each_helper(
-    std::function<void(Number_T, Number_T)>& func, Range<Number_T>* place)
+void for_each_helper(std::function<void(Number_T, Number_T)>& func,
+    Range<Number_T> const* place)
 {
   if(place != nullptr)
   {
@@ -392,17 +413,62 @@ void for_each_helper(
 }
 
 template<typename Number_T>
-void SkipList<Number_T>::forEach(std::function<void(Number_T, Number_T)> func)
+void SkipList<Number_T>::forEach(
+    std::function<void(Number_T, Number_T)> func) const
 {
   for_each_helper(func, this->list.get());
 }
 
+// Recursive helper for forward traversal in forRange
+template<typename Number_T>
+void for_range_helper(Number_T const rf, Number_T const rl,
+    std::function<void(Number_T, Number_T)>& func,
+    Range<Number_T> const* place)
+{
+  if(place != nullptr)
+  {
+    if(rf >= place->first && rl <= place->last)
+    {
+      for_range_helper(rf, rl, func, place->next.get());
+      func(rf, rl);
+    }
+    else if(rf <= place->first && rl >= place->last)
+    {
+      for_range_helper(rf, rl, func, place->next.get());
+      func(place->first, place->last);
+    }
+    else if(rf <= place->last && rf >= place->first && rl >= place->last)
+    {
+      for_range_helper(rf, rl, func, place->next.get());
+      func(rf, place->last);
+    }
+    else if(rf < place->first && rl >= place->first && rl <= place->last)
+    {
+      for_range_helper(rf, rl, func, place->next.get());
+      func(place->first, rl);
+    }
+    else if(rl < place->last)
+    {
+      for_range_helper(rf, rl, func, place->next.get());
+    }
+    // else if(rl < place->last) { return; }
+  }
+}
+
+template<typename Number_T>
+void SkipList<Number_T>::forRange(
+    Number_T const range_first, Number_T const range_last,
+    std::function<void(Number_T, Number_T)> func) const
+{
+  for_range_helper(range_first, range_last, func, this->list.get());
+}
+
 template<typename Number_T>
 bool SkipList<Number_T>::equivalent(
-    SkipList<Number_T>* a, SkipList<Number_T>* b)
+    SkipList<Number_T>const* const a, SkipList<Number_T> const* const b)
 {
-  Range<Number_T>* a_place = a->list.get();
-  Range<Number_T>* b_place = b->list.get();
+  Range<Number_T> const* a_place = a->list.get();
+  Range<Number_T> const* b_place = b->list.get();
 
   // check that all elements have the same value.
   while(a_place != nullptr && b_place != nullptr)

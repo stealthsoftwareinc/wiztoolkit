@@ -1,40 +1,67 @@
-# Copyright (C) 2021 Stealth Software Technologies, Inc.
+# Copyright (C) 2021-2022 Stealth Software Technologies, Inc.
 # FOR SIEVE PROGRAM USE ONLY
 
 test-ubuntu-18:
-  tags: [shared, t3-xlarge]
   image: registry.stealthsoftwareinc.com/stealth/builder-images/ubuntu:18.04
   script:
     - make BUILD_TYPE=CI test
     - make clean
     - make BUILD_TYPE=CI CXX=clang++ test
+    - make regression-test
+
 test-ubuntu-20:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/ubuntu:20.04
   script:
     - make BUILD_TYPE=CI test
     - make clean
     - make BUILD_TYPE=CI CXX=clang++ test
+    - make regression-test
+
 test-centos-stream8:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/centos:stream8
   script:
     - make BUILD_TYPE=CI test
     - make clean
     - make BUILD_TYPE=CI CXX=clang++ test
+    - make regression-test
+
 test-rockylinux-8:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/rockylinux:8
   script:
     - make BUILD_TYPE=CI test
     - make clean
     - make BUILD_TYPE=CI CXX=clang++ test
+    - make regression-test
+
 test-centos-7:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/centos:7
   script:
     - make ENABLE_ANTLR=0 CMAKE_CMD=cmake3 BUILD_TYPE=CI test
+    - PYTHONPATH="src/main/python" python3 src/test/python/regression_tests.py
+
+test-nixos:
+  image: registry.stealthsoftwareinc.com/stealth/wiztoolkit/wtk-nix
+  script:
+    - nix-build
+    - 'nix-shell -p "python3.withPackages(ps: with ps; [numpy])" --run "PYTHONPATH=src/main/python python3 src/test/python/regression_tests.py result/bin/"'
+
 static-analysis-centos-stream8:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/centos:stream8
   script:
     - make static-analysis
+
 static-analysis-rockylinux-8:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/rockylinux:8
   script:
     - make static-analysis
+
+pages:
+  image: registry.stealthsoftwareinc.com/kimee/stealth-pages-theme
+  script:
+    - cd pages/
+    - ./_scripts/download_content.sh
+    - jekyll build -d ../public
+  artifacts:
+    paths:
+      - public
+  when: manual

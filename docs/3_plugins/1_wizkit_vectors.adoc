@@ -1,0 +1,65 @@
+= The Wizkit Vectors Plugin
+:source-highlighter: pygments
+
+The `wizkit_vectors` plugin provides a limited number of operations which may be implemented using vector computation for better performance.
+
+== Operations
+The following operations are supported.
+
+`add`:: add pairs of elements from two vectors to form a third vector.
+`mul`:: multiply pairs of elements from two vectors to form a third vector.
+`sum`:: Add all elements from a single vector to form a single element.
+`product`:: Multiply all elements from a single vector to form a single element.
+`dotproduct`:: multiply pairs of elements from two vectors, them sum to form a single element.
+
+For example, using type _2_ for vectors of size 8, the following multiply operation could be used.
+
+----
+@function(vector_mul_2_8, @out: 2:8, @in: 2:8, 2:8)
+  @plugin(wizkit_vectors, mul);
+----
+
+The vector plugin operations do not use any additional plugin arguments.
+Instead, the plugin function signature must match the following constraints.
+
+=== `add` and `mul`
+Add or multiply pairs of elements from two lists.
+For a given type `t` and length `s`, the following parameters are used.
+
+.Function Signature
+* Output `t:s`: output vector
+* Input `t:s`: left input vector
+* Input `t:s`: right input vector
+
+.Plugin Binding
+* Plugin Name: `wizkit_vectors`
+* Operation: `add` or `mul`
+
+=== `sum` and `product`
+Add or multiply all elements of a list.
+For a given type `t` and length `s`, the following parameters are used.
+
+.Function Signature
+* Output `t:1`: The sum or product output wire
+* Input `t:s`: The input vector.
+
+.Plugin Binding
+* Plugin Name: `wizkit_vectors`
+* Operation: `sum` or `product`
+
+==== `dotproduct`
+Multiply pairs of elements from two lists, then sum the resulting products.
+For a given type `t` and length `s`, the following parameters are used.
+
+.Function Signature
+* Output `t:1`: output vector
+* Input `t:s`: left input vector
+* Input `t:s`: right input vector
+
+
+.Plugin Binding:
+* Plugin Name: `wizkit_vectors`
+* Operation: `dotproduct`
+
+== Implementing the Vector Plugin
+TODO: Coming Soon

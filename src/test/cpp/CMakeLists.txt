@@ -1,4 +1,6 @@
-project(wiztoolkit_test)
+cmake_minimum_required(VERSION 3.1)
+
+add_compile_options(${wtk_cxx_flags})
 
 include_directories(${GTEST_INCLUDE_DIRS})
 
@@ -8,9 +10,8 @@ include_directories(
 )
 
 add_executable(wtk-test
-  wtk/utils/is_prime.test.cpp
   wtk/utils/SkipList.test.cpp
-  wtk/utils/IRTreeUtils.test.cpp
+  wtk/utils/CharMap.test.cpp
 )
 
 target_link_libraries(wtk-test

@@ -6,3 +6,5 @@ src/deps/deps.success
 **/dist/
 tests/**/temp.out
 *.html
+__pycache__/
+result

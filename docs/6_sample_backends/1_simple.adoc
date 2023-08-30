@@ -1,0 +1,15 @@
+= Simple Arithmetic Demo Backend
+:source-highlighter: pygments
+ifndef::include-rel-dir[]
+:include-rel-dir: /docs
+endif::[]
+
+This backend focuses on implementing arithmetic ZK.
+Although the sample does demonstrate multiple fields and conversion (field switching), it should be simple enough to just remove converter related stuff.
+
+[source,c++]
+----
+include::{include-rel-dir}/6_sample_backends/simple.cpp[]
+----
+
+xref:./simple.cpp[Download the pass:[C++]] in case the above does not display or you wish to modify the example.

@@ -1,290 +1,418 @@
 #! /usr/bin/python3
 
-# Copyright (C) 2021 Stealth Software Technologies, Inc.
+# Copyright (C) 2021-2022 Stealth Software Technologies, Inc.
 
 import sys
 import random
 import numpy as np
+import TestCaseGen as tcg
 
-if len(sys.argv) != 9:
-  print("Usage: matrix_mult [ir0|ir1] a b c p <output>.rel <output>.ins <output>.wit")
-  print("  for the product of M (axb, instance) and N (bxc, witness)")
-  print("  is equal to C (axc, instance) over field p")
-  sys.exit(1)
+# Write the header for an IR resource
+def header(f, resource, prime):
+  f.write("version 2.1.0;\n" + resource + ";\n")
+  f.write("@type field " + str(prime) + ";\n@begin\n")
 
-ir = sys.argv[1]
-if ir == "ir0":
-  ir = 0
-elif ir == "ir1":
-  ir = 1
-else:
-  print("bad ir " + ir)
-  sys.exit(1)
+# Generate the instance and witness 
+def generateInsWit(ins_file, wit_file, m_dim, n_dim, c_dim, prime):
+  M_mat = np.ndarray(m_dim, dtype=object)
+  for i in range(0, m_dim[0]):
+    for j in range(0, m_dim[1]):
+      M_mat[i][j] = random.randint(0, prime) % prime
+  N_mat = np.ndarray(n_dim, dtype=object)
+  for i in range(0, n_dim[0]):
+    for j in range(0, n_dim[1]):
+      N_mat[i][j] = random.randint(0, prime) % prime
 
-a = int(sys.argv[2])
-b = int(sys.argv[3])
-c = int(sys.argv[4])
-p = int(sys.argv[5])
+  def mod(x):
+    return x % prime
 
-# output some gate counts
-main_loops = a * c
-inner_loop_muls = b * main_loops
-sum_add = (b - 1) * main_loops
-check = a * c
+  C_mat = mod(np.matmul(M_mat, N_mat, dtype=object))
 
-print("add gates:     " + str(sum_add + check))
-print("mul gates:     " + str(inner_loop_muls))
-print("mulc gates:    " + str(check))
-print("assert zeroes: " + str(check))
-print("instances:     " + str(a * b + a * c))
-print("witnesses:     " + str(b * c))
-print("total:         " + str(sum_add + check * 3 + inner_loop_muls + a * b + a * c + b * c))
+  for i in range(0, m_dim[0]):
+    for j in range(0, m_dim[1]):
+      ins_file.write("< " + str(M_mat[i][j]) + " >;\n")
 
-# Generate instance/witness random matrices.
-M = np.ndarray((a, b), dtype=object)
-for i in range(0, a):
-  for j in range(0, b):
-    M[i][j] = random.randint(0, p)
-N = np.ndarray((b, c), dtype=object)
-for i in range(0, b):
+  for i in range(0, c_dim[0]):
+    for j in range(0, c_dim[1]):
+      ins_file.write("< " + str(C_mat[i][j]) + " >;\n")
+
+  for i in range(0, n_dim[0]):
+    for j in range(0, n_dim[1]):
+      wit_file.write("< " + str(N_mat[i][j]) + " >;\n")
+
+  ins_file.write("@end\n")
+  wit_file.write("@end\n")
+
+# helper function to index into a matrix.
+def mat_idx(ptr, idx, sz):
+  return ptr + (idx[0] * sz[1]) + idx[1]
+
+# returns the size of a matrix, given its dimensions
+def mat_dim(sz):
+  return sz[0] * sz[1]
+
+# returns the size of a matrix required to carry a single column
+def mat_col_dim(sz):
+  return 1 + (sz[0] - 1) * sz[1]
+
+# generate a dot-product for the "textbook" algorithm
+def generateDotProdTB(out, b, c):
+  out.beginFunction("dotProd", [(0, 1)], [(0, b), (0, mat_col_dim([b, c]))])
+
+  place = 0
+  out.comment("output wire $" + str(place))
+  place += 1
+
+  out.comment("M row (" + str(b) + "): $" + str(place) + " ... $" \
+      + str(place + b - 1))
+  M_ROW = place
+  place += b
+
+  out.comment("N col (" + str(b) + "x" + str(c) + "): $"
+      + str(place) + " ... $" + str(place + mat_col_dim([b, c]) - 1))
+  N_COL = place
+  place += mat_col_dim([b, c])
+
+  out.new(place, place + 2 * b - 3)
+
+  for i in range(0, b):
+    out.mul(place, M_ROW + i, mat_idx(N_COL, [i, 0], [b, c]))
+    place += 1
+    if i != 0 and i != b - 1:
+      out.add(place, place - 2, place - 1)
+      place += 1
+  out.add(0, place - 2, place - 1)
+  out.end()
+
+# generate a dot-product for the "partial transpose" algorithm.
+def generateDotProdPT(out, b):
+  out.beginFunction("dotProd", [(0, 1)], [(0, b), (0, b)])
+
+  place = 0
+  out.comment("output wire: $" + str(place))
+  place += 1
+
+  out.comment("M row(" + str(b) + "): $" + str(place) + " ... $"
+      + str(place + b - 1))
+  M_ROW = place
+  place += b
+
+  out.comment("N col(" + str(b) + "): $" + str(place) + " ... $"
+      + str(place + b - 1))
+  N_COL = place
+  place += b
+
+  out.new(place, place + 2 * b - 3)
+
+  for i in range(0, b):
+    out.mul(place, M_ROW + i, N_COL + i)
+    place += 1
+    if i != 0 and i != b - 1:
+      out.add(place, place - 2, place - 1)
+      place += 1
+
+  out.add(0, place - 2, place - 1)
+  out.end()
+
+# generate a dot-product for the "partial transpose" algorithm.
+def generateDotProdPlugin(out, b):
+  out.beginFunction("dotProd", [(0, 1)], [(0, b), (0, b)])
+  out.pluginBinding("wizkit_vectors", "dotproduct", [])
+
+#function to generate partial transpose
+def generatePartialTranspose(out, b, c):
+  out.beginFunction("partTpose", [(0, b)], [(0, mat_col_dim([b, c]))])
+
+  place = 0
+  out.comment("Output wires (" + str(b) + "): $" + str(place) + " ... $"
+      + str(place + b - 1))
+  OUT = place
+  place += b
+
+  out.comment("N col (" + str(b) + "x" + str(c) + "): $"
+      + str(place) + " ... $" + str(place + mat_col_dim([b, c]) - 1))
+  N_COL = place
+  place += mat_col_dim([b, c])
+
+  for i in range(0, b):
+    out.copy(OUT + i, mat_idx(N_COL, [i, 0], [b, c]))
+  out.end()
+
+# generate the row helper
+def generateRowTB(out, b, c):
+  out.beginFunction("row", [[0, c]], [[0, b], [0, mat_dim([b, c])]])
+  out.comment("$0 ... $" + str(c - 1) + ": output")
+  out.comment("$" + str(c) + " ... $" + str(c + b - 1) + ": M row")
+  out.comment("$" + str(c + b) + " ... $"
+      + str(c + b  - 1 + b * c) + ": N matrix")
   for j in range(0, c):
-    N[i][j] = random.randint(0, p)
+    out.comment("j: " + str(j))
+    out.call("dotProd", [[j]],
+        [(c, c + b - 1),
+          (mat_idx(c + b, [0, j], [b, c]),
+           mat_idx(c + b, [b - 1, j], [b, c]))])
+  out.end()
 
-def mod(x):
-  return x % p
-
-# generate N*M product
-C = mod(np.matmul(M, N, dtype=object))
-
-relation = open(sys.argv[6], "w")
-instance = open(sys.argv[7], "w")
-witness = open(sys.argv[8], "w")
-
-relation.write("version 1.0.0;\n")
-instance.write("version 1.0.0;\n")
-witness.write("version 1.0.0;\n")
-relation.write("field characteristic " + str(p) + " degree 1;\n")
-instance.write("field characteristic " + str(p) + " degree 1;\n")
-witness.write("field characteristic " + str(p) + " degree 1;\n")
-
-relation.write("relation\n")
-relation.write("gate_set:arithmetic;\n")
-instance.write("instance\n@begin\n")
-witness.write("short_witness\n@begin\n")
-
-if(ir == 0):
-  relation.write("features:simple;\n")
-else:
-  relation.write("features:@for,@function;\n")
-
-relation.write("@begin\n")
-
-if ir == 1:
-  # write out the sum function.
-  relation.write("\n@function(sum, @out: 1, @in: " + str(b) \
-      + ", @instance: 0, @short_witness: 0)\n")
-  relation.write("  // out: $0\n")
-  relation.write("  // in: $1 ... $" + str(b) + "\n")
-  relation.write("  $" + str(1 + b) + " <- @add($1, $2);\n")
-  relation.write("  $" + str(2 + b) + " ... $" + str(b + b - 2) \
-      + " <- @for i @first 2 @last " + str(b - 2) + "\n")
-  relation.write("    $(i + " + str(b) \
-      + ") <- @anon_call($(1 + i), $(" + str(b - 1) \
-      + " + i), @instance: 0, @short_witness: 0)\n")
-  relation.write("      $0 <- @add($1, $2);\n")
-  relation.write("    @end\n")
-  relation.write("  @end\n")
-  relation.write("  $0 <- @add($" + str(b) + ", $" + str(b + b - 2) + ");\n")
-  relation.write("@end\n")
-
-instance_M_start = 0
-instance_M_end = instance_M_start + a * b
-instance_C_start = instance_M_end
-instance_C_end = instance_C_start + a * c
-witness_start = instance_C_end
-witness_end = witness_start + b * c
-
-C_prime_start = witness_end
-C_prime_end = C_prime_start + a * c
-
-num_wires = C_prime_end + (a * c * b) + (a * c * (b - 2)) + a * c * 2
-
-relation.write("\n// M (" + str(a) + "x" + str(b) + "): $" \
-    + str(instance_M_start) + "...$" + str(instance_M_end - 1) + " (instance)")
-relation.write("\n// N (" + str(b) + "x" + str(c) + "): $" \
-    + str(witness_start) + "...$" + str(witness_end - 1) + " (witness)")
-relation.write("\n// C (" + str(a) + "x" + str(c) + "): $" \
-    + str(instance_C_start) + "...$" + str(instance_C_end - 1) + " (instance)")
-relation.write("\n// C' (" + str(a) + "x" + str(c) + "): $" \
-    + str(C_prime_start) + "...$" + str(C_prime_end - 1) + "\n\n")
-
-relation.write("// Computes the product C':=M*N, and checks that C'==C\n\n")
-
-# write out the instance and witness
-next_wire = 0
-
-for i in range(0, len(M)):
-  for j in range(0, len(M[i])):
-    if ir == 0:
-      relation.write("$" + str(next_wire) + "<-@instance;\n")
-      next_wire = next_wire + 1
-    instance.write("<" + str(M[i][j]) + ">;\n")
-
-for i in range(0, len(C)):
-  for j in range(0, len(C[i])):
-    if ir == 0:
-      relation.write("$" + str(next_wire) + "<-@instance;\n")
-      next_wire = next_wire + 1
-    instance.write("<" + str(C[i][j]) + ">;\n")
-
-for i in range(0, len(N)):
-  for j in range(0, len(N[i])):
-    if ir == 0:
-      relation.write("$" + str(next_wire) + "<-@short_witness;\n")
-      next_wire = next_wire + 1
-    witness.write("<" + str(N[i][j]) + ">;\n")
-
-if ir == 1:
-  # M is instance
-  first = str(next_wire)
-  last = str(next_wire + len(M) * len(M[0]) - 1)
-  relation.write("$" + first + " ... $" + last + " <- @for i @first " \
-      + first + " @last " + last + "\n")
-  relation.write("  $i <- @anon_call(@instance: 1, @short_witness: 0)\n")
-  relation.write("    $0 <- @instance;\n")
-  relation.write("  @end\n")
-  relation.write("@end\n")
-  next_wire = next_wire + len(M) * len(M[0])
-  # C is instance
-  first = str(next_wire)
-  last = str(next_wire + len(C) * len(C[0]) - 1)
-  relation.write("$" + first + " ... $" + last + " <- @for i @first " \
-      + first + " @last " + last + "\n")
-  relation.write("  $i <- @anon_call(@instance: 1, @short_witness: 0)\n")
-  relation.write("    $0 <- @instance;\n")
-  relation.write("  @end\n")
-  relation.write("@end\n")
-  next_wire = next_wire + len(C) * len(C[0])
-  # N is witness
-  first = str(next_wire)
-  last = str(next_wire + len(N) * len(N[0]) - 1)
-  relation.write("$" + first + " ... $" + last + " <- @for i @first " \
-      + first + " @last " + last + "\n")
-  relation.write("  $i <- @anon_call(@instance: 0, @short_witness: 1)\n")
-  relation.write("    $0 <- @short_witness;\n")
-  relation.write("  @end\n")
-  relation.write("@end\n\n")
-  next_wire = next_wire + len(N) * len(N[0])
-
-instance.write("@end\n")
-witness.write("@end\n")
-
-# write out the relation
-next_wire = C_prime_end
-
-if ir == 0:
+# Generate the matrix-mul body for flat/text book
+def generateBodyFlatTB(out, c_start, m_start, n_start, place, a, b, c):
   for i in range(0, a):
     for j in range(0, c):
-      sum_start = next_wire
-      relation.write("// C'[" + str(i) + "," + str(j) + \
-          "] <- SUM_k M[" + str(i) + ", k] * N[k, " + str(j) + "]\n")
+      out.comment("i: " + str(i) + ", j: " + str(j))
+      rsrv = [place, place + 2 * b - 3]
+      out.new(rsrv[0], rsrv[1])
       for k in range(0, b):
-        relation.write("$" + str(next_wire) + "<-@mul($" + \
-            str(instance_M_start + (i * b) + k) + ",$" + \
-            str(witness_start + (k * c) + j) + ");\n");
-        next_wire = next_wire + 1
-      sum_end = next_wire
-      for k in range(sum_start + 1, sum_end):
-        if k == sum_end - 1:
-          relation.write("$" + str(C_prime_start + (i * c) + j))
-        else:
-          relation.write("$" + str(next_wire))
-          next_wire = next_wire + 1
-        relation.write("<-@add(");
-        if k == sum_start + 1:
-          relation.write("$" + str(sum_start))
-        elif k == sum_end - 1:
-          relation.write("$" + str(next_wire - 1))
-        else:
-          relation.write("$" + str(next_wire - 2))
-        relation.write(",$" + str(k) + ");\n")
-      relation.write("@delete($" + str(sum_start) + ",$" + str(next_wire - 1) + ");\n")
-else:
-  relation.write("$" + str(C_prime_start) + " ... $" +str(C_prime_end - 1) \
-      + " <- @for i @first  0 @last " + str(a - 1) + "\n")
-  relation.write("  $(" + str(C_prime_start) + " + (i * " + str(c) \
-      + ")) ... $(" + str(C_prime_start + c - 1) + " + (i * " + str(c) \
-      + ")) <- @anon_call($" + str(instance_M_start) + " ... $" \
-      + str(instance_M_end - 1) + ", $" + str(witness_start) \
-      + " ... $" + str(witness_end - 1) \
-      + ", @instance: 0, @short_witness: 0)\n")
-  relation.write("    // C'[i][...]: $0 ... $" + str(c - 1) + "\n")
-  relation.write("    // M: $" + str(c) + " ... $" + str(c + len(M) * len(M[0]) - 1) + "\n")
-  relation.write("    // N: $" + str(c + len(M) * len(M[0]))  + " ... $" \
-      + str(c + len(M) * len(M[0]) + len(N) * len(N[0]) - 1) + "\n")
-  relation.write("    $0 ... $" + str(c - 1) + " <- @for j @first 0 @last " \
-      + str(c - 1) + "\n")
-  relation.write("      $j <- @anon_call($" + str(c) + " ... $" \
-      + str(c + len(M) * len(M[0]) - 1) + ", $" + str(c + len(M) * len(M[0])) + "... $" \
-      + str(c + len(M) * len(M[0]) + len(N) * len(N[0]) - 1) + ", @instance: 0, @short_witness: 0)\n")
-  relation.write("        // C'[i][j]: $0\n")
-  relation.write("        // M: $1 ... $" + str(len(M) * len(N[0])) + "\n")
-  relation.write("        // N: $" + str(1 + len(M) * len(M[0])) + " ... $" \
-      + str(len(M) * len(M[0]) + len(N) * len(N[0])) + "\n")
-  relation.write("        $" + str(1 + len(M) * len(M[0]) + len(N) * len(N[0])) + " ... $" \
-      + str(b + len(M) * len(M[0]) + len(N) * len(N[0])) + " <- @for k @first 0 @last " + str(b - 1) \
-      + "\n")
-  relation.write("          $(k + " + str(1 + len(M) * len(M[0]) + len(N) * len(N[0])) \
-      + ") <- @anon_call($(1 + ((i * " + str(b) + ") + k)), $(" \
-      + str(1 + len(M) * len(M[0])) + " + ((k * " + str(c) + ") + j)), @instance: 0," \
-      + "@short_witness: 0)\n")
-  relation.write("            $0 <- @mul($1, $2);\n")
-  
-  relation.write("          @end\n")
-  relation.write("        @end\n")
-  relation.write("        $0 <- @call(sum, $" + str(1 + len(M) * len(M[0]) + len(N) * len(N[0])) \
-      + " ... $" + str(b + len(M) * len(M[0]) + len(N) * len(N[0])) + ");\n")
-  relation.write("      @end\n")
-  relation.write("    @end\n")
-  relation.write("  @end\n")
-  relation.write("@end\n\n")
+        out.mul(place, \
+            mat_idx(m_start, [i, k], [a, b]), mat_idx(n_start, [k, j], [b, c]))
+        place += 1
+        if k != 0 and k != b - 1:
+          out.add(place, place - 2, place - 1)
+          place += 1
+      out.add(mat_idx(c_start, [i, j], [a, c]), place - 2, place - 1)
 
-relation.write("// Check that C' == C\n")
-if ir == 0:
+      out.delete(rsrv[0], rsrv[1])
+
+# Generate the matrix-mul body for flat/partial transpose
+def generateBodyFlatPT(out, c_start, m_start, n_start, place, a, b, c):
+  for j in range(0, c):
+    out.comment("j: " + str(j))
+    Ncol = place
+    place += b
+    out.new(Ncol, place - 1)
+    for k in range(0, b):
+      out.copy(Ncol + k, mat_idx(n_start, [k, j], [b, c]))
+    for i in range(0, a):
+      Mrow = mat_idx(m_start, [i, 0], [a, b])
+
+      out.comment("i: " + str(i) + ", j: " + str(j))
+      rsrv = [place, place + 2 * b - 3]
+      out.new(rsrv[0], rsrv[1])
+
+      for k in range(0, b):
+        out.mul(place, Mrow + k, Ncol + k)
+        place += 1
+        if k != 0 and k != b - 1:
+          out.add(place, place - 2, place - 1)
+          place += 1
+      out.add(mat_idx(c_start, [i, j], [a, c]), place - 2, place - 1)
+      out.delete(rsrv[0], rsrv[1])
+    out.delete(Ncol, Ncol + b - 1)
+
+# Generate the matrix-mul body for dotProd/text book
+def generateBodyDotProdTB(out, c_start, m_start, n_start, place, a, b, c):
   for i in range(0, a):
-    del_wire = next_wire;
     for j in range(0, c):
-      relation.write("$" + str(next_wire) + "<-@mulc($" \
-          + str(instance_C_start + i * c + j) + ",<" \
-          + str(p - 1) + ">);\n")
-      relation.write("$" + str(next_wire + 1) + "<-@add($" \
-          + str(C_prime_start + i * c + j) + ",$" \
-          + str(next_wire) + ");\n")
-      relation.write("@assert_zero($" + str(next_wire + 1) + ");\n")
-      next_wire = next_wire + 2
-    relation.write("@delete($" + str(del_wire) + ",$" + str(next_wire - 1) + ");\n")
-else:
-  relation.write("@for i @first 0 @last " + str(a - 1) + "\n")
-  relation.write("  @anon_call($((i * " + str(c) + ") + " \
-      + str(instance_C_start) + ") ...$((i * " + str(c) + ") + " \
-      + str(instance_C_start + c - 1) + "), $((i * " + str(c) + ") + " \
-      + str(C_prime_start) + ") ... $((i * " + str(c) + ") + " \
-      + str(C_prime_start + c - 1) \
-      + "), @instance: 0, @short_witness: 0)\n")
-  relation.write("    // C[i][...]: $0 ... $" + str(c - 1) + "\n")
-  relation.write("    // C'[i][...]: $" + str(c) + " ... $" + str(c + c - 1) \
-      + "\n")
-  relation.write("    @for j @first 0 @last " + str(c - 1) + "\n")
-  relation.write("      @anon_call($j, $(j + " + str(c) \
-      + "), @instance: 0, @short_witness: 0)\n")
-  relation.write("        $2 <- @mulc($0, < " + str(p - 1) + " >);\n")
-  relation.write("        $3 <- @add($1, $2);\n")
-  relation.write("        @assert_zero($3);\n")
-  relation.write("      @end\n")
-  relation.write("    @end\n")
-  relation.write("  @end\n")
-  relation.write("@end\n\n")
+      out.comment("i: " + str(i) + ", j: " + str(j))
+      out.call("dotProd", [[mat_idx(c_start, [i, j], [a, c])]], \
+          [(mat_idx(m_start, [i, 0], [a, b]), \
+              mat_idx(m_start, [i, b - 1], [a, b])), \
+           (mat_idx(n_start, [0, j], [b, c]), \
+              mat_idx(n_start, [b - 1, j], [b, c]))])
 
-relation.write("@end\n");
+# Generate the matrix-mul body for dotProd/partial transpose
+def generateBodyDotProdPT(out, c_start, m_start, n_start, place, a, b, c):
+  for j in range(0, c):
+    out.comment("j: " + str(j))
+    Ncol = place
+    place += b
+    out.call("partTpose", [(Ncol, place - 1)],
+        [(mat_idx(n_start, [0, j], [b, c]),
+            mat_idx(n_start, [b - 1, j], [b, c]))])
 
-sys.exit(0)
+    for i in range(0, a):
+      Mrow = mat_idx(m_start, [i, 0], [a, b])
+
+      out.comment("i: " + str(i) + ", j: " + str(j))
+      out.call("dotProd", [[mat_idx(c_start, [i, j], [a, c])]],
+          [(Mrow, Mrow + b - 1), (Ncol, Ncol + b - 1)])
+
+    out.delete(Ncol, Ncol + b - 1)
+
+# Generate the matrix-mul body for dotProd/row helper textbook
+def generateBodyRowTB(out, c_start, m_start, n_start, place, a, b, c):
+  for i in range(0, a):
+    out.comment("i: " + str(i))
+    out.call("row",
+        [(mat_idx(c_start, [i, 0], [a, c]),
+          mat_idx(c_start, [i, c - 1], [a, c]))],
+        [(mat_idx(m_start, [i, 0], [a, b]),
+          mat_idx(m_start, [i, b - 1], [a, b])),
+          (n_start, n_start - 1 + b * c)])
+
+# generate the function for matrix-mul.
+def generateMatrixMul(out, ir, a, b, c):
+  out.beginFunction("matrixMul", [(0, mat_dim([a, c]))],
+          [(0, mat_dim([a, b])), (0, mat_dim([b, c]))])
+
+  place = 0
+
+  C_START = place
+  out.comment("C (" + str(a) + "x" + str(c) + "): $"
+    + str(place) + " ... $" + str(place + mat_dim([a, c]) - 1))
+  place += mat_dim([a, c])
+
+  M_START = place
+  out.comment("M (" + str(a) + "x" + str(b) + "): $"
+    + str(place) + " ... $" + str(place + mat_dim([a, b]) - 1))
+  place += mat_dim([a, b])
+
+  N_START = place
+  out.comment("N (" + str(b) + "x" + str(c) + "): $"
+    + str(place) + " ... $" + str(place + mat_dim([b, c]) - 1))
+  place += mat_dim([b, c])
+
+  if ir == "flat_tb":
+    generateBodyFlatTB(out, C_START, M_START, N_START, place, a, b, c)
+  # Flat/partial transpose
+  elif ir == "flat_pt":
+    generateBodyFlatPT(out, C_START, M_START, N_START, place, a, b, c)
+  # dot product/textbook
+  elif ir == "dotprod_tb":
+    generateBodyDotProdTB(out, C_START, M_START, N_START, place, a, b, c)
+  # dot product row
+  elif ir == "dotprod_row_tb":
+    generateBodyRowTB(out, C_START, M_START, N_START, place, a, b, c)
+  #dot product/partial transpose
+  elif ir == "dotprod_pt" or ir == "plugin_pt":
+    generateBodyDotProdPT(out, C_START, M_START, N_START, place, a, b, c)
+  out.end()
+
+# "top level" code for reading the instance/witness and checking results
+def generateMainBody(out, a, b, c, p):
+  place = 0
+
+  M_START = place
+  M_END = M_START + mat_dim([a, b]) - 1
+  out.newLine()
+  out.comment("M (" + str(a) + "x" + str(b) + "): $"
+      + str(M_START) + " ... $" + str(M_END))
+
+  out.new(M_START, M_END, True)
+  for i in range(0, mat_dim([a, b])):
+    out.public(place)
+    place += 1
+
+  N_START = place
+  N_END = N_START + mat_dim([b, c]) - 1
+  out.newLine()
+  out.comment("N (" + str(b) + "x" + str(c) + "): $"
+      + str(N_START) + " ... $" + str(N_END))
+
+  out.new(N_START, N_END, True)
+  for i in range(0, mat_dim([b, c])):
+    out.private(place)
+    place += 1;
+
+  C_START = place
+  C_END = C_START + mat_dim([a, c]) - 1
+  out.newLine()
+  out.comment("C' (" + str(a) + "x" + str(c) + "): $"
+      + str(C_START) + " ... $" + str(C_END))
+
+  out.call("matrixMul", [(C_START, C_END)], [(M_START, M_END), (N_START, N_END)])
+  place += mat_dim([a, c])
+  R_START = C_START
+
+  C_START = place
+  C_END = C_START + mat_dim([a, c]) - 1
+  out.newLine()
+  out.comment("C (" + str(a) + "x" + str(c) + "): $"
+      + str(C_START) + " ... $" + str(C_END))
+
+  out.new(C_START, C_END, True)
+  for i in range(0, mat_dim([a, c])):
+    out.public(place)
+    place += 1;
+
+  # Assert equal function.
+  out.newLine()
+  out.beginFunction("assertEq", [], [(0, 1), (0, 1)])
+  out.mulc(2, 1, p - 1)
+  out.add(3, 0, 2)
+  out.assertZero(3)
+  out.end()
+
+  for i in range(0, mat_dim([a, c])):
+    out.call("assertEq", [], [(R_START + i,), (C_START + i,)])
+
+  out.end()
+
+def generateMatrixProductIR0(ir, a, b, c, p, rel_file, ins_file, wit_file):
+  # read the IR variant
+  mem = False
+  if ir in [ "flat_tb", "flat_pt", "dotprod_tb", "dotprod_pt", "plugin_pt", "dotprod_row_tb" ]:
+    pass
+  elif ir in [ "mem_flat_tb", "mem_flat_pt", "mem_dotprod_tb", "mem_dotprod_pt", "mem_plugin_pt", "mem_dotprod_row_tb" ]:
+    ir = ir[4:]
+    mem = True
+  else:
+    print("Unrecognized IR Variant: " + ir)
+    sys.exit(1)
+
+  # generate the headers
+  if ir == "plugin_pt":
+    header(rel_file, "circuit;\n@plugin wizkit_vectors", p)
+  else:
+    header(rel_file, "circuit", p)
+  header(ins_file, "public_input", p)
+  header(wit_file, "private_input", p)
+
+  # generate the public/private input streams.
+  generateInsWit(ins_file, wit_file, [a, b], [b, c], [a, c], p)
+
+  out = tcg.GateWriter(rel_file, 0, True , not mem)
+
+  # Write out the dot product function
+  if ir == "dotprod_tb" or ir == "dotprod_row_tb":
+    generateDotProdTB(out, b, c)
+  elif ir == "dotprod_pt":
+    generateDotProdPT(out, b)
+    generatePartialTranspose(out, b, c)
+  elif ir == "plugin_pt":
+    generateDotProdPlugin(out, b)
+    generatePartialTranspose(out, b, c)
+
+  # write out the row helper function
+  if ir == "dotprod_row_tb":
+    generateRowTB(out, b, c)
+
+  # Write out the matrix-multiplier function
+  generateMatrixMul(out, ir, a, b, c)
+
+  generateMainBody(out, a, b, c, p)
+
+  rel_file.flush()
+  rel_file.close()
+
+  ins_file.flush()
+  ins_file.close()
+
+  wit_file.flush()
+  wit_file.close()
+
+if __name__ == "__main__":
+  if len(sys.argv) != 9:
+    print("Usage: matrix_prod <ir> <a> <b> <c> <p> <output>.rel <output>.ins <output>.wit")
+    print("  for proving the product of M (axb, instance) and N (bxc, witness)")
+    print("  is equal to C (axc, instance) over field p and encoded in <ir>.")
+    print("  the following IRs are accepted:")
+    print("   - flat_tb: flat circuit with textbook multiplier")
+    print("   - flat_pt: flat circuit with partial transpose multiplier")
+    print("   - dotprod_tb: dot product function with textbook multiplier")
+    print("   - dotprod_pt: dot product function with partial transpose multiplier")
+    print("   - plugin_pt: dot product via a plugin with partial transpose multiplier")
+    print("   - dotprod_row_tb: dot product function with textbook multiplier, and a helper function for rows")
+    print("   - add \"mem_\" prefix to aggressively manage memory")
+    sys.exit(1)
+
+  IR = sys.argv[1]
+  
+  A = int(sys.argv[2])
+  B = int(sys.argv[3])
+  C = int(sys.argv[4])
+  P = int(sys.argv[5])
+
+  REL = open(sys.argv[6], "w")
+  INS = open(sys.argv[7], "w")
+  WIT = open(sys.argv[8], "w")
+
+  generateMatrixProductIR0(IR, A, B, C, P, REL, INS, WIT)

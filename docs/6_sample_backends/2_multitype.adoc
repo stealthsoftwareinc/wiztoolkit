@@ -1,0 +1,14 @@
+= Arithmetic and Boolean Demo Backend
+:source-highlighter: pygments
+ifndef::include-rel-dir[]
+:include-rel-dir: /docs
+endif::[]
+
+This sample demonstrates a backend where arithmetic and boolean fields may be mixed.
+
+[source,c++]
+----
+include::{include-rel-dir}/6_sample_backends/multitype.cpp[]
+----
+
+xref:./multitype.cpp[Download the pass:[C++]] in case the above does not display or you wish to modify the example.

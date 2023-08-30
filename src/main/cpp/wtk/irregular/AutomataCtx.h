@@ -20,54 +20,88 @@ namespace irregular {
 class AutomataCtx
 {
 public:
-  FILE* const file;
-  size_t const bufferLen;
-
-
-  /** The place where the automata is currently reading */
-  size_t place = 0;
-
-// readonly:
+  // The read buffer (caller or subclass has responsibility for freeing)
   char* const buffer;
 
-  /** The start character of the string the automata is currently generating */
+  // A mark in the buffer indicating the start of the current token
   size_t mark = 0;
 
-  /** The expected maximum length of a token */
-  size_t maxTknLen;
-  /** A number of extra nulls to padd the end of the buffer and cause an
-   * automata to fail gracefully in the case of an overrun */
-  size_t const extraNulls;
-  /** The place in the buffer that is the end of the buffer. */
+  // The scan's current place in the buffer.
+  size_t place = 0;
+
+  // The last valid character in the buffer (rather than the buffer length)
   size_t last = 0;
 
-  /** indicates if the last place is an EOF character */
-  bool eof = false;
+  // Indicates that the last character is the end of file. (rather than
+  // being able to load more characters)
+  bool eof = true;
 
-  /**
-   * Constructor for an AutomataCtx.
-   *
-   * @param an open FILE pointer.
-   * @param Maximum number of characters to read from the buffer at once.
-   */
-  AutomataCtx(FILE* const f,
-      size_t bufLen = 65536, size_t maxTkn = 1024, size_t extraNulls = 64);
+  // A file name for error reporting.
+  char const* name = "<ctx>";
 
-  AutomataCtx(AutomataCtx const&) = delete;
-  AutomataCtx& operator=(AutomataCtx const&) = delete;
+  // The current line number
+  size_t lineNum = 1;
 
-  ~AutomataCtx();
+  // Constructor with a buffer pointer.
+  AutomataCtx(char* const b);
 
-  /**
-   * Update the mark position for the next automata.
-   */
-  void updateMark();
+  // Update the buffer (if possible). Returns false on failure, true otherwise.
+  virtual bool update() = 0;
 
-  /**
-   * read the next portion of the file. (called automatically by updateMark
-   * when the remaining characters in the buffer are less than the maxTknLen).
-   */
-  void updateBuffer();
+  // Indicates that the end of file has been parsed.
+  bool atEnd();
+
+  virtual ~AutomataCtx() = default;
+};
+
+// An AutomataCtx for working with files
+class FileAutomataCtx : public AutomataCtx
+{
+private:
+  // The file from which to read.
+  FILE* file;
+
+  // The total length of the buffer.
+  size_t const bufLen;
+
+public:
+  // Constructor with optional buffer-length and update threshold.
+  FileAutomataCtx(size_t const bl = 65536);
+
+  // Open the context when given a file name
+  // returns false on failure
+  bool open(char const* const n);
+
+  // Open the context with an already open FILE*, name is for error reporting
+  // returns false on failure
+  bool open(FILE* const f, char const* const n);
+
+  // Updates by reading from file.
+  bool update() override;
+
+  // frees the buffer and closes the file.
+  virtual ~FileAutomataCtx() override;
+};
+
+// An AutomataCtx for working with strings.
+class StringAutomataCtx : public AutomataCtx
+{
+public:
+
+  StringAutomataCtx(std::string& str, char const* const n = "<string>");
+
+  // doesn't update
+  bool update() override;
+};
+
+// An AutomataCtx for working with char*s
+class CharStarAutomataCtx : public AutomataCtx
+{
+public:
+  CharStarAutomataCtx(char const* const str, char const* const n = "<char*>");
+
+  // doesn't update
+  bool update() override;
 };
 
 } } // namespace wtk::irregular

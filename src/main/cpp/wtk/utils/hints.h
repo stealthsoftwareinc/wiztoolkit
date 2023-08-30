@@ -10,12 +10,14 @@
 #define UNLIKELY(x) __builtin_expect(!!(x), 0)
 #define LIKELY(x) __builtin_expect(!!(x), 1)
 #define ALWAYS_INLINE [[ gnu::always_inline ]]
+#define RESTRICT __restrict__
 
 #else
 
 #define UNLIKELY(x) (x)
 #define LIKELY(x) (x)
 #define ALWAYS_INLINE
+#define RESTRICT
 
 #endif
 

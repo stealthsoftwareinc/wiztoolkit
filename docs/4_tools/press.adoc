@@ -1,0 +1,61 @@
+= `wtk-press`
+
+`wtk-press` is a command line tool for converting between the text and flatbuffer formats of the SIEVE IR.
+PRESS stands for **P**rintout and **R**epresentation **E**xchange **S**oftware **S**uite.
+
+`wtk-press` will open an input file, and read it as either a text or flatbuffer resource, then it will print it back out in the specified output format. (There is also a "nothing" printout for testing and debugging).
+
+== Command-line Arguments
+
+----
+wtk-press [options] <direction> <input-file?> <output-file?>
+----
+
+.Options
+[cols="1,4"]
+|===
+| `--help` or `-h` | print out help instructions.
+| `--version` or `-v` | print out the version information.
+|===
+
+.Directions
+[cols="1,4"]
+|===
+| t2f | text to flatbuffer
+| f2t | flatbuffer to text
+| t2t | text to text
+| f2f | flatbuffer to flatbuffer
+| t2n | text to nothing
+| f2n | flatbuffer to nothing
+|===
+
+.Input File
+The input file name (optional, defaults to stdin)
+
+.Output File
+The output file name (optional, defaults to stdout)
+
+== Example Invocations
+To convert a relation, public input stream, and private input stream from text to flatbuffer.
+
+----
+wtk-press t2f relation.txt relation.sieve
+wtk-press t2f public_stream.txt public_stream.sieve
+wtk-press t2f private_stream.txt private_stream.sieve
+----
+
+Or in reverse, from flatbuffer to text.
+
+----
+wtk-press f2t relation.sieve relation.txt
+wtk-press f2t public_stream.sieve public_stream.txt
+wtk-press f2t private_stream.sieve private_stream.txt
+----
+
+To convert a resource from text to flatbuffer in a pipeline.
+
+----
+first_command | wtk-press t2f | second_command
+----
+
+Flatbuffer to text cannot be piped, because flatbuffer parsing requires the `mmap` system call which is incompatible with `stdin`.

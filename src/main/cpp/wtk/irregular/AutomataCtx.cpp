@@ -2,74 +2,131 @@
  * Copyright (C) 2020 Stealth Software Technologies, Inc.
  */
 
-#include <stdexcept>
-
 #include <wtk/utils/hints.h>
 #include <wtk/irregular/AutomataCtx.h>
+
+#define LOG_IDENTIFIER "wtk::irregular"
+#include <stealth_logging.h>
 
 namespace wtk {
 namespace irregular {
 
-AutomataCtx::AutomataCtx(FILE* const f,
-    size_t bufLen, size_t maxTknLen, size_t extraNulls)
-  : file(f),
-    bufferLen(bufLen),
-    buffer((char*) malloc(sizeof(char) * bufLen + extraNulls)),
-    maxTknLen(maxTknLen),
-    extraNulls(extraNulls)
+AutomataCtx::AutomataCtx(char* const b) : buffer(b) { /* empty */ }
+
+bool AutomataCtx::atEnd()
 {
+  return this->eof & (this->last < this->place);
+}
+
+FileAutomataCtx::FileAutomataCtx(size_t const bl)
+  : AutomataCtx((char*) malloc(sizeof(char) * bl)),
+    bufLen(bl)
+{
+  this->eof = false;
+}
+
+bool FileAutomataCtx::open(char const* const n)
+{
+  this->name = n;
+
+  if(this->buffer == nullptr)
+  {
+    log_error("failed to allocate buffer of size %zu", this->bufLen);
+    return false;
+  }
+
+  this->file = fopen(this->name, "r");
   if(this->file == nullptr)
   {
-    perror("error");
-    throw std::runtime_error("Read error.");
+    log_perror();
+    log_error("could not open file %s", this->name);
+    return false;
   }
 
-  if(this->maxTknLen > this->bufferLen) { this->maxTknLen = this->bufferLen; }
-  this->updateBuffer();
+  return this->update();
 }
 
-AutomataCtx::~AutomataCtx()
+bool FileAutomataCtx::open(FILE* const f, char const* const n)
 {
-  free((void*) this->buffer);
-}
+  this->name = n;
 
-void AutomataCtx::updateMark()
-{
-  this->mark = this->place;
-
-  if(UNLIKELY(this->place + this->maxTknLen > this->last))
+  if(this->buffer == nullptr)
   {
-    this->updateBuffer();
+    log_error("failed to allocate buffer of size %zu", this->bufLen);
+    return false;
   }
+
+  this->file = f;
+  if(this->file == nullptr)
+  {
+    log_error("File %s is not open", this->name);
+    return false;
+  }
+
+  return this->update();
 }
 
-void AutomataCtx::updateBuffer()
+bool FileAutomataCtx::update()
 {
-  memmove(this->buffer, this->buffer + this->mark, this->last - this->mark);
-  this->place = this->place - this->mark;
-  this->last = this->last - this->mark;
-  this->mark = 0;
-
-  errno = 0;
-  size_t const to_read = this->bufferLen - this->last;
-  size_t const n_read =
-    fread(this->buffer + this->last, sizeof(char), to_read, this->file);
-  this->last += n_read;
-  memset(this->buffer + this->last, '\0',
-      this->bufferLen + this->extraNulls - this->last);
-
-  if(n_read != to_read && feof(this->file) != 0)
+  if(this->last >= this->mark && LIKELY(this->last != 0))
   {
-    if(n_read == 0)
+    memmove(
+        this->buffer, this->buffer + this->mark, 1 + this->last - this->mark);
+    this->place = this->place - this->mark;
+    this->last = 1 + this->last - this->mark;
+    this->mark = 0;
+  }
+  else
+  {
+    this->place = 0;
+    this->last = 0;
+    this->mark = 0;
+  }
+
+  size_t const to_read = this->bufLen - this->last;
+  size_t const n_read = fread(
+      this->buffer + this->last, sizeof(char), to_read, this->file);
+
+  if(n_read != to_read)
+  {
+    if(ferror(this->file) != 0)
+    {
+      log_perror();
+      return false;
+    }
+    else if(feof(this->file) != 0) 
     {
       this->eof = true;
     }
   }
-  else if(n_read != to_read)
-  {
-    perror("error");
-    throw std::runtime_error("Read error.");
-  }
+
+  this->last += n_read - 1;
+  return true;
 }
+
+FileAutomataCtx::~FileAutomataCtx()
+{
+  free((void*) this->buffer);
+  fclose(this->file);
+}
+
+StringAutomataCtx::StringAutomataCtx(std::string& str, char const* const n)
+  : AutomataCtx(&str[0])
+{
+  this->last = str.size() - 1;
+  this->name = n;
+}
+
+bool StringAutomataCtx::update() { return true; }
+
+CharStarAutomataCtx::CharStarAutomataCtx(
+    char const* const str, char const* const n)
+  : AutomataCtx((char*) str)
+{
+  this->last = strlen(str);
+  this->name = n;
+}
+
+bool CharStarAutomataCtx::update() { return true; }
 
 } } // namespace wtk::irregular

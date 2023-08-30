@@ -1,0 +1,52 @@
+# The WizToolKit Manual
+:toc:
+
+:leveloffset: +1
+
+include::0_intro.adoc[]
+
+include::1_parsing.adoc[]
+
+include::2_nails.adoc[]
+
+:leveloffset: -1
+
+== IR Plugins
+
+:leveloffset: +2
+
+include::3_plugins/0_intro.adoc[]
+
+include::3_plugins/1_iter_v0.adoc[]
+
+include::3_plugins/1_mux_v0.adoc[]
+
+include::3_plugins/1_ram_arith_v0.adoc[]
+
+include::3_plugins/1_ram_bool_v0.adoc[]
+
+include::3_plugins/1_wizkit_vectors.adoc[]
+
+:leveloffset: -2
+
+== Command-line Tools
+
+:leveloffset: +2
+
+include::4_tools/firealarm.adoc[]
+
+include::4_tools/press.adoc[]
+
+:leveloffset: -1
+
+include::5_testcases.adoc[]
+
+include::6_sample_backends/0_intro.adoc[]
+
+include::6_sample_backends/1_simple.adoc[]
+
+include::6_sample_backends/2_multitype.adoc[]
+
+include::6_sample_backends/3_simple_plugins.adoc[]
+
+include::7_install.adoc[]

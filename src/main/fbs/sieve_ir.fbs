@@ -1,257 +1,247 @@
 /**
- * Taken from the SIEVE IR Specification Version 1.0.0
- * with commentary stripped.
+ * Taken from the SIEVE IR Specification, Version 2.0.0-beta
  */
 
-// namespace is unique to wiztoolkit
+// This is a FlatBuffers schema.
+// See https://google.github.io/flatbuffers/
+
+// namespace should be unique to wiztoolkit
+// namespace sieve_ir;
 namespace wtk_gen_flatbuffer;
 
-file_extension "sieve";
-file_identifier "siev";
+// REGEX used:
+// - VERSION_REGEX = "^\d+.\d+.\d+$"
+// - STRING_REGEX = "^[a-zA-Z_][\w]*((\.|::)[a-zA-Z_][\w]*)*$"
+// - NUMBER_REGEX = "^((\d+)|(0x[0-9a-fA-F]+))$"
 
+// ==== Message types that can be exchanged. ====
 union Message {
   Relation,
-  Instance,
-  Witness,
+  PublicInputs,
+  PrivateInputs,
 }
 
-table Root {
-  message                 :Message;
-}
-root_type Root;
-
-table Wire {
-  id         :uint64;
-}
-
-table WireRange {
-  first      :Wire;
-  last       :Wire;
-}
-
-union WireListElementU {
-  Wire,
-  WireRange,
-}
-
-table WireListElement {
-  element   :WireListElementU;
-}
-
-table WireList {
-  elements    :[WireListElement];
-}
-
-table Value {
-  value        :[ubyte];
-}
-
-table Header {
-  version              :string;
-  field_characteristic :Value;
-  field_degree         :uint32;
-}
-
-table Instance {
-  header               :Header;
-  common_inputs        :[Value];
-}
-
-table Witness {
-  header               :Header;
-  short_witness        :[Value];
-}
-
+// The 'version' field must match VERSION_REGEX
+// Each string in the 'plugins' list must match STRING_REGEX
 table Relation {
-  header               :Header;
-  gateset              :string;
-  features             :string;
-  functions            :[Function];
-  directives           :[Directive];
+  version      :string;
+  plugins      :[string];
+  types        :[Type];
+  conversions  :[Conversion];
+  directives   :[Directive];
 }
 
+// The 'version' field must match VERSION_REGEX
+table PublicInputs {
+  version  :string;
+  type     :Type;
+  inputs   :[Value];
+}
+
+// The 'version' field must match VERSION_REGEX
+table PrivateInputs {
+  version  :string;
+  type     :Type;
+  inputs   :[Value];
+}
+
+// ==== Helper types ====
+// Type element is encoded in a vector of bytes in little-endian
+// order. There is no minimum or maximum length; trailing zeros
+// may be omitted.
+table Value {
+  value  :[ubyte];
+}
+
+struct Count {
+  type_id  :ubyte;
+  count    :uint64;
+}
+
+// ==== Directive ====
+union DirectiveSet {
+  Gate,
+  Function,
+}
+
+table Directive {
+  directive  :DirectiveSet;
+}
+
+// ==== Conversion ====
+struct Conversion {
+  output_count  :Count;
+  input_count   :Count;
+}
+
+// ==== Type ====
+union TypeU {
+  Field,
+  ExtField,
+  Ring,
+  PluginType
+}
+
+table Type {
+  element  :TypeU;
+}
+
+table Field {
+  modulo  :Value;
+}
+
+table ExtField {
+  index   :ubyte;
+  degree  :uint64;
+  modulus :uint64;
+}
+
+table Ring {
+  nbits   :uint64;
+}
+
+// 'name' and 'operation' must match STRING_REGEX
+// Strings of the 'params' list must match either
+// STRING_REGEX or NUMBER_REGEX
+table PluginType {
+  name       :string;
+  operation  :string;
+  params     :[string];
+}
+
+// ==== Gate types ====
 table GateConstant {
-  output      :Wire;
-  constant    :[ubyte];
+  type_id   :ubyte;
+  out_id    :uint64;
+  // 'constant' is encoded in a vector of bytes in little-endian
+  // order. There is no minimum or maximum length; trailing zeros
+  // may be omitted.
+  constant  :[ubyte];
 }
 
 table GateAssertZero {
-  input       :Wire;
+  type_id  :ubyte;
+  in_id    :uint64;
 }
 
 table GateCopy {
-  output      :Wire;
-  input       :Wire;
-}
-
-table GateFree {
-  first       :Wire;
-  last        :Wire;
-}
-
-table GateInstance {
-  output      :Wire;
-}
-
-table GateWitness {
-  output      :Wire;
+  type_id  :ubyte;
+  out_id   :WireRange;
+  in_id    :[WireRange];
 }
 
 table GateAdd {
-  output      :Wire;
-  left        :Wire;
-  right       :Wire;
+  type_id  :ubyte;
+  out_id   :uint64;
+  left_id  :uint64;
+  right_id :uint64;
 }
 
 table GateMul {
-  output      :Wire;
-  left        :Wire;
-  right       :Wire;
+  type_id  :ubyte;
+  out_id   :uint64;
+  left_id  :uint64;
+  right_id :uint64;
 }
 
 table GateAddConstant {
-  output      :Wire;
-  input       :Wire;
-  constant    :[ubyte];
+  type_id   :ubyte;
+  out_id    :uint64;
+  in_id     :uint64;
+  // 'constant' is encoded in a vector of bytes in little-endian
+  // order. There is no minimum or maximum length; trailing zeros
+  // may be omitted.
+  constant  :[ubyte];
 }
 
 table GateMulConstant {
-  output      :Wire;
-  input       :Wire;
-  constant    :[ubyte];
+  type_id   :ubyte;
+  out_id    :uint64;
+  in_id     :uint64;
+  // 'constant' is encoded in a vector of bytes in little-endian
+  // order. There is no minimum or maximum length; trailing zeros
+  // may be omitted.
+  constant  :[ubyte];
 }
 
-table GateAnd {
-  output      :Wire;
-  left        :Wire;
-  right       :Wire;
+table GatePublic {
+  type_id  :ubyte;
+  out_id   :WireRange;
 }
 
-table GateXor {
-  output      :Wire;
-  left        :Wire;
-  right       :Wire;
+table GatePrivate {
+  type_id  :ubyte;
+  out_id   :WireRange;
 }
 
-table GateNot {
-  output      :Wire;
-  input       :Wire;
+// To allocate in a contiguous space all wires between
+// first_id and last_id inclusive.
+table GateNew {
+  type_id   :ubyte;
+  first_id  :uint64;
+  last_id   :uint64;
 }
 
+table GateDelete {
+  type_id   :ubyte;
+  first_id  :uint64;
+  last_id   :uint64;
+}
+
+table GateConvert {
+  out_type_id   :ubyte;
+  out_first_id  :uint64;
+  out_last_id   :uint64;
+  in_type_id    :ubyte;
+  in_first_id   :uint64;
+  in_last_id    :uint64;
+  modulus       :bool;
+}
+
+// ==== Function declaration ====
+union FunctionBody {
+  Gates,
+  PluginBody,
+}
+
+table Gates {
+  gates  :[Gate];
+}
+
+// 'name' and 'operation' must match STRING_REGEX
+// Strings of the 'params' list must match either
+// STRING_REGEX or NUMBER_REGEX
+table PluginBody {
+  name           :string;
+  operation      :string;
+  params         :[string];
+  public_count   :[Count]; // Each type_id must be unique
+  private_count  :[Count]; // Each type_id must be unique
+}
+
+// Declare a Function gate as a custom computation or from a plugin
+// The 'name' must match STRING_REGEX
 table Function {
-  name            :string;
-  output_count    :uint64;
-  input_count     :uint64;
-  instance_count  :uint64;
-  witness_count   :uint64;
-  body            :[Directive];
+  name          :string;
+  output_count  :[Count];
+  input_count   :[Count];
+  body          :FunctionBody;
 }
 
+struct WireRange {
+  first_id  :uint64;
+  last_id   :uint64;
+}
+
+// Invokes a previously defined Function gate
+// The 'name' must match STRING_REGEX
 table GateCall {
-  name              :string;
-  output_wires      :WireList;
-  input_wires       :WireList;
+  name    :string;
+  out_ids :[WireRange];
+  in_ids  :[WireRange];
 }
 
-table AbstractGateCall {
-  name              :string;
-  input_wires       :WireList;
-}
-
-table GateAnonCall {
-  output_wires    :WireList;
-  inner           :AbstractAnonCall;
-}
-
-table AbstractAnonCall {
-  input_wires     :WireList;
-  instance_count  :uint64;
-  witness_count   :uint64;
-  subcircuit      :[Directive];
-}
-
-table GateSwitch {
-  condition         :Wire;
-  output_wires      :WireList;
-  cases             :[Value];
-  branches          :[CaseInvoke];
-}
-
-union CaseInvokeU {
-  AbstractGateCall,
-  AbstractAnonCall,
-}
-
-table CaseInvoke {
-  invocation  :CaseInvokeU;
-}
-
-union ForLoopBody {
-  IterExprFunctionInvoke,
-  IterExprAnonFunction
-}
-
-table GateFor {
-  outputs     :WireList;
-  iterator    :string;
-  first       :uint64;
-  last        :uint64;
-  body        :ForLoopBody;
-}
-
-union IterExpr {
-  IterExprConst,
-  IterExprName,
-  IterExprAdd,
-  IterExprSub,
-  IterExprMul,
-  IterExprDivConst,
-}
-
-table IterExprWireNumber {
-  value       :IterExpr;
-}
-
-table IterExprConst { value :uint64; }
-table IterExprName { name : string; }
-table IterExprAdd { left :IterExprWireNumber; right :IterExprWireNumber; }
-table IterExprSub { left :IterExprWireNumber; right :IterExprWireNumber; }
-table IterExprMul { left :IterExprWireNumber; right :IterExprWireNumber; }
-table IterExprDivConst { numer :IterExprWireNumber; denom :uint64; }
-
-table IterExprWireRange {
-  first :IterExprWireNumber;
-  last  :IterExprWireNumber;
-}
-
-union IterExprWireListElementU {
-  IterExprWireNumber,
-  IterExprWireRange,
-}
-
-table IterExprWireListElement {
-  element     :IterExprWireListElementU;
-}
-
-table IterExprWireList {
-  elements    :[IterExprWireListElement];
-}
-
-table IterExprFunctionInvoke {
-  name     :string;
-  outputs  :IterExprWireList;
-  inputs   :IterExprWireList;
-}
-
-table IterExprAnonFunction {
-  outputs          :IterExprWireList;
-  inputs           :IterExprWireList;
-  instance_count   :uint64;
-  witness_count    :uint64;
-  body             :[Directive];
-}
-
-union DirectiveSet {
+union GateSet {
   GateConstant,
   GateAssertZero,
   GateCopy,
@@ -259,18 +249,31 @@ union DirectiveSet {
   GateMul,
   GateAddConstant,
   GateMulConstant,
-  GateAnd,
-  GateXor,
-  GateNot,
-  GateInstance,
-  GateWitness,
-  GateFree,
+  GatePublic,
+  GatePrivate,
+  GateNew,
+  GateDelete,
+  GateConvert,
   GateCall,
-  GateAnonCall,
-  GateSwitch,
-  GateFor,
 }
 
-table Directive {
-  directive      :DirectiveSet;
+table Gate {
+  gate  :GateSet;
 }
+
+// ==== Flatbuffers details ====
+// All message types are encapsulated in the FlatBuffers root table.
+table Root {
+  message  :Message;
+}
+root_type Root;
+
+// When storing messages to files, this extension and identifier
+// should be used.
+file_extension "sieve";
+file_identifier "siev"; // a.k.a. magic bytes.
+
+// Message framing:
+//
+// All messages must be prefixed by its size in bytes,
+// as a 4-bytes little-endian unsigned integer.

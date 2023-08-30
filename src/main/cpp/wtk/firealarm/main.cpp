@@ -1,720 +1,1223 @@
 /**
- * Copyright (C) 2020-2021 Stealth Software Technologies, Inc.
+ * Copyright (C) 2022 Stealth Software Technologies, Inc.
  */
 
-#include <cstdio>
 #include <cstddef>
-#include <iostream>
-#include <sstream>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 #include <vector>
-#include <deque>
-#include <string>
 
-#if ENABLE_ANTLR
-#include <antlr4-runtime.h>
-#endif
+#define WTK_NAILS_ENABLE_TRACES
+
+#include <wtk/versions.h>
 
 #include <openssl/bn.h>
 #include <sst/catalog/bignum.hpp>
 
-// #include <wtk/BooleanIR0Handler.h>
-// #include <wtk/ArithmeticIR0Handler.h>
-#include <wtk/IRParameters.h>
-#include <wtk/IRTree.h>
 #include <wtk/Parser.h>
-#include <wtk/Version.h>
-#include <wtk/utils/FileNameUtils.h>
+#include <wtk/circuit/Parser.h>
+#include <wtk/circuit/Data.h>
 #include <wtk/utils/NumUtils.h>
-
-// #include <wtk/irregular/Parser.h>
-
-#if ENABLE_ANTLR
-#include <wtk/antlr/Parser.h>
-#endif
-
-#if ENABLE_FLATBUFFER
-#include <wtk/flatbuffer/Parser.h>
-#endif
+#include <wtk/utils/ParserOrganizer.h>
+#include <wtk/utils/Pool.h>
 
 #include <wtk/irregular/Parser.h>
+#include <wtk/flatbuffer/Parser.h>
+#include <wtk/firealarm/FieldBackend.h>
+#include <wtk/firealarm/Converter.h>
+#include <wtk/firealarm/Wire.h>
+#include <wtk/firealarm/Counters.h>
+#include <wtk/firealarm/RAM.h>
 
-// #include <wtk/firealarm/ArithmeticIR0Alarm.h>
-// #include <wtk/firealarm/BooleanIR0Alarm.h>
-#include <wtk/firealarm/TreeAlarm.h>
-#include <wtk/firealarm/TraceTreeAlarm.h>
+#include <wtk/nails/Handler.h>
+#include <wtk/nails/Interpreter.h>
+#include <wtk/nails/IterPlugin.h>
 
+#include <wtk/plugins/Plugin.h>
+#include <wtk/plugins/Vectors.h>
+#include <wtk/plugins/Multiplexer.h>
+#include <wtk/plugins/ExtendedArithmetic.h>
+
+#define LOG_IDENTIFIER "wtk-firealarm"
 #include <stealth_logging.h>
-
-bool bignum_is_prime(sst::bignum candidate)
-{
-#if OPENSSL_VERSION_MAJOR == 3
-   return 1 == BN_check_prime(candidate.peek(),sst::bignum::ctx(), nullptr);
-#else
-  return 1 == BN_is_prime_ex(
-      candidate.peek(), BN_prime_checks, sst::bignum::ctx(), nullptr);
-#endif
-}
 
 void print_version()
 {
-  printf("Wiztoolkit wtk-firealarm\n");
-  printf("FIREALARM: Friendly IR Evaluator And Logic Assertion and Rejection Machine\n");
-  printf("IR Version " IR_MAJOR_STR "." IR_MINOR_STR "." IR_PATCH_STR "\n");
-  printf("\nCopyright (C) 2020-2021 Stealth Software Technologies, Inc.\n");
-  printf("FOR SIEVE PROGRAM USE ONLY!\n");
-#if !ENABLE_ANTLR
-  printf("Note: compiled without ANTLR.\n");
-#endif
-#if !ENABLE_FLATBUFFER
-  printf("Note: compiled without FlatBuffer.\n");
-#endif
+  printf("WizToolKit wtk-firealarm\n");
+  printf("FIREALARM: Friendly IR Evaluator And Logic Assertion and Rejection "
+      "Machine\n\n");
+
+  printf("WizToolKit Version: %s\n",
+      wtk::utils::stringify_version(wtk::WTK_VERSION_MAJOR,
+        wtk::WTK_VERSION_MINOR, wtk::WTK_VERSION_PATCH,
+        wtk::WTK_VERSION_EXTRA).c_str());
+  printf("SIEVE IR Version:   %s\n",
+      wtk::utils::stringify_version(wtk::IR_VERSION_MAJOR,
+        wtk::IR_VERSION_MINOR, wtk::IR_VERSION_PATCH,
+        wtk::IR_VERSION_EXTRA).c_str());
+
+  printf("\nCopyright (C) 2022 Stealth Software Technologies, Inc.\n");
 }
 
 void print_help()
 {
   print_version();
-  printf("\nwtk-firealarm is a tool for checking the validity of SIEVE IR resources.\n");
-  printf("Given either a single relation, it can check resource validity, or \n");
-  printf("given all three resources (relation, instance, witness) together, it checks\n");
-  printf("evaluation validity (evaluate the circuit).\n");
-  printf("\nwtk-firealarm");
-  printf("\nImplementation wise, it supports three parsers. The off-the-shelf ANTLR\n");
-  printf("parser gives better line-number information and can recover after a parser\n");
-  printf("error, but it uses significantly more time and memory. IRRegular, is faster\n");
-  printf("and less memory-intensive, but lacks line-numbering and error recovery.\n");
-  printf("Lastly is the FlatBuffer parser, for binary encoding. NOTE: that the IR\n");
-  printf("Specification calls for file-suffix \".sieve\" when using the binary format,\n");
-  printf("but firealarm continues to use the \".rel\", \".ins\", and \".wit\" suffixes.\n");
-  printf("\nUsage:\n");
-  printf("  Resource:   wtk-firealarm [ options ] [ relation.rel | instance.ins | witness.wit ]\n");
-  printf("  Evaluation: wtk-firealarm [ options ] relation.rel instance.ins witness.wit\n");
-  printf("\nOptions:\n");
-#if ENABLE_ANTLR
-  printf("  -i         Use the IRRegular parser (default is ANTLR).\n");
-#else
-  printf("  -i         Flag is ignored and IRRegular is always chosen. (ANTLR was not built).\n");
-#endif
-#if ENABLE_FLATBUFFER
-  printf("  -f         Use the FlatBuffer parser (default is ANTLR).\n");
-#else
-  printf("  -f         Flag is ignored and error occurs (FlatBuffer was not built).");
-#endif
-  printf("  -t         Produce a trace of function-boundaries, inputs and assertions.\n");
-  printf("  -T         Produce a detailed trace with definitions of each wire.\n");
-  printf("  -h --help  Print this help text.\n");
-  printf("  -v\n");
-  printf("  --version  Print the version and copyright information.\n");
+  printf("\nwtk-firealarm is a tool for checking the validity of SIEVE IR "
+      "resources. Given\neither a single relation, it can check resource "
+      "validity, or given all three\nresources (relation, instance, witness) "
+      "together, it checks evaluation validity\n(evaluate the circuit).\n\n");
+
+  printf("USAGE:\n");
+  printf("  wtk-firealarm [options] [resources]...\n\n");
+
+  printf("OPTIONS:\n");
+  printf("  -f        Use the flatbuffer binary parser.");
+  printf("  -t        Produce a short trace which lists function boundaries, "
+      "function\n            inputs/outputs, and assertions.\n");
+  printf("  -T        Produce a detailed trace (short trace and the extended "
+      "witness).\n");
+  printf("  -d        Include details when reporting on gate counts.\n");
+  printf("  --fallback-ram\n"
+         "            Use the fallback RAM plugin (default: firealarm RAM)\n");
+  printf("  --help\n");
+  printf("  -h        Print this help text.\n");
+  printf("  --version\n");
+  printf("  -v        Print the version information.\n\n");
+
+  printf("RESOURCES:\n");
+  printf("One resource may be provided at a time in order to check for "
+      "resource\nvalidity. Or multiple may be checked together for "
+      "evaluation validity.\n\n");
+  printf("  circuit: A Circuit-IR relation, exclusive with translation\n");
+  printf("  translation: A Translation-IR relation, exclusive with circuit "
+      "(unimplemented)\n");
+  printf("  public_input: A public input stream, must be paired with a "
+      "private input\n      stream of the same field, and the field must "
+      "match one from the relation.\n");
+  printf("  private_input: A private input stream, must be paired with a "
+      "public input \n      stream of the same field, and the field must match "
+      "one from the relation.\n\n");
+
+  printf("WizToolKit is no longer sensitive resource file suffixes.\n");
 }
 
-static bool use_irregular = false;
-static bool use_flatbuffer = false;
+// ==== Command line arguments ====
 
-static bool trace = false;
-static bool detail_trace = false;
+// flags to enable additional reporting modes
+bool short_trace_flag = false;
+bool detail_trace_flag = false;
+bool detail_counts = false;
 
-char const* relation_str = nullptr;
-char const* instance_str = nullptr;
-char const* witness_str = nullptr;
+// list of resources to open
+std::vector<char const*> resource_names;
 
-bool check_evaluation = false;
+// version/help flags
+bool print_version_flag = false;
+bool print_help_flag = false;
 
-void parse_args(int const argc, char const* const argv[])
+// flag to use fallback RAM instead of firealarm RAM
+bool fallback_ram_flag = false;
+
+// flag to use the flatbuffer parser instead of irregular
+bool flatbuffer_flag = false;
+
+// Function to read the arguments
+void read_arguments(int argc, char const* argv[])
 {
-  bool parser_chosen = false;
-  bool has_relation = false;
-  bool has_instance = false;
-  bool has_witness = false;
   for(size_t i = 1; i < (size_t) argc; i++)
   {
-    std::string arg(argv[i]);
-
-    if("-i" == arg)
+    if(0 == strcmp(argv[i], "-t"))
     {
-      if(parser_chosen)
-      {
-        log_error("cannot use multiple parser flags");
-        exit(1);
-      }
-      use_irregular = true;
-      parser_chosen = true;
+      short_trace_flag = true;
     }
-    else if("-f" == arg)
+    else if(0 == strcmp(argv[i], "-T"))
     {
-      if(parser_chosen)
-      {
-        log_error("cannot use multiple parser flags");
-        exit(1);
-      }
-#if ENABLE_FLATBUFFER
-      use_flatbuffer = true;
-      parser_chosen = true;
-#else
-      log_error("FlatBuffer was not built");
-      exit(1);
-#endif
+      short_trace_flag = true;
+      detail_trace_flag = true;
     }
-    else if("-t" == arg)
+    else if(0 == strcmp(argv[i], "-d"))
     {
-      trace = true;
+      detail_counts = true;
     }
-    else if("-T" == arg)
+    else if(0 == strcmp(argv[i], "-v") || 0 == strcmp(argv[i], "--version"))
     {
-      detail_trace = true;
+      print_version_flag = true;
     }
-    else if("--help" == arg || "-h" == arg)
+    else if(0 == strcmp(argv[i], "-h") || 0 == strcmp(argv[i], "--help"))
     {
-      print_help();
-      exit(0);
+      print_help_flag = true;
     }
-    else if("--version" == arg || "-v" == arg)
+    else if(0 == strcmp(argv[i], "--fallback-ram"))
     {
-      print_version();
-      exit(0);
+      fallback_ram_flag = true;
     }
-    else if(wtk::utils::isRelation(arg))
+    else if(0 == strcmp(argv[i], "-f"))
     {
-      if(has_relation)
-      {
-        log_error("cannot have multiple relation files.");
-        exit(1);
-      }
-      relation_str = argv[i];
-      has_relation = true;
-    }
-    else if(wtk::utils::isInstance(arg))
-    {
-      if(has_instance)
-      {
-        log_error("cannot have multiple instance files.");
-        exit(1);
-      }
-      instance_str = argv[i];
-      has_instance = true;
-    }
-    else if(wtk::utils::isWitness(arg))
-    {
-      if(has_witness)
-      {
-        log_error("cannot have multiple witness files.");
-        exit(1);
-      }
-      witness_str = argv[i];
-      has_witness = true;
+      flatbuffer_flag = true;
     }
     else
     {
-      log_error("Unrecognized argument: \'%s\'\n\n", arg.c_str());
-      print_help();
-      exit(1);
+      resource_names.emplace_back(argv[i]);
     }
-  }
-
-  size_t num_res = 0;
-  if(has_relation) { num_res++; }
-  if(has_instance) { num_res++; }
-  if(has_witness) { num_res++; }
-
-  if(num_res == 1)      { check_evaluation = false; }
-  else if(num_res == 3) { check_evaluation = true; }
-  else
-  {
-    log_error("Unrecognized IR configuration, must have either a single "
-        "resource or a triple of relation, instance, witness");
-    exit(1);
   }
 }
 
-template<typename Number_T, typename Parser_T>
-int checkEvaluation(Parser_T* rel_parser, Parser_T* ins_parser,
-    Parser_T* wit_parser, Number_T characteristic, wtk::GateSet* gateset,
-    wtk::FeatureToggles* toggles)
+// ==== Memory management for the highly flexible FIREALARM setup ====
+
+// (most ZK backends probably don't need as much flexibility and could
+// have simpler setup)
+
+// Enumeration of bit-width/precision for Wire_T arguments.
+enum class Precision
 {
-  wtk::IRTree<Number_T>* relation = rel_parser->parseTree();
-  if(relation == nullptr) { return 1; }
+  unlimited,
+  uint64,
+  uint8,
+  ram_unlimited,
+  ram_uint64,
+  ram_uint8,
+  bool_ram,
+  fallback_ram_unlimited,
+  fallback_ram_uint64,
+  fallback_ram_uint8,
+  fallback_bool_ram_uint8
+};
 
-  wtk::InputStream<Number_T>* instance = ins_parser->instance();
-  if(instance == nullptr) { return 1; }
+// Memory manager for TypeBackends within FIREALARM
+struct TypeManager
+{
+  bool suppressAsserts;
 
-  wtk::InputStream<Number_T>* short_witness = wit_parser->shortWitness();
-  if(short_witness == nullptr) { return 1; }
+  TypeManager(bool sa) : suppressAsserts(sa) { }
 
-  if(trace || detail_trace)
+  bool trace = false;
+  wtk::utils::Indent const* indent = nullptr;
+
+  void enableTrace(wtk::utils::Indent const* const idt)
   {
-    wtk::firealarm::TraceTreeAlarm<Number_T> alarm(
-        characteristic, gateset, toggles, relation_str, detail_trace);
+    this->trace = true;
+    this->indent = idt;
+  }
 
-    int ret = 1;
-    if(alarm.checkTree(relation, instance, short_witness))
+  // pool allocation
+  wtk::utils::Pool<wtk::firealarm::FieldBackend<sst::bignum, sst::bignum>, 1> unlimited;
+  wtk::utils::Pool<wtk::firealarm::FieldBackend<sst::bignum, uint64_t>, 1> uint64;
+  wtk::utils::Pool<wtk::firealarm::FieldBackend<sst::bignum, uint8_t>, 1> uint8;
+  wtk::utils::Pool<wtk::firealarm::RAMBackend<sst::bignum, sst::bignum>, 1> ramUnlimited;
+  wtk::utils::Pool<wtk::firealarm::RAMBackend<sst::bignum, uint64_t>, 1> ramUint64;
+  wtk::utils::Pool<wtk::firealarm::RAMBackend<sst::bignum, uint8_t>, 1> ramUint8;
+  wtk::utils::Pool<wtk::firealarm::BoolRAMBackend<sst::bignum, uint8_t>, 1> boolRam;
+
+  // pool allocation for fallback RAM (option)
+  wtk::utils::Pool<wtk::plugins::FallbackRAMBackend<
+    sst::bignum, wtk::firealarm::Wire<sst::bignum>>, 1> fallbackRamUnlimited;
+  wtk::utils::Pool<wtk::plugins::FallbackRAMBackend<
+    sst::bignum, wtk::firealarm::Wire<uint64_t>>, 1> fallbackRamUint64;
+  wtk::utils::Pool<wtk::plugins::FallbackRAMBackend<
+    sst::bignum, wtk::firealarm::Wire<uint8_t>>, 1> fallbackRamUint8;
+  wtk::utils::Pool<wtk::plugins::FallbackBoolRAMBackend<
+    sst::bignum, wtk::firealarm::Wire<uint8_t>>, 1> fallbackBoolRamUint8;
+
+  // reference to a backend. precision is indicated, but type is erased
+  struct TypeRef
+  {
+    Precision const precision;
+
+    wtk::TypeBackendEraser<sst::bignum>* const erasedType;
+
+    TypeRef(Precision const pr, wtk::TypeBackendEraser<sst::bignum>* const et)
+      : precision(pr), erasedType(et) { }
+  };
+
+  // List of all backends, indexed in order of declaration
+  std::vector<TypeRef> typeRefs;
+
+  // make a backend with unlimited precision wire
+  wtk::firealarm::FieldBackend<sst::bignum, sst::bignum>* makeUnlimited(
+      char const* const f_name,
+      wtk::circuit::TypeSpec<sst::bignum> const* const type,
+      wtk::firealarm::TypeCounter* const ctr)
+  {
+    wtk::firealarm::FieldBackend<sst::bignum, sst::bignum>* ret =
+      this->unlimited.allocate(1, f_name, type, ctr, this->suppressAsserts);
+    this->typeRefs.emplace_back(Precision::unlimited, ret);
+
+    if(this->trace)
     {
-      log_info("Evaluation successful (non-ZK).\n");
-      ret = 0;
+      ret->enableTrace(this->indent);
     }
-    else { log_error("Evaluation failed (non-ZK).\n"); }
 
-    alarm.logCounts(true);
     return ret;
   }
-  else
+
+  // make a backend with 64-bit wire
+  wtk::firealarm::FieldBackend<sst::bignum, uint64_t>* makeUint64(
+      char const* const f_name,
+      wtk::circuit::TypeSpec<sst::bignum> const* const type,
+      wtk::firealarm::TypeCounter* const ctr)
   {
-    wtk::firealarm::TreeAlarm<Number_T> alarm(
-        characteristic, gateset, toggles, relation_str);
+    wtk::firealarm::FieldBackend<sst::bignum, uint64_t>* ret =
+      this->uint64.allocate(1, f_name, type, ctr, this->suppressAsserts);
+    this->typeRefs.emplace_back(Precision::uint64, ret);
 
-    int ret = 1;
-    if(alarm.checkTree(relation, instance, short_witness))
+    if(this->trace)
     {
-      log_info("Evaluation successful (non-ZK).\n");
-      ret = 0;
+      ret->enableTrace(this->indent);
     }
-    else { log_error("Evaluation failed (non-ZK).\n"); }
 
-    alarm.logCounts(true);
     return ret;
   }
-}
 
-template<typename Number_T, typename Parser_T>
-int checkRelation(Parser_T* rel_parser, Number_T characteristic,
-    wtk::GateSet* gateset, wtk::FeatureToggles* toggles)
-{
-  wtk::IRTree<Number_T>* relation = rel_parser->parseTree();
-  if(relation == nullptr) { return 1; }
-
-  wtk::firealarm::TreeAlarm<Number_T> alarm(
-      characteristic, gateset, toggles, relation_str);
-
-  if(alarm.checkTree(relation))
+  // make a backend with 8-bit wire
+  wtk::firealarm::FieldBackend<sst::bignum, uint8_t>* makeUint8(
+      char const* const f_name,
+      wtk::circuit::TypeSpec<sst::bignum> const* const type,
+      wtk::firealarm::TypeCounter* const ctr)
   {
-    log_info("Relation is valid.\n");
-    alarm.logCounts();
+    wtk::firealarm::FieldBackend<sst::bignum, uint8_t>* ret =
+      this->uint8.allocate(1, f_name, type, ctr, this->suppressAsserts);
+    this->typeRefs.emplace_back(Precision::uint8, ret);
+
+    if(this->trace)
+    {
+      ret->enableTrace(this->indent);
+    }
+
+    return ret;
+  }
+
+  // make a RAM backend with unlimited precision wire
+  wtk::firealarm::RAMBackend<sst::bignum, sst::bignum>* makeRAMUnlimited(
+      wtk::circuit::TypeSpec<sst::bignum> const* const type,
+      char const* const f_name, wtk::type_idx const idx_type,
+      wtk::firealarm::TypeCounter* const counter)
+  {
+    log_assert(idx_type < this->typeRefs.size()
+        && this->typeRefs[(size_t) idx_type].precision == Precision::unlimited);
+
+    wtk::firealarm::RAMBackend<sst::bignum, sst::bignum>* ret =
+      this->ramUnlimited.allocate(1, f_name, idx_type,
+          static_cast<wtk::firealarm::FieldBackend<sst::bignum, sst::bignum>*>(
+            this->typeRefs[(size_t) idx_type].erasedType), counter, type);
+    this->typeRefs.emplace_back(Precision::ram_unlimited, ret);
+    return ret;
+  }
+
+  // make a RAM backend with 64-bit wire
+  wtk::firealarm::RAMBackend<sst::bignum, uint64_t>* makeRAMUint64(
+      wtk::circuit::TypeSpec<sst::bignum> const* const type,
+      char const* const f_name, wtk::type_idx const idx_type,
+      wtk::firealarm::TypeCounter* const counter)
+  {
+    log_assert(idx_type < this->typeRefs.size()
+        && this->typeRefs[(size_t) idx_type].precision == Precision::uint64);
+
+    wtk::firealarm::RAMBackend<sst::bignum, uint64_t>* ret =
+      this->ramUint64.allocate(1, f_name, idx_type,
+          static_cast<wtk::firealarm::FieldBackend<sst::bignum, uint64_t>*>(
+            this->typeRefs[(size_t) idx_type].erasedType), counter, type);
+    this->typeRefs.emplace_back(Precision::ram_uint64, ret);
+    return ret;
+  }
+
+  // make a RAM backend with 8-bit wire
+  wtk::firealarm::RAMBackend<sst::bignum, uint8_t>* makeRAMUint8(
+      wtk::circuit::TypeSpec<sst::bignum> const* const type,
+      char const* const f_name, wtk::type_idx const idx_type,
+      wtk::firealarm::TypeCounter* const counter)
+  {
+    log_assert(idx_type < this->typeRefs.size()
+        && this->typeRefs[(size_t) idx_type].precision == Precision::uint8);
+
+    wtk::firealarm::RAMBackend<sst::bignum, uint8_t>* ret =
+      this->ramUint8.allocate(1, f_name, idx_type,
+          static_cast<wtk::firealarm::FieldBackend<sst::bignum, uint8_t>*>(
+            this->typeRefs[(size_t) idx_type].erasedType), counter, type);
+    this->typeRefs.emplace_back(Precision::ram_uint8, ret);
+    return ret;
+  }
+
+  // make a Bool RAM backend with 8-bit wire
+  wtk::firealarm::BoolRAMBackend<sst::bignum, uint8_t>* makeBoolRAM(
+      wtk::circuit::TypeSpec<sst::bignum> const* const type,
+      char const* const f_name, wtk::type_idx const idx_type,
+      wtk::wire_idx const idx_bits, wtk::wire_idx const elt_bits,
+      wtk::firealarm::TypeCounter* const counter)
+  {
+    log_assert(idx_type < this->typeRefs.size()
+        && this->typeRefs[(size_t) idx_type].precision == Precision::uint8);
+
+    wtk::firealarm::BoolRAMBackend<sst::bignum, uint8_t>* ret =
+      this->boolRam.allocate(1, f_name, idx_type,
+          static_cast<wtk::firealarm::FieldBackend<sst::bignum, uint8_t>*>(
+            this->typeRefs[(size_t) idx_type].erasedType),
+          idx_bits, elt_bits, counter, type);
+    this->typeRefs.emplace_back(Precision::bool_ram, ret);
+    return ret;
+  }
+
+  // make a Fallback RAM backend with unlimited precision wire
+  wtk::plugins::FallbackRAMBackend<
+    sst::bignum, wtk::firealarm::Wire<sst::bignum>>*
+    makeFallbackRAMUnlimited(
+        wtk::circuit::TypeSpec<sst::bignum> const* const type,
+        wtk::type_idx const idx_type)
+  {
+    log_assert(idx_type < this->typeRefs.size()
+        && this->typeRefs[(size_t) idx_type].precision == Precision::unlimited);
+
+    wtk::plugins::FallbackRAMBackend<
+      sst::bignum, wtk::firealarm::Wire<sst::bignum>>* ret =
+      this->fallbackRamUnlimited.allocate(1, type, idx_type,
+          static_cast<wtk::firealarm::FieldBackend<sst::bignum, sst::bignum>*>(
+            this->typeRefs[(size_t) idx_type].erasedType));
+    this->typeRefs.emplace_back(Precision::fallback_ram_unlimited, ret);
+    return ret;
+  }
+
+  // make a Fallback RAM backend with uint64 precision wire
+  wtk::plugins::FallbackRAMBackend<
+    sst::bignum, wtk::firealarm::Wire<uint64_t>>*
+    makeFallbackRAMUint64(
+        wtk::circuit::TypeSpec<sst::bignum> const* const type,
+        wtk::type_idx const idx_type)
+  {
+    log_assert(idx_type < this->typeRefs.size()
+        && this->typeRefs[(size_t) idx_type].precision == Precision::uint64);
+
+    wtk::plugins::FallbackRAMBackend<
+      sst::bignum, wtk::firealarm::Wire<uint64_t>>* ret =
+      this->fallbackRamUint64.allocate(1, type, idx_type,
+          static_cast<wtk::firealarm::FieldBackend<sst::bignum, uint64_t>*>(
+            this->typeRefs[(size_t) idx_type].erasedType));
+    this->typeRefs.emplace_back(Precision::fallback_ram_uint64, ret);
+    return ret;
+  }
+
+  // make a Fallback RAM backend with uint8 precision wire
+  wtk::plugins::FallbackRAMBackend<
+    sst::bignum, wtk::firealarm::Wire<uint8_t>>*
+    makeFallbackRAMUint8(
+        wtk::circuit::TypeSpec<sst::bignum> const* const type,
+        wtk::type_idx const idx_type)
+  {
+    log_assert(idx_type < this->typeRefs.size()
+        && this->typeRefs[(size_t) idx_type].precision == Precision::uint8);
+
+    wtk::plugins::FallbackRAMBackend<
+      sst::bignum, wtk::firealarm::Wire<uint8_t>>* ret =
+      this->fallbackRamUint8.allocate(1, type, idx_type,
+          static_cast<wtk::firealarm::FieldBackend<sst::bignum, uint8_t>*>(
+            this->typeRefs[(size_t) idx_type].erasedType));
+    this->typeRefs.emplace_back(Precision::fallback_ram_uint8, ret);
+    return ret;
+  }
+
+  // make a Fallback Bool RAM backend with uint8 precision wire
+  wtk::plugins::FallbackBoolRAMBackend<
+    sst::bignum, wtk::firealarm::Wire<uint8_t>>*
+    makeFallbackBoolRAM(
+        wtk::circuit::TypeSpec<sst::bignum> const* const type,
+        wtk::type_idx const idx_type, wtk::wire_idx const idx_bits,
+        wtk::wire_idx const elt_bits)
+  {
+    log_assert(idx_type < this->typeRefs.size()
+        && this->typeRefs[(size_t) idx_type].precision == Precision::uint8);
+
+    wtk::plugins::FallbackBoolRAMBackend<
+      sst::bignum, wtk::firealarm::Wire<uint8_t>>* ret =
+      this->fallbackBoolRamUint8.allocate(1, type, idx_type,
+          static_cast<wtk::firealarm::FieldBackend<sst::bignum, uint8_t>*>(
+            this->typeRefs[(size_t) idx_type].erasedType), idx_bits, elt_bits);
+    this->typeRefs.emplace_back(Precision::fallback_bool_ram_uint8, ret);
+    return ret;
+  }
+
+  /* ==== pool allocators for converters ==== */
+
+  // out type: unlimited, in type: *
+  wtk::utils::Pool<wtk::firealarm::Converter<
+    sst::bignum, sst::bignum, sst::bignum>, 1> convertUnlimitedUnlimited;
+  wtk::utils::Pool<wtk::firealarm::Converter<
+    sst::bignum, sst::bignum, uint64_t>, 1> convertUnlimitedUint64;
+  wtk::utils::Pool<wtk::firealarm::Converter<
+    sst::bignum, sst::bignum, uint8_t>, 1> convertUnlimitedUint8;
+
+  // out type: uint64, in type: *
+  wtk::utils::Pool<wtk::firealarm::Converter<
+    sst::bignum, uint64_t, sst::bignum>, 1> convertUint64Unlimited;
+  wtk::utils::Pool<wtk::firealarm::Converter<
+    sst::bignum, uint64_t, uint64_t>, 1> convertUint64Uint64;
+  wtk::utils::Pool<wtk::firealarm::Converter<
+    sst::bignum, uint64_t, uint8_t>, 1> convertUint64Uint8;
+
+  // out type: uint8, in type: *
+  wtk::utils::Pool<wtk::firealarm::Converter<
+    sst::bignum, uint8_t, sst::bignum>, 1> convertUint8Unlimited;
+  wtk::utils::Pool<wtk::firealarm::Converter<
+    sst::bignum, uint8_t, uint64_t>, 1> convertUint8Uint64;
+  wtk::utils::Pool<wtk::firealarm::Converter<
+    sst::bignum, uint8_t, uint8_t>, 1> convertUint8Uint8;
+};
+
+template<typename Parser_T>
+int submain(wtk::utils::ParserOrganizer<Parser_T, sst::bignum>& parsers);
+
+int main(int argc, char const* argv[])
+{
+  read_arguments(argc, argv);
+
+  if(print_help_flag)
+  {
+    print_help();
+    return 0;
+  }
+  else if(print_version_flag)
+  {
+    print_version();
     return 0;
   }
   else
   {
-    log_error("Relation is invalid.\n");
-    alarm.logCounts();
-    return 1;
-  }
-}
-
-template<typename Number_T>
-int checkInputStream( wtk::InputStream<Number_T>* stream,
-    Number_T characteristic, std::string const& filename)
-{
-  if(stream == nullptr) { return 1; }
-
-  bool success = true;
-  bool at_end = false;
-  size_t count = 0;
-  while(!at_end)
-  {
-    Number_T num;
-    wtk::StreamStatus status = stream->next(&num);
-    if(status == wtk::StreamStatus::success)
+    // start by parsing/organizing all the resources
+    if(flatbuffer_flag)
     {
-      count++;
-      if(characteristic <= num)
-      {
-        log_error("%s:%zu: Input value %s exceeds characteristic (%s)",
-            filename.c_str(), stream->lineNum(), wtk::utils::dec(num).c_str(),
-            wtk::utils::dec(characteristic).c_str());
-        success = false;
-      }
-    }
-    else if(status == wtk::StreamStatus::end)
-    {
-      at_end = true;
+      wtk::utils::ParserOrganizer<
+        wtk::flatbuffer::Parser<sst::bignum>, sst::bignum> parsers;
+
+      return submain(parsers);
     }
     else
     {
-      log_error("%s:%zu: Error parsing stream",
-          filename.c_str(), stream->lineNum());
-      at_end = true;
-      success = false;
+      wtk::utils::ParserOrganizer<
+        wtk::irregular::Parser<sst::bignum>, sst::bignum> parsers;
+
+      return submain(parsers);
     }
   }
-
-  int ret = 0;
-  if(success)
-  {
-    log_info("Stream is well-formed.\n");
-  }
-  else
-  {
-    log_error("Stream is not well-formed.\n");
-    ret = 1;
-  }
-
-  log_info("  stream value count: %zu", count);
-
-  return ret;
 }
 
 template<typename Parser_T>
-bool checkVersion(Parser_T* parser)
+int submain(wtk::utils::ParserOrganizer<Parser_T, sst::bignum>& parsers)
 {
-  if(parser->version.major != IR_MAJOR_INT
-      && parser->version.minor != IR_MINOR_INT
-      && parser->version.patch != IR_PATCH_INT)
+  for(size_t i = 0; i < resource_names.size(); i++)
   {
-    log_error("IR Version not supported %zu.%zu.%zu.",
-        parser->version.major, parser->version.minor,
-        parser->version.patch);
-    return false;
+    if(!parsers.open(resource_names[i])) { return 1; }
   }
-  return true;
-}
 
-template<typename Parser_T>
-int submain()
-{
-  if(check_evaluation)
+  wtk::utils::Setting setting = parsers.organize();
+  bool suppress_asserts = false;
+  if(setting == wtk::utils::Setting::failure) { return 1; }
+  else if(setting == wtk::utils::Setting::verifier)
   {
-    std::string rel_string(relation_str);
-    Parser_T rel_parser(rel_string);
-    std::string ins_string(instance_str);
-    Parser_T ins_parser(ins_string);
-    std::string wit_string(witness_str);
-    Parser_T wit_parser(wit_string);
+    log_warn("Running wtk-firealarm in the verifier setting will suppress "
+        "@assert_zero gates to avoid false positives.");
+    suppress_asserts = true;
+  }
+  else if(setting == wtk::utils::Setting::preprocess)
+  {
+    suppress_asserts = true;
+  }
 
-    if(!rel_parser.parseHdrResParams())
-    {
-      return 1;
-    }
-    else if(rel_parser.resource != wtk::Resource::relation)
-    {
-      log_error("file \"%s\" is not a relation.", relation_str);
-      return 1;
-    }
+  // Counters for current/maximum active wire reporting.
+  // These are pointed to/updated by all the FIREALARM backends
+  size_t totalCurrentCount = 0;
+  size_t totalMaximumCount = 0;
 
-    if(!ins_parser.parseHdrResParams())
-    {
-      return 1;
-    }
-    else if(ins_parser.resource != wtk::Resource::instance)
-    {
-      log_error("file \"%s\" is not a instance.", instance_str);
-      return 1;
-    }
+  // Allocate counters for each backend
+  std::vector<wtk::firealarm::TypeCounter> counters;
+  counters.reserve(parsers.circuitBodyParser->types.size());
 
-    if(!wit_parser.parseHdrResParams())
-    {
-      return 1;
-    }
-    else if(wit_parser.resource != wtk::Resource::shortWitness)
-    {
-      log_error("file \"%s\" is not a witness.", witness_str);
-      return 1;
-    }
+  // NAILS Interpreter
+  wtk::nails::Interpreter<sst::bignum> interpreter(parsers.circuitName);
 
-    if(!checkVersion(&rel_parser))
-    {
-      return 1;
-    }
+  if(short_trace_flag) { interpreter.enableTrace(); }
+  if(detail_trace_flag) { interpreter.enableTraceDetail(); }
 
-    if(rel_parser.version.major != ins_parser.version.major
-        || rel_parser.version.major != wit_parser.version.major
-        || rel_parser.version.minor != ins_parser.version.minor
-        || rel_parser.version.minor != wit_parser.version.minor
-        || rel_parser.version.patch != ins_parser.version.patch
-        || rel_parser.version.patch != wit_parser.version.patch)
+  TypeManager manager(suppress_asserts);
+  if(detail_trace_flag)
+  {
+    manager.enableTrace(&interpreter.indent);
+  }
+
+  // Plugins Manager
+  wtk::plugins::PluginsManager<sst::bignum,
+    wtk::firealarm::Wire<sst::bignum>,
+    wtk::firealarm::Wire<uint64_t>,
+    wtk::firealarm::Wire<uint8_t>,
+    wtk::firealarm::RAMBuffer<sst::bignum>,
+    wtk::firealarm::RAMBuffer<uint8_t>,
+    wtk::firealarm::RAMBuffer<uint64_t>,
+    wtk::plugins::FallbackRAMBuffer<wtk::firealarm::Wire<sst::bignum>>,
+    wtk::plugins::FallbackRAMBuffer<wtk::firealarm::Wire<uint64_t>>,
+    wtk::plugins::FallbackRAMBuffer<wtk::firealarm::Wire<uint8_t>>,
+    wtk::plugins::FallbackBoolRAMBuffer<wtk::firealarm::Wire<uint8_t>>>
+      plugins_manager;
+
+  wtk::nails::MapOperation<sst::bignum> map_op(&interpreter);
+
+  // load all the plugins indicated in the relation's header.
+  for(size_t i = 0; i < parsers.circuitBodyParser->plugins.size(); i++)
+  {
+    if(detail_counts)
     {
-      log_error("IR Versions do not match between relation (%zu.%zu.%zu),"
-          " instance (%zu.%zu.%zu), and witness (%zu.%zu.%zu)",
-          rel_parser.version.major, rel_parser.version.minor,
-          rel_parser.version.patch, ins_parser.version.major,
-          ins_parser.version.minor, ins_parser.version.patch,
-          wit_parser.version.major, wit_parser.version.minor,
-          wit_parser.version.patch);
-      return 1;
+      log_info("loading plugin: %s",
+          parsers.circuitBodyParser->plugins[i].c_str());
     }
 
-    if(!bignum_is_prime(rel_parser.characteristic))
+    if("wizkit_vectors" == parsers.circuitBodyParser->plugins[i])
     {
-      log_error("Characteristic is not prime (%s)",
-          wtk::utils::dec(rel_parser.characteristic).c_str());
-      return 1;
-    }
+      std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+        wtk::firealarm::Wire<sst::bignum>>> vector_bignum_plugin_ptr(
+            new wtk::plugins::FallbackVectorPlugin<
+            sst::bignum, wtk::firealarm::Wire<sst::bignum>>());
+      plugins_manager.addPlugin(
+          "wizkit_vectors", std::move(vector_bignum_plugin_ptr));
 
-    if(rel_parser.characteristic != ins_parser.characteristic ||
-        rel_parser.characteristic != wit_parser.characteristic)
-    {
-      log_error("Characteristic does not match between relation (%s), "
-          "instance (%s), and witness (%s)",
-          wtk::utils::dec(rel_parser.characteristic).c_str(),
-          wtk::utils::dec(ins_parser.characteristic).c_str(),
-          wtk::utils::dec(wit_parser.characteristic).c_str());
-      return 1;
-    }
+      std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+        wtk::firealarm::Wire<uint64_t>>> vector_uint64_plugin_ptr(
+            new wtk::plugins::FallbackVectorPlugin<
+            sst::bignum, wtk::firealarm::Wire<uint64_t>>());
+      plugins_manager.addPlugin(
+          "wizkit_vectors", std::move(vector_uint64_plugin_ptr));
 
-    if(rel_parser.degree != 1)
-    {
-      log_error("Degree must be exactly 1 (currently %zu)", rel_parser.degree);
-      return 1;
+      std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+        wtk::firealarm::Wire<uint8_t>>> vector_uint8_plugin_ptr(
+            new wtk::plugins::FallbackVectorPlugin<
+            sst::bignum, wtk::firealarm::Wire<uint8_t>>());
+      plugins_manager.addPlugin(
+          "wizkit_vectors", std::move(vector_uint8_plugin_ptr));
     }
-
-    if(rel_parser.degree != ins_parser.degree ||
-        rel_parser.degree != wit_parser.degree)
+    else if("ram_arith_v0" == parsers.circuitBodyParser->plugins[i]
+        || "ram_arith_v1" == parsers.circuitBodyParser->plugins[i])
     {
-      log_error("Degree does not match between relation (%zu), "
-          "instance (%zu), and witness (%zu)", rel_parser.degree,
-          ins_parser.degree, wit_parser.degree);
-      return 1;
-    }
-
-    if(rel_parser.gateSet.gateSet == wtk::GateSet::boolean)
-    {
-      if(rel_parser.characteristic != sst::bignum(2))
+      char const* const plugin_name =
+        parsers.circuitBodyParser->plugins[i].c_str();
+      if(fallback_ram_flag)
       {
-        log_error("Characteristic must be 2 when gate_set is boolean.");
+        std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+          wtk::plugins::FallbackRAMBuffer<
+            wtk::firealarm::Wire<sst::bignum>>>> ram_bignum_plugin_ptr(
+                new wtk::plugins::FallbackRAMPlugin<
+                  sst::bignum, wtk::firealarm::Wire<sst::bignum>>());
+        plugins_manager.addPlugin(
+            plugin_name, std::move(ram_bignum_plugin_ptr));
+
+        std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+          wtk::plugins::FallbackRAMBuffer<
+            wtk::firealarm::Wire<uint64_t>>>> ram_uint64_plugin_ptr(
+                new wtk::plugins::FallbackRAMPlugin<
+                  sst::bignum, wtk::firealarm::Wire<uint64_t>>());
+        plugins_manager.addPlugin(
+            plugin_name, std::move(ram_uint64_plugin_ptr));
+
+        std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+          wtk::plugins::FallbackRAMBuffer<
+            wtk::firealarm::Wire<uint8_t>>>> ram_uint8_plugin_ptr(
+                new wtk::plugins::FallbackRAMPlugin<
+                  sst::bignum, wtk::firealarm::Wire<uint8_t>>());
+        plugins_manager.addPlugin(
+            plugin_name, std::move(ram_uint8_plugin_ptr));
+      }
+      else
+      {
+        std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+          wtk::firealarm::RAMBuffer<sst::bignum>>> ram_bignum_plugin_ptr(
+              new wtk::firealarm::RAMPlugin<sst::bignum, sst::bignum>());
+        plugins_manager.addPlugin(
+            plugin_name, std::move(ram_bignum_plugin_ptr));
+
+        std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+          wtk::firealarm::RAMBuffer<uint64_t>>> ram_uint64_plugin_ptr(
+              new wtk::firealarm::RAMPlugin<sst::bignum, uint64_t>());
+        plugins_manager.addPlugin(
+            plugin_name, std::move(ram_uint64_plugin_ptr));
+
+        std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+          wtk::firealarm::RAMBuffer<uint8_t>>> ram_uint8_plugin_ptr(
+              new wtk::firealarm::RAMPlugin<sst::bignum, uint8_t>());
+        plugins_manager.addPlugin(
+            plugin_name, std::move(ram_uint8_plugin_ptr));
+      }
+    }
+    else if("ram_bool_v0" == parsers.circuitBodyParser->plugins[i])
+    {
+      if(fallback_ram_flag)
+      {
+        std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+          wtk::plugins::FallbackBoolRAMBuffer<
+            wtk::firealarm::Wire<uint8_t>>>> bool_ram_plugin_ptr(
+              new wtk::plugins::FallbackBoolRAMPlugin<
+                sst::bignum, wtk::firealarm::Wire<uint8_t>>());
+        plugins_manager.addPlugin(
+            "ram_bool_v0", std::move(bool_ram_plugin_ptr));
+      }
+      else
+      {
+        std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+          wtk::firealarm::RAMBuffer<uint8_t>>> bool_ram_plugin_ptr(
+              new wtk::firealarm::BoolRAMPlugin<sst::bignum, uint8_t>());
+        plugins_manager.addPlugin(
+            "ram_bool_v0", std::move(bool_ram_plugin_ptr));
+      }
+    }
+    else if("iter_v0" == parsers.circuitBodyParser->plugins[i])
+    {
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::firealarm::Wire<sst::bignum>>());
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::firealarm::Wire<uint64_t>>());
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::firealarm::Wire<uint8_t>>());
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::firealarm::RAMBuffer<sst::bignum>>());
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::firealarm::RAMBuffer<uint64_t>>());
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::firealarm::RAMBuffer<uint8_t>>());
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::plugins::FallbackRAMBuffer<
+          wtk::firealarm::Wire<sst::bignum>>>());
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::plugins::FallbackRAMBuffer<
+          wtk::firealarm::Wire<uint64_t>>>());
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::plugins::FallbackRAMBuffer<
+          wtk::firealarm::Wire<uint8_t>>>());
+      plugins_manager.addPlugin("iter_v0",
+          map_op.makePlugin<wtk::plugins::FallbackBoolRAMBuffer<
+          wtk::firealarm::Wire<uint8_t>>>());
+    }
+    else if("mux_v0" == parsers.circuitBodyParser->plugins[i])
+    {
+      std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+        wtk::firealarm::Wire<sst::bignum>>> multiplexer_bignum_plugin_ptr(
+            new wtk::plugins::FallbackMultiplexerPlugin<
+            sst::bignum, wtk::firealarm::Wire<sst::bignum>>());
+      plugins_manager.addPlugin(
+          "mux_v0", std::move(multiplexer_bignum_plugin_ptr));
+
+      std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+        wtk::firealarm::Wire<uint64_t>>> multiplexer_uint64_plugin_ptr(
+            new wtk::plugins::FallbackMultiplexerPlugin<
+            sst::bignum, wtk::firealarm::Wire<uint64_t>>());
+      plugins_manager.addPlugin(
+          "mux_v0", std::move(multiplexer_uint64_plugin_ptr));
+
+      std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+        wtk::firealarm::Wire<uint8_t>>> multiplexer_uint8_plugin_ptr(
+            new wtk::plugins::FallbackMultiplexerPlugin<
+            sst::bignum, wtk::firealarm::Wire<uint8_t>>());
+      plugins_manager.addPlugin(
+          "mux_v0", std::move(multiplexer_uint8_plugin_ptr));
+    }
+    else if("extended_arithmetic_v1" == parsers.circuitBodyParser->plugins[i])
+    {
+      std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+        wtk::firealarm::Wire<sst::bignum>>> arith_plugin_bignum_ptr(
+            new wtk::plugins::FallbackExtendedArithmeticPlugin<
+            sst::bignum, wtk::firealarm::Wire<sst::bignum>>(setting));
+      plugins_manager.addPlugin(
+          "extended_arithmetic_v1", std::move(arith_plugin_bignum_ptr));
+
+      std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+        wtk::firealarm::Wire<uint64_t>>> arith_plugin_uint64_ptr(
+            new wtk::plugins::FallbackExtendedArithmeticPlugin<
+            sst::bignum, wtk::firealarm::Wire<uint64_t>>(setting));
+      plugins_manager.addPlugin(
+          "extended_arithmetic_v1", std::move(arith_plugin_uint64_ptr));
+
+      std::unique_ptr<wtk::plugins::Plugin<sst::bignum,
+        wtk::firealarm::Wire<uint8_t>>> arith_plugin_uint8_ptr(
+            new wtk::plugins::FallbackExtendedArithmeticPlugin<
+            sst::bignum, wtk::firealarm::Wire<uint8_t>>(setting));
+      plugins_manager.addPlugin(
+          "extended_arithmetic_v1", std::move(arith_plugin_uint8_ptr));
+    }
+    else
+    {
+      log_error("Unrecognized plugin \"%s\"",
+          parsers.circuitBodyParser->plugins[i].c_str());
+      return 1;
+    }
+  }
+
+  // Check that the number of types doesn't exceed the 8-bit type-index limit
+  if(parsers.circuitBodyParser->types.size() >= UINT8_MAX)
+  {
+    log_error("Amount of types exceeds type index limit: %zu",
+        parsers.circuitBodyParser->types.size());
+    return 1;
+  }
+
+  // Create a backend for each type indicated by the relation's header.
+  for(size_t i = 0; i < parsers.circuitBodyParser->types.size(); i++)
+  {
+    wtk::circuit::TypeSpec<sst::bignum>* type =
+      &parsers.circuitBodyParser->types[i];
+
+    if(type->variety == wtk::circuit::TypeSpec<sst::bignum>::plugin
+        && (type->binding.name == "ram_arith_v0"
+          || type->binding.name == "ram_arith_v1"))
+    {
+      wtk::type_idx idx_type = 0;
+      wtk::wire_idx num_allocs = 0;
+      wtk::wire_idx total_alloc = 0;
+      wtk::wire_idx max_alloc = 0;
+
+      if(type->binding.name == "ram_arith_v0" && !wtk::plugins::checkRAMv0Type(
+            type, &idx_type, &num_allocs, &total_alloc, &max_alloc))
+      {
         return 1;
       }
 
-      return checkEvaluation<uint8_t>(rel_parser.boolean(),
-          ins_parser.boolean(), wit_parser.boolean(), 2, &rel_parser.gateSet,
-          &rel_parser.featureToggles);
-    }
+      counters.emplace_back(nullptr, nullptr, true);
+      wtk::firealarm::TypeCounter* const ctr = &counters.back();
 
-    if(sst::bignum(UINT16_MAX) > rel_parser.characteristic)
-    {
-      return checkEvaluation<uint32_t>(rel_parser.arithmetic32(),
-          ins_parser.arithmetic32(), wit_parser.arithmetic32(),
-          uint32_t(rel_parser.characteristic), &rel_parser.gateSet,
-          &rel_parser.featureToggles);
-    }
-    else if(sst::bignum(UINT32_MAX) > rel_parser.characteristic)
-    {
-      return checkEvaluation<uint64_t>(rel_parser.arithmetic64(),
-          ins_parser.arithmetic64(), wit_parser.arithmetic64(),
-          uint64_t(rel_parser.characteristic), &rel_parser.gateSet,
-          &rel_parser.featureToggles);
-    }
-    else
-    {
-      return checkEvaluation<sst::bignum>(rel_parser.arithmetic(),
-          ins_parser.arithmetic(), wit_parser.arithmetic(),
-          rel_parser.characteristic, &rel_parser.gateSet,
-          &rel_parser.featureToggles);
-    }
-  }
-  else if(relation_str != nullptr)
-  {
-    std::string rel_string(relation_str);
-    Parser_T rel_parser(rel_string);
-
-    if(!rel_parser.parseHdrResParams())
-    {
-      return 1;
-    }
-    else if(rel_parser.resource != wtk::Resource::relation)
-    {
-      log_error("file \"%s\" is not a relation.", relation_str);
-      return 1;
-    }
-
-    if(!checkVersion(&rel_parser))
-    {
-      return 1;
-    }
-
-    if(!bignum_is_prime(rel_parser.characteristic))
-    {
-      log_error("Characteristic is not prime (%s)",
-          wtk::utils::dec(rel_parser.characteristic).c_str());
-      return 1;
-    }
-
-    if(rel_parser.degree != 1)
-    {
-      log_error("Degree must be exactly 1 (currently %zu)", rel_parser.degree);
-      return 1;
-    }
-
-    if(rel_parser.gateSet.gateSet == wtk::GateSet::boolean)
-    {
-      if(rel_parser.characteristic != sst::bignum(2))
+      switch(manager.typeRefs[(size_t) idx_type].precision)
       {
-        log_error("Characteristic must be 2 when gate_set is boolean.");
+      case Precision::unlimited:
+      {
+        if(fallback_ram_flag)
+        {
+          wtk::plugins::FallbackRAMBackend<
+            sst::bignum, wtk::firealarm::Wire<sst::bignum>>* backend =
+              manager.makeFallbackRAMUnlimited(type, idx_type);
+
+          interpreter.addType<wtk::plugins::FallbackRAMBuffer<
+            wtk::firealarm::Wire<sst::bignum>>>(
+              backend, nullptr, nullptr);
+
+          plugins_manager.addBackend((wtk::type_idx) i, backend);
+        }
+        else
+        {
+          wtk::firealarm::RAMBackend<sst::bignum, sst::bignum>* backend =
+            manager.makeRAMUnlimited(type, parsers.circuitName, idx_type, ctr);
+
+          interpreter.addType<wtk::firealarm::RAMBuffer<sst::bignum>>(
+              backend, nullptr, nullptr);
+
+          plugins_manager.addBackend((wtk::type_idx) i, backend);
+        }
+        break;
+      }
+      case Precision::uint64:
+      {
+        if(fallback_ram_flag)
+        {
+          wtk::plugins::FallbackRAMBackend<
+            sst::bignum, wtk::firealarm::Wire<uint64_t>>* backend =
+              manager.makeFallbackRAMUint64(type, idx_type);
+
+          interpreter.addType<wtk::plugins::FallbackRAMBuffer<
+            wtk::firealarm::Wire<uint64_t>>>(
+              backend, nullptr, nullptr);
+
+          plugins_manager.addBackend((wtk::type_idx) i, backend);
+        }
+        else
+        {
+          wtk::firealarm::RAMBackend<sst::bignum, uint64_t>* backend =
+            manager.makeRAMUint64(type, parsers.circuitName, idx_type, ctr);
+
+          interpreter.addType<wtk::firealarm::RAMBuffer<uint64_t>>(
+              backend, nullptr, nullptr);
+
+          plugins_manager.addBackend((wtk::type_idx) i, backend);
+        }
+        break;
+      }
+      case Precision::uint8:
+      {
+        if(fallback_ram_flag)
+        {
+          wtk::plugins::FallbackRAMBackend<
+            sst::bignum, wtk::firealarm::Wire<uint8_t>>* backend =
+              manager.makeFallbackRAMUint8(type, idx_type);
+
+          interpreter.addType<wtk::plugins::FallbackRAMBuffer<
+            wtk::firealarm::Wire<uint8_t>>>(
+              backend, nullptr, nullptr);
+
+          plugins_manager.addBackend((wtk::type_idx) i, backend);
+        }
+        else
+        {
+          wtk::firealarm::RAMBackend<sst::bignum, uint8_t>* backend =
+            manager.makeRAMUint8(type, parsers.circuitName, idx_type, ctr);
+
+          interpreter.addType<wtk::firealarm::RAMBuffer<uint8_t>>(
+              backend, nullptr, nullptr);
+
+          plugins_manager.addBackend((wtk::type_idx) i, backend);
+        }
+        break;
+      }
+      default:
+      {
+        log_error("Cannot use RAM with type %d", (int) idx_type);
+        return 1;
+      }
+      }
+
+      continue;
+    }
+    else if(type->variety == wtk::circuit::TypeSpec<sst::bignum>::plugin
+        && type->binding.name == "ram_bool_v0")
+    {
+      wtk::type_idx idx_type = 0;
+      wtk::wire_idx idx_bits = 0;
+      wtk::wire_idx elt_bits = 0;
+      wtk::wire_idx num_allocs = 0;
+      wtk::wire_idx total_alloc = 0;
+      wtk::wire_idx max_alloc = 0;
+
+      if(!wtk::plugins::checkBoolRAMType(
+            type, &idx_type, &idx_bits, &elt_bits,
+            &num_allocs, &total_alloc, &max_alloc))
+      {
         return 1;
       }
 
-      return checkRelation<uint8_t>(rel_parser.boolean(), 2,
-          &rel_parser.gateSet, &rel_parser.featureToggles);
+      counters.emplace_back(nullptr, nullptr, true);
+      wtk::firealarm::TypeCounter* const ctr = &counters.back();
+
+      if(manager.typeRefs[(size_t) idx_type].erasedType->type->variety
+          == wtk::circuit::TypeSpec<sst::bignum>::field
+          && manager.typeRefs[(size_t) idx_type].erasedType->type->prime == 2)
+      {
+        if(fallback_ram_flag)
+        {
+          wtk::plugins::FallbackBoolRAMBackend<
+            sst::bignum, wtk::firealarm::Wire<uint8_t>>* backend =
+              manager.makeFallbackBoolRAM(type, idx_type, idx_bits, elt_bits);
+
+          interpreter.addType<wtk::plugins::FallbackBoolRAMBuffer<
+            wtk::firealarm::Wire<uint8_t>>>(
+              backend, nullptr, nullptr);
+
+          plugins_manager.addBackend((wtk::type_idx) i, backend);
+        }
+        else
+        {
+          wtk::firealarm::BoolRAMBackend<sst::bignum, uint8_t>* backend =
+            manager.makeBoolRAM(
+                type, parsers.circuitName, idx_type, idx_bits, elt_bits, ctr);
+
+          interpreter.addType<wtk::firealarm::RAMBuffer<uint8_t>>(
+              backend, nullptr, nullptr);
+
+          plugins_manager.addBackend((wtk::type_idx) i, backend);
+        }
+        break;
+      }
+      else
+      {
+        log_error("Cannot instantiate Boolean RAM with non-boolean type");
+        return 1;
+      }
+    }
+    else if(type->variety != wtk::circuit::TypeSpec<sst::bignum>::field)
+    {
+      log_error(
+          "FIREALARM currently only supports prime field and RAM types");
+      return 1;
     }
 
-    if(sst::bignum(UINT16_MAX) > rel_parser.characteristic)
+    counters.emplace_back(&totalCurrentCount, &totalMaximumCount);
+
+    if(type->prime >= UINT32_MAX) // overflows uint64_t during multiply
     {
-      return checkRelation<uint32_t>(rel_parser.arithmetic32(),
-          uint32_t(rel_parser.characteristic), &rel_parser.gateSet,
-          &rel_parser.featureToggles);
+      wtk::firealarm::FieldBackend<sst::bignum, sst::bignum>* backend =
+        manager.makeUnlimited(parsers.circuitName, type, &counters.back());
+
+      interpreter.addType<wtk::firealarm::Wire<sst::bignum>>(backend,
+          parsers.circuitStreams[i].publicStream,
+          parsers.circuitStreams[i].privateStream);
+
+      plugins_manager.addBackend((wtk::type_idx) i, backend);
     }
-    else if(sst::bignum(UINT32_MAX) > rel_parser.characteristic)
+    else if(type->prime >= 16) // overflows uint8_t during multiply
     {
-      return checkRelation<uint64_t>(rel_parser.arithmetic64(),
-          uint64_t(rel_parser.characteristic), &rel_parser.gateSet,
-          &rel_parser.featureToggles);
+      wtk::firealarm::FieldBackend<sst::bignum, uint64_t>* backend =
+        manager.makeUint64(parsers.circuitName, type, &counters.back());
+
+      interpreter.addType<wtk::firealarm::Wire<uint64_t>>(backend,
+          parsers.circuitStreams[i].publicStream,
+          parsers.circuitStreams[i].privateStream);
+
+      plugins_manager.addBackend((wtk::type_idx) i, backend);
     }
     else
     {
-      return checkRelation<sst::bignum>(rel_parser.arithmetic(),
-          rel_parser.characteristic, &rel_parser.gateSet,
-          &rel_parser.featureToggles);
+      wtk::firealarm::FieldBackend<sst::bignum, uint8_t>* backend =
+        manager.makeUint8(parsers.circuitName, type, &counters.back());
+
+      interpreter.addType<wtk::firealarm::Wire<uint8_t>>(backend,
+          parsers.circuitStreams[i].publicStream,
+          parsers.circuitStreams[i].privateStream);
+
+      plugins_manager.addBackend((wtk::type_idx) i, backend);
     }
   }
-  else if(instance_str != nullptr)
+
+  /* ==== Add all applicable converters ==== */
+
+  std::vector<size_t> conv_counters(
+      parsers.circuitBodyParser->conversions.size(), 0);
+
+  for(size_t i = 0; i < parsers.circuitBodyParser->conversions.size(); i++)
   {
-    std::string ins_string(instance_str);
-    Parser_T ins_parser(ins_string);
+    wtk::circuit::ConversionSpec const* spec =
+      &parsers.circuitBodyParser->conversions[i];
 
-    if(!ins_parser.parseHdrResParams())
+    wtk::circuit::TypeSpec<sst::bignum> const* out_type =
+      &parsers.circuitBodyParser->types[(size_t) spec->outType];
+    wtk::circuit::TypeSpec<sst::bignum> const* in_type =
+      &parsers.circuitBodyParser->types[(size_t) spec->inType];
+
+    // Switch on the output type's precision (Wire_T template)
+    switch(manager.typeRefs[(size_t) spec->outType].precision)
     {
+    case Precision::unlimited:
+    {
+      // Switch on the intput type's precision (Wire_T template)
+      switch(manager.typeRefs[(size_t) spec->inType].precision)
+      {
+      case Precision::unlimited:
+      {
+        interpreter.addConversion(
+            spec, manager.convertUnlimitedUnlimited.allocate(1,
+              out_type->prime, in_type->prime, spec->outLength,
+              spec->inLength, &counters[(size_t) spec->outType],
+              &conv_counters[i], parsers.circuitName));
+        break;
+      }
+      case Precision::uint64:
+      {
+        interpreter.addConversion(
+            spec, manager.convertUnlimitedUint64.allocate(1,
+              out_type->prime, in_type->prime, spec->outLength,
+              spec->inLength, &counters[(size_t) spec->outType],
+              &conv_counters[i], parsers.circuitName));
+        break;
+      }
+      case Precision::uint8:
+      {
+        interpreter.addConversion(
+            spec, manager.convertUnlimitedUint8.allocate(1,
+              out_type->prime, in_type->prime, spec->outLength,
+              spec->inLength, &counters[(size_t) spec->outType],
+              &conv_counters[i], parsers.circuitName));
+        break;
+      }
+      default:
+      {
+        log_error("Cannot convert from type %d to type %d",
+            (int) spec->inType, (int) spec->outType);
+        return 1;
+      }
+      }
+
+      break;
+    }
+    case Precision::uint64:
+    {
+      // Switch on the intput type's precision (Wire_T template)
+      switch(manager.typeRefs[(size_t) spec->inType].precision)
+      {
+      case Precision::unlimited:
+      {
+        interpreter.addConversion(
+            spec, manager.convertUint64Unlimited.allocate(1,
+              out_type->prime, in_type->prime, spec->outLength,
+              spec->inLength, &counters[(size_t) spec->outType],
+              &conv_counters[i], parsers.circuitName));
+        break;
+      }
+      case Precision::uint64:
+      {
+        interpreter.addConversion(
+            spec, manager.convertUint64Uint64.allocate(1,
+              out_type->prime, in_type->prime, spec->outLength,
+              spec->inLength, &counters[(size_t) spec->outType],
+              &conv_counters[i], parsers.circuitName));
+        break;
+      }
+      case Precision::uint8:
+      {
+        interpreter.addConversion(
+            spec, manager.convertUint64Uint8.allocate(1,
+              out_type->prime, in_type->prime, spec->outLength,
+              spec->inLength, &counters[(size_t) spec->outType],
+              &conv_counters[i], parsers.circuitName));
+        break;
+      }
+      default:
+      {
+        log_error("Cannot convert from type %d to type %d",
+            (int) spec->inType, (int) spec->outType);
+        return 1;
+      }
+      }
+
+      break;
+    }
+    case Precision::uint8:
+    {
+      // Switch on the intput type's precision (Wire_T template)
+      switch(manager.typeRefs[(size_t) spec->inType].precision)
+      {
+      case Precision::unlimited:
+      {
+        interpreter.addConversion(
+            spec, manager.convertUint8Unlimited.allocate(1,
+              out_type->prime, in_type->prime, spec->outLength,
+              spec->inLength, &counters[(size_t) spec->outType],
+              &conv_counters[i], parsers.circuitName));
+        break;
+      }
+      case Precision::uint64:
+      {
+        interpreter.addConversion(
+            spec, manager.convertUint8Uint64.allocate(1,
+              out_type->prime, in_type->prime, spec->outLength,
+              spec->inLength, &counters[(size_t) spec->outType],
+              &conv_counters[i], parsers.circuitName));
+        break;
+      }
+      case Precision::uint8:
+      {
+        interpreter.addConversion(
+            spec, manager.convertUint8Uint8.allocate(1,
+              out_type->prime, in_type->prime, spec->outLength,
+              spec->inLength, &counters[(size_t) spec->outType],
+              &conv_counters[i], parsers.circuitName));
+        break;
+      }
+      default:
+      {
+        log_error("Cannot convert from type %d to type %d",
+            (int) spec->inType, (int) spec->outType);
+        return 1;
+      }
+      }
+
+      break;
+    }
+    default:
+    {
+      log_error("Cannot convert from type %d to type %d",
+          (int) spec->inType, (int) spec->outType);
       return 1;
     }
-    else if(ins_parser.resource != wtk::Resource::instance)
-    {
-      log_error("file \"%s\" is not an instance.", instance_str);
-      return 1;
-    }
-
-    if(!checkVersion(&ins_parser))
-    {
-      return 1;
-    }
-
-    if(!bignum_is_prime(ins_parser.characteristic))
-    {
-      log_error("Characteristic is not prime (%s)",
-          wtk::utils::dec(ins_parser.characteristic).c_str());
-      return 1;
-    }
-
-    if(ins_parser.degree != 1)
-    {
-      log_error("Degree must be exactly 1 (currently %zu)", ins_parser.degree);
-      return 1;
-    }
-
-    if(sst::bignum(2) == ins_parser.characteristic)
-    {
-      return checkInputStream<uint8_t>(ins_parser.boolean()->instance(),
-          uint8_t(ins_parser.characteristic), instance_str);
-    }
-    if(sst::bignum(UINT16_MAX) > ins_parser.characteristic)
-    {
-      return checkInputStream<uint32_t>(ins_parser.arithmetic32()->instance(),
-          uint32_t(ins_parser.characteristic), instance_str);
-    }
-    else if(sst::bignum(UINT32_MAX) > ins_parser.characteristic)
-    {
-      return checkInputStream<uint64_t>(ins_parser.arithmetic64()->instance(),
-          uint64_t(ins_parser.characteristic), instance_str);
-    }
-    else
-    {
-      return checkInputStream<sst::bignum>(ins_parser.arithmetic()->instance(),
-          ins_parser.characteristic, instance_str);
     }
   }
-  else if(witness_str != nullptr)
+
+  // NAILS boilerplate.
+  wtk::nails::GatesFunctionFactory<sst::bignum> func_fact;
+  wtk::nails::Handler<sst::bignum> handler(
+      &interpreter, &func_fact, &plugins_manager);
+
+  bool win = true;
+
+  // Parse/stream and check for success criteria
+  if(!parsers.circuitBodyParser->parse(&handler))
   {
-    std::string wit_string(witness_str);
-    Parser_T wit_parser(wit_string);
-
-    if(!wit_parser.parseHdrResParams())
-    {
-      return 1;
-    }
-    else if(wit_parser.resource != wtk::Resource::shortWitness)
-    {
-      log_error("file \"%s\" is not a witness.", witness_str);
-      return 1;
-    }
-
-    if(!checkVersion(&wit_parser))
-    {
-      return 1;
-    }
-
-    if(!bignum_is_prime(wit_parser.characteristic))
-    {
-      log_error("Characteristic is not prime (%s)",
-          wtk::utils::dec(wit_parser.characteristic).c_str());
-      return 1;
-    }
-
-    if(wit_parser.degree != 1)
-    {
-      log_error("Degree must be exactly 1 (currently %zu)", wit_parser.degree);
-      return 1;
-    }
-
-    if(sst::bignum(2) == wit_parser.characteristic)
-    {
-      return checkInputStream<uint8_t>(
-          wit_parser.boolean()->shortWitness(),
-          uint8_t(wit_parser.characteristic), witness_str);
-    }
-    if(sst::bignum(UINT16_MAX) > wit_parser.characteristic)
-    {
-      return checkInputStream<uint32_t>(
-          wit_parser.arithmetic32()->shortWitness(),
-          uint32_t(wit_parser.characteristic), witness_str);
-    }
-    else if(sst::bignum(UINT32_MAX) > wit_parser.characteristic)
-    {
-      return checkInputStream<uint64_t>(
-          wit_parser.arithmetic64()->shortWitness(),
-          uint64_t(wit_parser.characteristic), witness_str);
-    }
-    else
-    {
-      return checkInputStream<sst::bignum>(
-          wit_parser.arithmetic()->shortWitness(),
-          wit_parser.characteristic, witness_str);
-    }
+    win = false;
   }
   else
   {
-    log_error("missing input");
-    return 1;
-  }
-}
-
-int main(int const argc, char const* const argv[])
-{
-  LOG_FILE = stdout;
-  log_set_identifier("wtk-firealarm");
-
-  parse_args(argc, argv);
-
-  int ret = 0;
-  try
-  {
-#if ENABLE_ANTLR
-    if(!use_irregular && !use_flatbuffer)
+    for(size_t i = 0; i < manager.typeRefs.size(); i++)
     {
-      ret = submain<wtk::antlr::Parser<sst::bignum>>();
+      wtk::TypeBackendEraser<sst::bignum>* const backend =
+        manager.typeRefs[i].erasedType;
+
+      if(!backend->check())
+      {
+        switch(backend->type->variety)
+        {
+        case wtk::circuit::TypeSpec<sst::bignum>::field:
+        {
+          log_error("failure in field %zu (prime %s)",
+              i, wtk::utils::dec(backend->type->prime).c_str());
+          break;
+        }
+        case wtk::circuit::TypeSpec<sst::bignum>::ring:
+        case wtk::circuit::TypeSpec<sst::bignum>::plugin:
+        {
+          /* TODO */
+          break;
+        }
+        }
+
+        win = false;
+      }
     }
-    else
-#endif
-    if(use_flatbuffer)
+
+    if(win)
     {
-#if ENABLE_FLATBUFFER
-      ret = submain<wtk::flatbuffer::Parser<sst::bignum>>();
-#else
-      ret = 1;
-      log_error("FlatBuffer disabled by build.");
-#endif
+      log_info("Relation evaluated successfully");
     }
-    else
+
+    // Add up all the total gate counts
+    wtk::firealarm::TypeCounter total(
+        &totalCurrentCount, &totalMaximumCount);
+    for(size_t i = 0; i < counters.size(); i++)
     {
-      ret = submain<wtk::irregular::Parser<sst::bignum>>();
+      if(detail_counts)
+      {
+        std::string name;
+        if(parsers.circuitBodyParser->types[i].variety ==
+            wtk::circuit::TypeSpec<sst::bignum>::field)
+        {
+          name = "field ";
+          name += wtk::utils::dec(i);
+          name += ":";
+          name += wtk::utils::dec(parsers.circuitBodyParser->types[i].prime);
+        }
+        else if(parsers.circuitBodyParser->types[i].binding.name
+            == "ram_arith_v0")
+        {
+          name = "type " + wtk::utils::dec(i) + " arithmetic ram";
+        }
+        else if(parsers.circuitBodyParser->types[i].binding.name
+            == "ram_bool_v0")
+        {
+          name = "type " + wtk::utils::dec(i) + " boolean ram";
+        }
+
+        counters[i].print(true, name.c_str());
+      }
+      total.addTotal(&counters[i]);
     }
-  }
-  catch(...)
-  {
-    log_error("exiting after failure. (Did you use the correct parser?)\n");
-    ret = 1;
+
+    // print out total gate counts
+    total.maximumActive = totalMaximumCount;
+    total.print(detail_counts, "totals");
+
+    // print out detailed gate counts (per field/per convert)
+    if(detail_counts && conv_counters.size() > 0)
+    {
+      log_info("Convert Gate Counts");
+
+      /* TODO check for success/failure */
+
+      for(size_t i = 0;
+          i < parsers.circuitBodyParser->conversions.size(); i++)
+      {
+        wtk::circuit::ConversionSpec const* const spec =
+          &parsers.circuitBodyParser->conversions[i];
+
+        log_info("@convert(@out: %u:%zu, @in %u:%zu):  %zu",
+            (unsigned int) spec->outType, spec->outLength,
+            (unsigned int) spec->inType, spec->inLength,
+            conv_counters[i]);
+      }
+    }
   }
 
-  return ret;
+  return win ? 0 : 1;
 }

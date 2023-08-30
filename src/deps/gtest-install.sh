@@ -2,6 +2,12 @@
 
 # Copyright (C) 2020 Stealth Software Technologies, Inc.
 
+ENABLE_GTEST="$1"
+
+if [ "${ENABLE_GTEST}" != 1 ] ; then
+  exit 0
+fi
+
 if [ -d gtest ] ; then
   rm -rf gtest
 fi

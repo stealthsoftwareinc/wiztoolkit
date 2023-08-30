@@ -1,0 +1,90 @@
+= Generating Test Cases with WizToolKit
+ifndef::src-rel-dir[]
+:src-rel-dir: 
+endif::[]
+
+The following test-case generation scripts are provided
+
+* xref:{src-rel-dir}/src/main/python/matrix_prod.py[`matrix_prod.py`]
+* xref:{src-rel-dir}/src/main/python/multiplexer_1type.py[`multiplexer_1type.py`]
+* xref:{src-rel-dir}/src/main/python/multiplexer_2type.py[`multiplexer_2type.py`]
+* xref:{src-rel-dir}/src/main/python/memchk.py[`memchk.py`]
+
+== Matrix Multiplication
+The `matrix_prod.py` script generates an IR relation demonstrating a matrix multiplication in the IR.
+The circuit inputs three matrixes, _M_, _N_, and _C_, of sizes _a*b_, _b*c_, and _a*c_.
+It computes _C' := M x N_, and then checks that _C' == C_.
+_M_ and _C_ are read from the public input stream, while _N_ is read from the private input stream.
+
+The script accepts the following parameters
+
+----
+python3 src/main/python/matrix_prod.py <ir> <a> <b> <c> <p> <relation> <public_inputs> <private_inputs>
+----
+
+* `<ir>` A keyword indicating how the relation will be generated.
+** `flat_tb` A flat matrix-multiply function is generated (no helper functions), using the textbook matrix-multiply algorithm
+** `mem_flat_tb` Same as `flat_tb`, however memory management gates are used more aggressively.
+** `flat_pt` A flat matrix-multiply function is generated (no helper functions), using a derivation of the textbook algorithm which transposes each column in _N_ one at a time. (`pt` is short for Partial Transpose).
+** `mem_flat_pt` Same as `flat_pt`, however memory management gates are used more aggressively.
+** `dotprod_tb` A matrix-multiply function is generated to take advantage of a dot-product helper function. The textbook algorithm is used.
+** `mem_dotprod_tb` Same as `dotprod_tb`, however memory management gates are used more aggressively.
+** `dotprod_pt` A matrix-multiply function is generated to take advantage of a dot-product helper function, and a partial-transpose helper function.
+** `mem_dotprod_pt` Same as `dotprod_pt`, however memory management gates are used more aggressively.
+* `<a>`, `<b>`, and `<c>` matrix size parameters.
+* `<p>` the field/prime.
+* `<relation>` the filename of the relation
+* `<public_inputs>` the filename of the public inputs
+* `<private_inputs>` the filename of the private inputs
+
+== Multiplexer 1-type
+The multiplexer 1-type script generates a function implementing an arithmetic multiplexer either in the IR or with a plugin.
+
+The script accepts the following parameters
+
+----
+python3 src/main/python/multiplexer_2type.py <ir> <F> <G> <cases> <items> <output>
+----
+
+* `<ir>` A keyword indicating how the relation will be generated
+** `no_plugins` indicates the multiplexer should be generated without the use of any plugins.
+** `mux_v0` use the plugin.
+* `<F>` the prime used in the multiplexer test relation
+* `<cases>` the number of cases
+* `<item>` the number of items in each case
+* `<output>` the base name of all output files
+
+== Multiplexer 2-type
+The multiplexer 2-type script generates a function implementing an arithmetic multiplexer.
+The function has an input wire in field `F` as the case select wire.
+It also hase one input range for every case in the multiplexer using field `G`.
+The outputs are provided in field `G`.
+
+The script accepts the following parameters
+
+----
+python3 src/main/python/multiplexer_2type.py <ir> <F> <G> <cases> <items> <output>
+----
+
+* `<ir>` A keyword indicating how the relation will be generated
+** `no_plugins` indicates the multiplexer should be generated without the use of any plugins.
+** The current `mux_v0` plugin does not support multiple types.
+* `<F>` and `<G>` the primes/fields used for the case selector and item lists respectively.
+* `<cases>` the number of cases
+* `<item>` the number of items in each case
+* `<output>` the base name of all output files
+
+== Memchk
+The memchk script generates a relation using the `ram_arith_v0` and `iter_v0` plugins.
+It emulates the classic "memchk" program writing values to each location in memory and asserting that the same value is read.
+Then it reads a sequence of random reads and writes from the witness, and asserts the correctness of those too.
+
+The script accepts the following parameters
+
+----
+python3 src/main/python/memchk.py <size> <prime> <output>
+----
+
+* `<size>` the size of the RAM buffer to test
+* `<prime>` the prime used for the index/element type
+* `<output>` the base name for all output files

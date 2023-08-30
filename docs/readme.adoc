@@ -1,0 +1,20 @@
+= WizToolKit Manual
+
+* xref:./0_intro.adoc[Introduction]
+* xref:./1_parsing.adoc[Parsing the IR]
+* xref:./2_nails.adoc[The NAILS Interpreter]
+* xref:./3_plugins/0_intro.adoc[IR Plugins]
+** xref:./3_plugins/1_iter_v0.adoc[Iteration Plugin]
+** xref:./3_plugins/1_mux_v0.adoc[Multiplexer Plugin]
+** xref:./3_plugins/1_ram_arith_v0.adoc[Arithmetic RAM Plugin]
+** xref:./3_plugins/1_ram_bool_v0.adoc[Boolean RAM Plugin]
+** xref:./3_plugins/1_wizkit_vectors.adoc[Wizkit Vectors Plugin]
+* Tools
+** xref:./4_tools/firealarm.adoc[`wtk-firealarm`: Non-ZK IR Interpreter for Debugging]
+** xref:./4_tools/firealarm.adoc[`wtk-press`: Converter for the Text and Flatbuffer Formats]
+* xref:./5_testcases.adoc[Testcase Generation Scripts]
+* xref:./6_sample_backends/0_intro.adoc[Sample Backend Code]
+** xref:./6_sample_backends/1_simple.adoc[Simple Arithmetic Backend]
+** xref:./6_sample_backends/2_multitype.adoc[Arithmetic and Boolean Backend]
+** xref:./6_sample_backends/3_simple_plugins.adoc[Simple Arithmetic Backend with Plugins]
+* xref:7_install.adoc[Installation Guide]

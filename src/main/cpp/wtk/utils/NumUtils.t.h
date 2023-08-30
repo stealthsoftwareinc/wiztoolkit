@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020 Stealth Software Technologies, Inc.
+ * Copyright (C) 2020-2023 Stealth Software Technologies, Inc.
  */
 
 namespace wtk {
@@ -22,7 +22,7 @@ std::string dec(Number_T num)
     // as unsigned, even though sst::bignum is signed.
 
     // NOLINTNEXTLINE
-    ret += DEC_DIGITS[size_t(num % 10)];
+    ret += DEC_DIGITS[cast_size(num % 10)];
     num = Number_T(num / 10);
   }
 
@@ -40,7 +40,7 @@ std::string hex(Number_T num)
   std::string ret;
   while(num != 0)
   {
-    ret += HEX_DIGITS[size_t(num & 0x0F)];
+    ret += HEX_DIGITS[cast_size(num & 0x0F)];
     num = Number_T(num >> 4);
   }
 
@@ -106,6 +106,22 @@ ALWAYS_INLINE static inline void bin_to_uint(
     num = Number_T(num << 1);
     num = Number_T(num + Number_T(NUMERIC_VALS[(size_t) *place]));
   }
+}
+
+template<typename Number_T>
+ALWAYS_INLINE static inline size_t cast_size(Number_T const& number)
+{
+  return static_cast<size_t>(number);
+}
+template<typename Number_T>
+ALWAYS_INLINE static inline wtk::wire_idx cast_wire(Number_T const& number)
+{
+  return static_cast<wtk::wire_idx>(number);
+}
+template<typename Number_T>
+ALWAYS_INLINE static inline wtk::type_idx cast_type(Number_T const& number)
+{
+  return static_cast<wtk::type_idx>(number);
 }
 
 } } // namespace wtk::utils

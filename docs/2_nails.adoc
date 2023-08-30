@@ -1,0 +1,172 @@
+= NAILS Circuit-IR Interpreter
+:source-highlighter: pygments
+ifndef::src-rel-dir[]
+:src-rel-dir: 
+endif::[]
+
+NAILS is WizToolKit's interpreter library for the Circuit-IR (IR0+).
+NAILS will handle the IR semantics and pass off the details of ZK to your backend.
+It stands for "Naive Amenity for Interpreting Long Streams", because it just reads things and passes them to the backend, it can't do much in the way of smart things to speed up processing.
+
+NAILS requires you to implement an abstract class with callbacks to handle each gate.
+You will need one of these "backend" objects for each type in the statement.
+Once these are provided, the NAILS system can invoke the appropriate callbacks corresponding to the gates in the relation.
+
+== Implementing a Backend
+A ZK backend should implement the `wtk::TypeBackend<Number_T, Wire_T>` interface defined in xref:{src-rel-dir}/src/main/cpp/wtk/TypeBackend.h[`#include <wtk/TypeBackend.h>`].
+the `Number_T` template should correspond with the `Number_T` used for the xref:./1_parsing.adoc#common_api[Parser API].
+the `Wire_T` template is representative of a wire or a field element within the backend, it has few requirements other than being default and move constructible.
+
+Implement methods of the backend to perform arithmetic like this
+
+[source,c++]
+----
+template<Number_T, Wire_T>
+class MyBackend : public wtk::TypeBackend<Number_T, Wire_T>
+{
+public:
+  void mulGate(Element_T* const out,
+      Element_T const* const left_in, Element_T const* const right_in)
+  {
+    /* Your Code Here */
+  }
+
+  /** Etc. */
+};
+----
+
+The failure method of `wtk::TypeBackend` is to cache them until the end of the relation (for example if an `@assert_zero` turns out non-zero) and report the failure at end using the `bool check()` method.
+
+[#invoking_nails]
+== Invoking NAILS
+The main worker of NAILS is the `wtk::nails::Interpreter<Number_T>` class from xref:{src-rel-dir}/src/main/cpp/wtk/nails/Interpreter.h[`#include <wtk/nails/Interpreter.h>`].
+The interpreter manages gates and memory and passes off gates to the appropriate `wtk::TypeBackend` callback for doing ZK logic.
+It is templated on just the `Number_T`, for example GMP's `mpz_class`, same as the parser.
+It is not templated with the backend's `Wire_T` because it must handle multiple backends, each of which may have a different Wire_T template.
+
+[source,c++]
+----
+wtk::nails::Interpreter<mpz_class> interpreter("circuit_file_name (for error reporting)");
+----
+
+You will need to add each type in your relation to the `interpreter`, along with public and private input streams.
+The `pass:[circuit_parser->types]` vector holds a type specification for each conversion (`wtk::circuit::TypeSpec<Number_T>` from xref:{src-rel-dir}/src/main/cpp/wtk/circuit/Data.h[`#include <wtk/circuit/Data.h>`].
+The public and private input streams may be `nullptr`, for example in preprocessing or as the verifier.
+As mentioned, the backend's `Wire_T` template may differ on each invocation of the `pass:[interpreter.addBackend(...)]` call.
+
+[source,c++]
+----
+for(size_t i = 0; i < circuit_parser->types.size(); i++)
+{
+  /* Create the appropriate backend and streams */
+
+  interpreter.addType(my_backend, public_in_stream, private_in_stream);
+}
+----
+
+Next is a little bit of necessary boilerplate to accomodate functions and plugins.
+
+* `wtk::nails::GatesFunctionFactory<Number_T>` (from xref:{src-rel-dir}/src/main/cpp/wtk/nails/Functions.h[`#include <wtk/nails/Functions.h>`]
+* `wtk::plugin::PluginsManager<Number_T, Wire_Ts...>` (from xref:{src-rel-dir}/src/main/cpp/wtk/plugins/Plugin.h[`#include <wtk/plugins/Plugin.h>`])
+** This one requires a list with each distinct `Wire_T` from all backends.
+
+[source,c++]
+----
+wtk::nails::GatesFunctionFactory<mpz_class> function_factory;
+wtk::plugins::PluginsManager<mpz_class, BoolWire, ArithmeticWire> plugins_manager;
+----
+
+Finally, to invoke NAILS, you'll need to invoke the xref:1_parsing.adoc#circuit[Circuit-IR Parser] with a `wtk::nails::Handler<Number_T>`.
+The `wtk::nails::Handler<Number_T>` implements the Parser's callback API, either passing off gates to NAILS or recording them within functions.
+Find it in xref:{src-rel-dir}/src/main/cpp/wtk/nails/Handler.h[`#include <wtk/nails/Handler.h>`].
+
+[source,c++]
+----
+wtk::nails::Handler<mpz_class> handler(&interpreter, &function_factory, &plugins_manager);
+
+if(!circuit_parser->parse(&handler))
+{
+  printf("syntax error or poorly formed relation\n")
+}
+----
+
+Last thing to do is call `check()` and `finish()` to report errors and clean up.
+
+[source,c++]
+----
+if(!my_field.check())
+{
+  printf("Something asserted non-zero");
+}
+
+// if implemented by your backend
+my_field.finish()
+----
+
+== Field Switching and Conversions
+The parser API includes a `wtk::circuit::ConversionSpec` type with details about each conversion (see xref:{src-rel-dir}/src/main/cpp/wtk/circuitData.h[`#include <wtk/circuit/Data.h>`]).
+Most notably, the conversion spec defines a type and a size for the inputs and outputs.
+You will need to provide one converter object to correspond to each conversion spec.
+Implement the `wtk::Converter<OutWire_T, InWire_T>` interface for field switching (see xref:{src-rel-dir}/src/main/cpp/wtk/Converter.h[`#include <wtk/Converter.h>`]).
+The `OutWire_T` and `InWire_T` templates correspond to `Wire_T` of the output and input ``wtk::TypeBackend``s.
+The constructor must set the `ouLength` and `inLength` parent attributes.
+
+[source,c++]
+----
+class MyConversion : public wtk::Converter<MyWireOut, MyWireIn>
+{
+  // constructor recieves in/out lengths
+  MyConversion(size_t out_len, size_t in_len)
+    : wtk::Converter<MyWireOut, MyWireIn>(out_len, in_len) { }
+
+  // convert method recieves pointers of length outLength and inLength
+  bool convert(
+      OutWire_T* const out_wires, InWire_T const* const in_wires) override
+  {
+    size_t out_len const = this->outLength;
+    size_t in_len const = this->inLength;
+
+    /* Your code here */
+  }
+};
+----
+
+In pseudocode, the precise plaintext algorithm for SIEVE IR conversion is as follows.
+
+----
+void plaintext_conversion(out_len, in_len, out_prime, in_prime, out_vals[], in_vals[])
+{
+  int_equiv = 0;
+  for(i from 0 to in_len)
+  {
+    int_equiv *= in_prime
+    int_equiv += in_vals[i]
+  }
+
+  for(i from 1 to out_len + 1)
+  {
+    out_vals[out_len - i] = int_equiv % out_prime;
+    int_equiv = int_equiv / out_prime; // division rounds down
+  }
+
+  // It is allowable for int_equiv to be non-zero here.
+}
+----
+
+Once your conversion implementation is working you can begin allocation.
+The `pass:[circuit_parser->conversions]` vector holds specifications for each conversion (`wtk::circuit::ConversionSpec` from xref:{src-rel-dir}/src/main/cpp/wtk/circuit/Data.h[`#include <wtk/circuit/Data.h>`], and `wtk::circuit::Parser<Number_T>` from xref:{src-rel-dir}/src/main/cpp/wtk/circuit/Parser.h[`#include <wtk/circuit/Parser.h>`]).
+The appropriate `pass:[converter->convert(out_wires, in_wires)]` method will be called when a convert gate is encountered.
+
+Conversions must be added to NAILS via the `pass:[interpreter.addConversion(/* ... */)]` method.
+
+[source,c++]
+----
+for(size_t i = 0; i < circuit_parser->conversions.size(); i++)
+{
+  wtk::circuit::ConversionSpec spec = &circuit_parser->conversions[i];
+
+  /* Your code here */
+
+  interpreter.addConversion(spec, my_converter);
+}
+----

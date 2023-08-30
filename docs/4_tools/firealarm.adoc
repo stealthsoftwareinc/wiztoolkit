@@ -1,0 +1,60 @@
+= `wtk-firealarm`
+
+`wtk-firealarm` is a command line program for interpreting the SIEVE IR in a non-ZK setting.
+FIREALARM stands for **F**riendly **IR** **E**valuator **A**nd **L**ogic **A**ssertion and **R**ejection **M**achine.
+
+When given a single resource, `wtk-firealarm` will checks for well-formedness.
+For a circuit, this means that each wire is assigned before it is used, and that it is never reused ("topological ordering", and "single static assignment (SSA)"), along with other checks.
+For a public or private input stream, this simply means that each value in the stream is a field-element (e.g. does not exceed the field’s characteristic).
+
+When given all resources necessary for a statement, `wtk-firealarm` will evaluate the statement in a Non-ZK environment, indicating if the proof should be valid or not (evaluation validity).
+It can also generate a program trace at two levels of detail.
+
+== Comand-line Arguments
+
+----
+wtk-firealarm [options]... [resources]...
+----
+
+.Options
+[cols="1,4"]
+|===
+| Flag | Description
+
+| `-t` | Produce a short trace which lists function boundaries, function inputs/outputs, and assertions.
+| `-T` | Produce a detailed trace (short trace and the extended witness).
+| `-d` | Include details when reporting on gate counts.
+| `--help` or `-h` | Print this help text.
+| `--version` or `-v` | Print the version information.
+|===
+
+.Resources
+`circuit`:: A Circuit-IR relation, exclusive with translation
+`translation`:: A Translation-IR relation, exclusive with circuit (coming soon)
+`public_input`:: A public input stream, must be paired with a private input stream of the same field, and the field must match one from the relation.
+`private_input`:: A private input stream, must be paired with a public input stream of the same field, and the field must match one from the relation.
+
+== Example Invocations
+To check a single resource for well-formedness.
+
+----
+wtk-firealarm circuit_file.sieve
+
+wtk-firealarm translation_file.sieve  # coming soon
+
+wtk-firealarm public_input_file.sieve
+
+wtk-firealarm private_input_file.sieve
+----
+
+To check a witnessed-statement for evaluation validity.
+
+----
+wtk-firealarm circuit_file.sieve field_0_public_inputs.sieve field_0_private_inputs.sieve field_1_public_inputs.sieve field_1_private_inputs.sieve
+----
+
+To generate a detailed trace (aka print out the extended witness) and a detailed report.
+
+----
+wtk-firealarm -T -d circuit_file.sieve field_0_public_inputs.sieve field_0_private_inputs.sieve field_1_public_inputs.sieve field_1_private_inputs.sieve
+----

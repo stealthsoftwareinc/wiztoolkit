@@ -1,0 +1,15 @@
+= Sample Backend Code
+
+We've put together these following backend code samples to get you started implementing.
+While we can't really help you with the mathemagic, we can get you started with the nitty-gritty implementation details.
+All of these should compile out of the box, after you've xref:../7_install.adoc[installed WizToolKit].
+
+----
+g++ -o wtk_demo demo_main.cpp /usr/local/lib/libwiztoolkit.a /usr/local/lib/libstealth_logging.a -lgmp
+----
+
+Care was taken that each successive demo-program may be ``diff``'d to highlight additional functionality.
+
+* xref:./1_simple.adoc[Simple Arithmetic Backend]
+* xref:./2_multitype.adoc[Arithmetic and Boolean Backend]
+* xref:./3_simple_plugins.adoc[Simple Arithmetic Backend with Plugins]

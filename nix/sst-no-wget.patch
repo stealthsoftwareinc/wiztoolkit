@@ -1,0 +1,13 @@
+diff --git a/src/deps/sst_bignum_only.sh b/src/deps/sst_bignum_only.sh
+index b17ac19..dbd34e4 100755
+--- a/src/deps/sst_bignum_only.sh
++++ b/src/deps/sst_bignum_only.sh
+@@ -61,7 +61,7 @@ mkdir -p src/sst/
+ # $3 file name
+ get_sst_file()
+ {
+-  wget -O "${1}/${3}" "https://github.com/stealthsoftwareinc/sst/raw/${SST_COMMIT}/${2}/${3}"
++  cp ../sst/"${2}${3}" "${1}${3}"
+ }
+ 
+ get_h()

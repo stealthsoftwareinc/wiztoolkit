@@ -1,0 +1,209 @@
+= Iteration v0 Plugin
+:source-highlighter: pygments
+ifndef::src-rel-dir[]
+:src-rel-dir: 
+endif::[]
+
+The `iter_v0` plugin will iteratively repeat the invocation of a function.
+A incrementing chunk of each input and output parameter will be passed to the function on each invocation.
+Optionally, the iteration count may also be passed to the function.
+
+== Operations
+The iteration plugin has two operations which repeatedly invoke a function.
+
+`map`:: Repeatedly invoke a function.
+`map_enumerated`:: Repeatedly invoke a function, and pass the iteration count as an input parameter.
+
+Here is an example which repeats a function call 5 times.
+The iteration plugin-function has 5 times the  wires in each input range.
+On each iteration, within each range the next wire is passed into the function.
+
+----
+//                     one output
+//                               one input
+@function(no_op, @out: 0:1, @in: 0:1)
+  $0 <- @$1;
+@end
+
+// Repeat no_op on five iterations
+//                      five outputs
+//                                five inputs
+@function(no_op5, @out: 0:5, @in: 0:5)
+//                      function name
+//                                iteration count
+  @plugin(iter_v0, map, no_op, 0, 5);
+----
+
+The same thing happens with longer ranges.
+In this next example pairs of wires are passed on each iteration.
+
+----
+//                     two outputs
+//                               two inputs
+@function(no_op2, @out: 0:2, @in: 0:2)
+  $0 <- $2;
+  $1 <- $3;
+@end
+
+// Repeat no_op2 on five iterations
+//                      ten outputs
+//                                 ten inputs
+@function(no_op2_5, @out: 0:10, @in: 0:10)
+//                      function name
+//                                iteration count
+  @plugin(iter_v0, map, no_op2, 0, 5);
+----
+
+And, of course, mixed parameter lengths are permitted, so long as all are multiples of the iteration count.
+
+-----
+@function(mul_1_2, @out: 0:1, @in: 0:2)
+  $0 <- @mul($1, $2);
+@end
+
+// Repeat mul_1_2 on five iterations
+//                         five outputs
+//                                   ten inputs
+@function(mul_1_2_5, @out: 0:5, @in: 0:10)
+//                      function name
+//                                  iteration count
+  @plugin(iter_v0, map, mul_1_2, 0, 5);
+-----
+
+So far, these examples have ignored the `0` plugin parameter.
+This does *not* correspond to the type of the inputs.
+Actually it designates the first few parameters as closure parameters.
+
+----
+@function(mul_1_1_1, @out: 0:1, @in: 0:1, 0:1)
+  $0 <- @mul($1, $2);
+@end
+
+// Repeat mul_1_1_1 on five iterations
+//                           five outputs
+//                                     one inputs
+//                                          five inputs
+@function(mul_1_1_1_5, @out: 0:5, @in: 0:1, 0:10)
+//                      function name
+//                                 closure count
+//                                    iteration count
+  @plugin(iter_v0, map, mul_1_1_1, 1, 5);
+----
+
+Lastly, the `map_enumerated` operation can pass the iteration counter between the closure and the iterated inputs.
+
+----
+//                           one output
+//                                     one closure input
+//                                          one iteration counter
+//                                               one iterated input
+@function(mul_1_1_1_1, @out: 0:1, @in: 0:1, 0:1, 0:1)
+  $4 <- @mul($1, $2);
+  $0 <- @mul($3, $4);
+@end
+
+// Repeat mul_1_1_1_1 on five iterations
+//                             five outputs
+//                                       one inputs
+//                                            five inputs
+@function(mul_1_1_1_1_5, @out: 0:5, @in: 0:1, 0:10)
+//                                 function name
+//                                              closure count
+//                                                 iteration count
+  @plugin(iter_v0, map_enumerated, mul_1_1_1_1, 1, 5);
+----
+
+=== `map`
+Iteratively repeat the invocation of a function, passing on a set of iterative outputs, a set of closure inputs, and a set of iterative inputs.
+For some output types, `ot_1` through `ot_n`, output sizes `os_1` through `os_n`, some closure input types, `ct_1` through `ct_m`, closure input sizes, `cs_1` through `cs_m`, iterated input types `it_1` through `it_o`, iterated sizes, `is_1` through `is_o`, and an iteration count `c`, the following parameters are allowed.
+
+.Iterated Function Signature
+* Output `ot_1:os_1`: the first output range
+* ...
+* Output `ot_n:os_n`: the last output range
+* Input `ct_1:cs_1`: the first closure input range
+* ...
+* Input `ct_m:cs_m`: the last closure input range
+* Input `it_1:is_1`: the first iterated range
+* ...
+* Input `it_o:is_o`: the first iterated range
+
+.Iter Plugin Function Signature
+* Output `ot_1:os_1 * c`: the first output range
+* ...
+* Output `ot_n:os_n * c`: the last output range
+* Input `ct_1:cs_1`: the first closure input range
+* ...
+* Input `ct_m:cs_m`: the last closure input range
+* Input `it_1:is_1 * c`: the first iterated range
+* ...
+* Input `it_o:is_o * c`: the first iterated range
+
+.Iter Plugin Binding
+* Plugin Name: `iter_v0`
+* Operation: `map`
+* _String_: iterated function name
+* _Number_: `m`, the number of closures
+* _Number_: `c`, the iteration count
+
+=== `map_enumerated`
+Iteratively repeat the invocation of a function, passing on a set of iterative outputs, a set of closure inputs, an iterator count input, and a set of iterative inputs.
+For some output types, `ot_1` through `ot_n`, output sizes `os_1` through `os_n`, some closure input types, `ct_1` through `ct_m`, closure input sizes, `cs_1` through `cs_m`, an iterator type, `rt`, an iterator size, `rs`, iterated input types `it_1` through `it_o`, iterated sizes, `is_1` through `is_o`, and an iteration count `c`, the following parameters are allowed.
+
+.Iterated Function Signature
+* Output `ot_1:os_1`: the first output range
+* ...
+* Output `ot_n:os_n`: the last output range
+* Input `ct_1:cs_1`: the first closure input range
+* ...
+* Input `ct_m:cs_m`: the last closure input range
+* Input `rt:rs`: the iteration count input range.
+  In the WizToolKit implementation:
+** if `rs` is _1_, then the iteration count is passed as an arithmetic value and `rt` must be an arithmetic type.
+** If `rs` is _greater than 1_ then the iteration count is passed as a bit-vector (most significant bit first), regardless of `rt`.
+** If the iteration count exceeds the prime or the bit-width's maximum value, it will overflow modularly.
+* Input `it_1:is_1`: the first iterated range
+* ...
+* Input `it_o:is_o`: the first iterated range
+
+.Iter Plugin Function Signature
+* Output `ot_1:os_1 * c`: the first output range
+* ...
+* Output `ot_n:os_n * c`: the last output range
+* Input `ct_1:cs_1`: the first closure input range
+* ...
+* Input `ct_m:cs_m`: the last closure input range
+* Input `it_1:is_1 * c`: the first iterated range
+* ...
+* Input `it_o:is_o * c`: the first iterated range
+
+.Iter Plugin Binding
+* Plugin Name: `iter_v0`
+* Operation: `map_enumerated`
+* _String_: iterated function name
+* _Number_: `m`, the number of closures
+* _Number_: `c`, the iteration count
+
+== Implementing the `iter_v0` plugin
+the xref:../2_nails.adoc[NAILS interpreter] provides an implementation of the `iter_v0` plugin.
+Backends are not intended to reimplement the plugin on their own.
+
+The `wtk::nails::MapOperation<Number_T>` (from xref:{src-rel-dir}/src/main/cpp/wtk/nails/IterPlugin.h[`#include <wtk/nails/IterPlugin.h>`]) implements the `iter_v0` plugin.
+Opposite to most plugins the map operation creates iter plugins and hands them off to the plugins manager.
+Instantiate an map operation object, and then use the `map_operation.makePlugin<Wire_T>)()` method to add plugins to a `wtk::utils::PluginsManager<Number_T, Wire_Ts...>` object (from xref:{src-rel-dir}/src/main/cpp/wtk/plugins/Plugin.h[`#include <wtk/plugins/Plugin.h>`]).
+You must add one plugin from the map operation for each `Wire_T` which is used in your backend.
+Here is an example.
+
+[source,c++]
+----
+wtk::nails::Interpreter<Number> interpreter("relation_file_name");
+wtk::plugins::PluginsManager<Number, WireA, WireB> plugins_manager;
+wtk::nails::MapOperation<Number> map_operation(&interpreter);
+
+plugins_manager.addPlugin("iter_v0",
+    map_operation.makePlugin<WireA>());
+plugins_manager.addPlugin("iter_v0",
+    map_operation.makePlugin<WireB>());
+----
+
+Now, your backend can interpret a circuit using the `iter_v0` plugin.

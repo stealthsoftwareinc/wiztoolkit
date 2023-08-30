@@ -1,0 +1,288 @@
+= Parsing the IR
+:source-highlighter: pygments
+ifndef::src-rel-dir[]
+:src-rel-dir: 
+endif::[]
+
+A key functionality of WizToolKit is parsing the IR, converting it from a byte-sequence representation to an in-memory representation.
+Because the IR has two formats, WizToolKit has a xref:#common_api[common parser API] with the xref:#irregular[IRRegular implementation for text] and the xref:#flatbuffer[FlatBuffer implementation for binary].
+Further, the IR is composed of many resources, or files.
+In different settings, one or more of the resources may be needed concurrently.
+For this reason, we suggest starting with our xref:#parser_organizer[Parser Organizer] helper.
+
+[#parser_organizer]
+== Organizing Multiple Files/Parsers
+The latest IR revision calls for many resources, which are composed in a few ways.
+The `wtk::utils::ParserOrganizer<Parser_T, Number_T>` class (from xref:{src-rel-dir}/src/main/cpp/wtk/utils/ParserOrganizer.h[`#include <wtk/utils/ParserOrganizer.h>`]) can open a number of resources and organize them into one of a few settings.
+
+Preprocessing:: In this setting a `circuit` resource is provided without any input streams.
+This allows a backend to process the relation on its own before the proof.
+For example, to convert it to an alternate format or generate correlated randomness.
+Prover:: In this setting a `circuit` resource is provided.
+For each declared `@type field` both the `public_input` and `private_input` resources are provided.
+Verifier:: In this setting a `circuit` resource is proved.
+For each declared `@type field` just the `public_input` is provided.
+
+In the _prover_ and _verifier_ settings, non field types (such as `@type @plugin(/* ... */)`) may or may not have `public_input` or `private_input` streams.
+Organization only enforces their presence upon field types.
+
+To instantiate an organizer, two templates are required.
+
+* `Parser_T` The parser implementation being used. For example `wtk::irregular::Parser<Number_T>`
+* `Number_T` The pass:[C++] numeric type used for representing numbers while parsing.
+  Various backends will prefer different types here, hence it must be a template.
+  For example, some backends may require unlimited precision types, such as GMP's `mpz_class`, while others may suffice with a fixed-width type such as `uint64_t`.
+
+Here is an example.
+
+[source,c++]
+----
+wtk::utils::ParserOrganizer<wtk::irregular::Parser<mpz_class>, mpz_class> organizer;
+----
+
+To open resources, call the `organizer.open(char const*)` function.
+Note that the passed `char const*` is retained and may be used later, so it should have a lifetime longer than the `organizer`.
+This is likely the case anyways, for example if you were to call `organizer.open(argv[i])`.
+
+[source,c++]
+----
+for(size_t i = 0; i < file_names.size(); i++)
+{
+  organizer.open(file_names[i]);
+}
+----
+
+Next, call `organizer.organize()` to get the `wtk::utils::Setting` (also from `#include <wtk/utils/ParserOrganizer.h>`) and indicate success or failure.
+`wtk::utils::Setting` is the following enumeration.
+
+* `wtk::utils::Setting::failure`
+* `wtk::utils::Setting::preprocess`
+* `wtk::utils::Setting::verifier`
+* `wtk::utils::Setting::prover`
+
+Once `organize()` completes successfully, attributes of the `organizer` are set with various parser objects and file names.
+Now you can access the circuit directly and the streams are co-indexed with the circuit's type list.
+See xref:{src-rel-dir}/src/main/cpp/wtk/utils/ParserOrganizer.h[`#include <wtk/utils/ParserOrganizer.h>`] for more details.
+
+[source,c++]
+----
+wtk::utils::Setting setting = organizer.organize();
+if(setting == wtk::utils::Setting::failure) { return; }
+
+organizer.circuitBodyParser // the parser for the circuit's body
+organizer.circuitName       // the circuit's file name
+
+for(size_t i = 0; i < organizer.circuitBodyParser->types.size(); i++)
+{
+  if(setting == wtk::utils::Setting::verifier)
+  {
+    organizer.publicStream; // the input stream for the type's public_input
+    organizer.publicName;   // the file name for the type's public_input
+  }
+  else if(setting == wtk::utils::Setting::prover)
+  {
+    organizer.publicStream; // the input stream for the type's public_input
+    organizer.publicName;   // the file name for the type's public_input
+
+    organizer.privateStream; // the input stream for the type's private_input
+    organizer.privateName;   // the file name for the type's private_input
+  }
+}
+----
+
+See xref:#circuit[Parsing Circuit-IR] and xref:#input_streams[Parsing Input Streams] for more details on working with each parser object.
+However, you might insead want to check out xref:./2_nails.adoc[the NAILS IR interpreter] for handling IR semantics and passing off ZK semantics to a backend.
+
+[#common_api]
+== Common API
+WizToolKit has a common API for opening all resources.
+the `wtk::Parser<Number_T>` (from xref:{src-rel-dir}/src/main/cpp/wtk/Parser.h[`#include <wtk/Parser.h>`]) is an abstract class which is instantiated by all parser implementations.
+It parses the header and then can hand off responsibility to an appropriate helper to parse resource-specific data.
+
+Each `wtk::Parser<Number_T>` object is tied to a single file.
+Instantiate one parser for each file you need to parse.
+
+The `Number_T` template parameter must be fulfilled by a numeric type supporting a bit of arithmetic (enough to parse numeric strings in decimal and hexadecimal).
+It could be fulfilled by `unsigned long`, however for large fields this may overflow.
+We recommend using a big-number library to fulfill the `Number_T`.
+
+The `wtk::ResourceType` enum indicates what kind of resource is parsed.
+It has values for the different IR resources (`circuit`, `translation`, `public_in`, etc).
+The `parser.parseHeader()` function will parse the header and then set the `parser.type` attribute, indicating which resource it is reading.
+
+The following example shows a function which parses the header and switches off to a helper parser for various resources.
+
+[source,c++]
+----
+void parser_function(wtk::Parser<unsigned long>* parser)
+{
+  if(!parser->parseHeader())
+  {
+    printf("error\n");
+    return;
+  }
+
+  switch(parser->type)
+  {
+  case wtk::ResourceType::translation:
+  {
+    wtk::TranslationParser<Number_T>* translation_parser = parser->translation();
+
+    /* Your Code Here */
+
+    break;
+  }
+  case wtk::ResourceType::circuit:
+  {
+    wtk::circuit::Parser<Number_T>* circuit_parser = parser->circuit();
+
+    /* Your Code Here */
+
+    break;
+  }
+  case wtk::ResourceType::public_in:
+  {
+    wtk::InputStream<Number_T> public_in_stram = parser->publicIn();
+
+    /* Your Code Here */
+
+    break;
+  }
+  /* ... */
+  }
+}
+----
+
+In the above example, the `xx_parser` will retain ownership of the helper parsers, so you don't need to worry about freeing them.
+They will get free'd when the `parser` is free'd.
+
+[#translation]
+=== Parsing Translation-IR
+Coming Soon
+
+[#circuit]
+=== Parsing Circuit-IR
+The `wtk::circuit::Parser` abstract class will parse the Circuit-IR for you (See xref:{src-rel-dir}/src/main/cpp/wtk/circuit/Parser.h[`#include <wtk/circuit/Parser.h>`]).
+Start off by parsing the circuit header using `circuit_parser->parseCircuitHeader()`.
+This will fill `pass:[circuit_parser->plugins]`, `pass:[->types]`, and `pass:[->conversions]` with circuit's plugins, types, and conversion specifications.
+Use these attributes to prepare to encounter these items in the body of the circuit.
+
+[source,c++]
+----
+if(!circuit_parser->parseCircuitHeader())
+{
+  printf("error\n");
+  return;
+}
+
+for(size_t i = 0; i < circuit_parser->plugins.size(); i++) { /* Your Code Here */ }
+
+for(size_t i = 0; i < circuit_parser->types.size(); i++) { /* Your Code Here */ }
+
+for(size_t i = 0; i < circuit_parser->conversions.size(); i++) { /* Your Code Here */ }
+----
+
+Parsing the body is handled via a callback interface: the `wtk::circuit::Handler<Number_T>` (from xref:{src-rel-dir}/src/main/cpp/wtk/circuit/Handler.h[`#include <wtk/circuit/Handler.h>`]).
+The `handler` makes use of the typedefs `wtk::wire_idx` (`uint64_t`) for wire numbers and `wtk::type_idx` (`uint8_t`) for type indexes (see xref:{src-rel-dir}/src/main/cpp/wtk/indexes.h[`#include <wtk/indexes.h>`]).
+Most gates have a callback to handle them for example `pass:[handler->mulGate(out_wire, left_in_wire, right_in_wire, type)]`.
+
+Function declarations will use multiple callbacks to handle the entire body.
+
+* First `pass:[handler->beginFunction(func_signature)]` is called, delivering the function's name and inputs/outputs.
+  The `pass:[wtk::circuit::FunctionSignature]` type can be found in xref:{src-rel-dir}/src/main/cpp/wtk/circuit/Data.h[`#include <wtk/circuit/Data.h>`].
+* Then `pass:[handler->regularFunction()]` is called indicating that a regular, or non-plugin, function follows.
+* Other gate callbacks are called as appropriate to define the function's body (such as `pass:[handler->mulGate(/* ... */)]`.
+  Note that the IR's grammar forbids nested function declarations.
+* Finally `pass:[handler->endFunction()]` is called.
+
+The handler is passed to `pass:[circuit_parser->parse(handler)]`.
+
+[source,c++]
+----
+CircuitHandlerChildClass handler(/* Your Code Here */);
+
+if(!circuit_handler->parse(&handler))
+{
+  print("error\n");
+  return;
+}
+----
+
+NOTE:: Rather than implementing the Circuit-IR callbacks, you might prefer to use xref:2_nails.adoc[the `wtk::nails` API for interpreting the IR and passing it off to a backend].
+
+NOTE:: I might change the exact details of parsing the circuit's header.
+
+[#input_streams]
+=== Parsing Input Streams
+Each field in a relation is expected to be accompanied by a pair of input streams: one for public inputs and another for private inputs.
+These input streams have the same format.
+The `wtk::InputStream<Number_T>` helper parser is defined to parse these resources.
+It can be found in xref:{src-rel-dir}/src/main/cpp/wtk/Parser.h[`#include <wtk/Parser.h>`].
+
+Retrieve an input stream from the parser using either `pass:[parser->publicIn()]` or `pass:[parser->privateIn()]`.
+Read the stream's header to check what prime it uses with `pass:[in_stream->parseStreamHeader()]`.
+Then consume items from the stream with `pass:[in_stream->next(&value)]`.
+
+[source,c++]
+----
+wtk::InputStream<unsigned long>* const in_stream = parser->publicIn();
+
+if(!in_stream->parseStreamHeader())
+{
+  printf("error\n");
+  return;
+}
+
+printf("stream prime: %lu", in_stream->prime);
+
+wtk:StreamStatus status;
+do
+{
+  unsigned long value = 0;
+  status = in_stream->next(&value);
+  switch(status)
+  {
+  case wtk::StreamStatus::error:
+  {
+    printf("error\n");
+    break;
+  }
+  case wtk::StreamStatus::end:
+  {
+    print("end of stream\n")
+    break;
+  }
+  case wtk::StreamStatus::success:
+  {
+    printf("line %zu, value %lu", in_stream->lineNum(), value);
+    break;
+  }
+  }
+} while(status == wtk::StreamStatus::success);
+----
+
+NOTE:: I might change the exact details of parsing the stream's header.
+
+[#configuration]
+=== Parsing the CCC
+Coming Soon
+
+[#irregular]
+== IRRegular Parser for Text
+The `wtk::irregular::Parser<Number_T>` is defined in xref:{src-rel-dir}/src/main/cpp/wtk/irregular/Parser.h[`#include <wtk/irregular/Parser.h>`] and implements the `wtk::Parser<Number_T>` class.
+Initialization is handled with a default constructor, then the `open(file_name)` method may be used.
+
+[source,c++]
+----
+wtk::irregular::Parser<unsigned long> irregular_parser;
+
+if(!irregular_parser.open("file_name"))
+{
+  printf("error\n");
+  return;
+}
+----
+
+[#flatbuffer]
+== FlatBuffer Parser for Binary
+Coming Soon.

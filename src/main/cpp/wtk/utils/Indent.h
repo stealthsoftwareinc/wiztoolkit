@@ -42,12 +42,12 @@ public:
     this->size = n > (this->size) ? 0 : this->size - n;
   }
 
-  char const* get()
+  char const* get() const
   {
     return this->whitespace.c_str() + (this->whitespace.size() - this->size);
   }
 
-  void print(FILE* f)
+  void print(FILE* f) const
   {
     fputs(this->get(), f);
   }

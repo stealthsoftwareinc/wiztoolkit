@@ -1,0 +1,92 @@
+= The Mux v0 Plugin
+:source-highlighter: pygments
+
+The `mux_v0` plugin provides a multiplexer functionality.
+
+== Operations
+Two multiplexer behaviors are provided, each having a different error behavior when the selector bit exceeds the number of input cases.
+
+`permissive`:: Produces zeroes when the selector bit exceeds the number of inputs.
+`strict`:: Fails an `@assert_zero` when the selector bit exceeds the number of inputs.
+
+These operations do not use any additional plugin operations.
+The size of each input is recognized by the size of the output, and the number of inputs is recognized by the repetition of the output sizes over the inputs.
+Here is an example.
+
+----
+//                        |-size--|      |-selector
+@function(mux_demo, @out: 0:2, 0:4, @in: 0:1,
+                          0:2, 0:4, // input case 0
+                          0:2, 0:4, // input case 1
+                          0:2, 0:4, // input case 2
+                          0:2, 0:4, // input case 3
+                          0:2, 0:4) // input case 4
+  @plugin(mux_v0, strict);
+----
+
+In this example, there are two output ranges -- `0:2` and `0:4`, and that shape is repeated 5 times as input cases.
+
+Formally, using type `t`, and sizes `s1` through `sn`, the following parameters are allowed.
+When `t` is of boolean type, the selector may have width `w`.
+
+.Function Signature
+* Output `t:s1`: first output range
+* ...
+* Output `t:sn`: last output range
+* Input `t:1` or `t:w`: selector wire or selector range (boolean only)
+* For each input case:
+** Input `t:s1`: input range corresponding to the first output range
+** ...
+** Input `t:sn`: input range corresponding to the last output range
+
+.Plugin Binding
+* Plugin Name: `mux_v0`
+* Operation: `permissive` or `strict`
+
+NOTE: Currently, WizToolKit supports only arithmetic multiplexers.
+
+== Implementing the Mux v0 Plugin
+
+You can implement the `mux_v0` plugin by subclassing a few classes, or you can rely on WziToolKit's fallback implementation.
+
+== Implementing your own Multiplexer
+The core of your multiplexer will implement the `wtk::plugins::MuxOperation<Number_T, Wire_T>::evaluateMux(...)` method (from link:/src/main/cpp/wtk/plugins/Multiplexer.h[`#include <wtk/plugins/Multiplexer.h>`]).
+Remember you will need to implement both the `strict` and `permissive` multiplexer operations: either with one subclass handling both or with two subclasses.
+
+The `outputs` and `inputs` vectors are groups of wire ranges.
+Each `Wire_T*` of `outputs` and `Wire_T const*` of `inputs` is a pointer to the first element of a range, length determined by `sizes`.
+`inputs` is nested vector, because each multiplexer case is a group of ranges congruent to the `outputs`.
+
+[source,c++]
+----
+virtual void evaluateMux(std::vector<size_t> const& sizes,
+    std::vector<Wire_T*>& outputs,
+    Wire_T const* const selector,
+    std::vector<std::vector<Wire_T const*>>& inputs) override
+{
+  /* Your code here */
+}
+----
+
+You must also subclass `wtk::plugins::MultiplexerPlugin<Number_T, Wire_T>`, as essentially a factory for mux operations.
+
+== The Fallback Multiplexer
+WizToolKit provides the `wtk::plugins::FallbackMultiplexerPlugin<Number_T, Wire_T>` using https://en.wikipedia.org/wiki/Fermat's_little_theorem[Fermat's Little Theorem] to check equality of the selector with each case number.
+
+== Setting up the Multiplexer plugin
+To setup the multiplexer plugin, all you need do is pass a plugin object to the `PluginsManager<Number_T, Wire_Ts...>` for every `Wire_T` which you intend to support the plugin (so typically all of them).
+
+[source,c++]
+----
+wtk::plugins::PluginsManager<Number, WireA, Wire_B> plugins_manager;
+
+std::unique_ptr<MyMuxPlugin<Number, WireA>> mux_a(
+    new MyMuxPlugin<Number, WireA>());
+plugins_manager.addPlugin("mux_v0", std::move(mux_a));
+
+std::unique_ptr<MyMuxPlugin<Number, WireB>> mux_b(
+    new MyMuxPlugin<Number, WireB>());
+plugins_manager.addPlugin("mux_v0", std::move(mux_b));
+----
+
+For more details, see the xref:../0_intro.adoc#implementing_plugins[general plugins] section of this manual.
