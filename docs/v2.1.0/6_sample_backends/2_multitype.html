@@ -17,7 +17,7 @@
     <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Arithmetic and Boolean Demo Backend | WizToolKit</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.2" />
 <meta property="og:title" content="Arithmetic and Boolean Demo Backend" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/6_sample_backends/2_multitype.html" />
@@ -85,476 +85,476 @@
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;cstddef&gt;</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;cstdio&gt;</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;vector&gt;</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;cstdint&gt;</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;memory&gt;</span>
-
-<span class="tok-c1">// Parsers</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/Parser.h&gt;</span><span class="tok-c1">                // top level API</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/circuit/Parser.h&gt;</span><span class="tok-c1">        // circuit IR API</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/circuit/Data.h&gt;</span><span class="tok-c1">          // structs used by the circuit parser API</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/irregular/Parser.h&gt;</span><span class="tok-c1">      // text parser implementation</span>
-
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/utils/ParserOrganizer.h&gt;</span><span class="tok-c1"> // &quot;owner&quot;/&quot;organizer&quot; for parsers</span>
-
-<span class="tok-c1">// Backend API</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/TypeBackend.h&gt;</span><span class="tok-c1">           // per-field/type backend callback API</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/Converter.h&gt;</span><span class="tok-c1">             // field switching API</span>
-
-<span class="tok-c1">// NAILS Interpreter</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/nails/Interpreter.h&gt;</span><span class="tok-c1">     // main actor of the NAILS API</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/nails/Handler.h&gt;</span><span class="tok-c1">         // bridge between NAILS and the Parser</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/nails/Functions.h&gt;</span><span class="tok-c1">       // helpers for NAILS functions</span>
-
-<span class="tok-c1">// Plugin API (boilerplate in this example)</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/plugins/Plugin.h&gt;</span>
-
-<span class="tok-c1">// An unbounded (or big enough not to overflow) numeric type.</span>
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;gmpxx.h&gt;</span>
-<span class="tok-k">using</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">mpz_class</span><span class="tok-p">;</span>
-<span class="tok-c1">// using Number = uint64_t; </span>
-
-<span class="tok-cp">#include</span><span class="tok-w"> </span><span class="tok-cpf">&lt;wtk/utils/NumUtils.gmp.h&gt;</span><span class="tok-c1"> // GMP specific hacks</span>
-
-<span class="tok-c1">// Struct containing the data carried between gates (&quot;wires&quot;)</span>
-<span class="tok-c1">// We&#39;ll use this struct for arithmetic</span>
-<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyWire</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-p">};</span>
-<span class="tok-c1">// And for boolean, we&#39;ll bit-bang everything into a uint8</span>
-<span class="tok-k">using</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-kt">uint8_t</span><span class="tok-p">;</span>
-
-<span class="tok-c1">// This struct implements the TypeBackend callbacks for arithmetic types.</span>
-<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyBackend</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TypeBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">assertFailure</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-nb">false</span><span class="tok-p">;</span>
-
-<span class="tok-w">  </span><span class="tok-n">MyBackend</span><span class="tok-p">(</span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-n">p</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TypeBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-n">p</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $0 &lt;- &lt;0&gt;;</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">assign</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $1 &lt;- $0;</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">copy</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">input_wire</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_wire</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $2 &lt;- @add($0, $1);</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">addGate</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $3 &lt;- @add($1, $2);</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">mulGate</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $4 &lt;- @addc($3, &lt;1&gt;);</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">addcGate</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $4 &lt;- @addc($3, &lt;2&gt;);</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">mulcGate</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// @assert_zero($4);</span>
-<span class="tok-w">  </span><span class="tok-c1">// Failures may occur, but should get cached until the end when &quot;check()&quot;</span>
-<span class="tok-w">  </span><span class="tok-c1">// is called</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">assertZero</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">input_wire</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_wire</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-c1">// check that the input wire == 0</span>
-<span class="tok-w">    </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">assertFailure</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-nb">false</span><span class="tok-w"> </span><span class="tok-o">||</span><span class="tok-w"> </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">assertFailure</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $5 &lt;- @public_in();</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">publicIn</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $5 &lt;- @private_in();</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">privateIn</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// indicates if any failures occured.</span>
-<span class="tok-w">  </span><span class="tok-c1">// Normally true, false on failure.</span>
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">check</span><span class="tok-p">()</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-o">!</span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">assertFailure</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">finish</span><span class="tok-p">()</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-c1">// optional cleanup tasks.</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span>
-
-<span class="tok-c1">// This struct implements the TypeBackend callbacks for the Boolean type.</span>
-<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">BoolBackend</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TypeBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">assertFailure</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-nb">false</span><span class="tok-p">;</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// We should be safe to default construct this and assume prime==2</span>
-<span class="tok-w">  </span><span class="tok-n">BoolBackend</span><span class="tok-p">()</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TypeBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-mi">2</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $0 &lt;- &lt;0&gt;;</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">assign</span><span class="tok-p">(</span><span class="tok-n">BoolWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $1 &lt;- $0;</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">copy</span><span class="tok-p">(</span><span class="tok-n">BoolWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">input_wire</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_wire</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $2 &lt;- @add($0, $1);</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">addGate</span><span class="tok-p">(</span><span class="tok-n">BoolWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $3 &lt;- @add($1, $2);</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">mulGate</span><span class="tok-p">(</span><span class="tok-n">BoolWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $4 &lt;- @addc($3, &lt;1&gt;);</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">addcGate</span><span class="tok-p">(</span><span class="tok-n">BoolWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $4 &lt;- @addc($3, &lt;2&gt;);</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">mulcGate</span><span class="tok-p">(</span><span class="tok-n">BoolWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">left_input</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">right_input</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// @assert_zero($4);</span>
-<span class="tok-w">  </span><span class="tok-c1">// Failures may occur, but should get cached until the end when &quot;check()&quot;</span>
-<span class="tok-w">  </span><span class="tok-c1">// is called</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">assertZero</span><span class="tok-p">(</span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">input_wire</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_wire</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-c1">// check that the input wire == 0</span>
-<span class="tok-w">    </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">assertFailure</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-nb">false</span><span class="tok-w"> </span><span class="tok-o">||</span><span class="tok-w"> </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">assertFailure</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $5 &lt;- @public_in();</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">publicIn</span><span class="tok-p">(</span><span class="tok-n">BoolWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// $5 &lt;- @private_in();</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">privateIn</span><span class="tok-p">(</span><span class="tok-n">BoolWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">output</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">input_value</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// indicates if any failures occured.</span>
-<span class="tok-w">  </span><span class="tok-c1">// Normally true, false on failure.</span>
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">check</span><span class="tok-p">()</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-o">!</span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">assertFailure</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">finish</span><span class="tok-p">()</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-c1">// optional cleanup tasks.</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span>
-
-<span class="tok-c1">// Subclass the Converter type to implement conversion.</span>
-<span class="tok-c1">// Due to the &lt;MyWire, MyWire&gt; template fill, these converters goes from one</span>
-<span class="tok-c1">// arithmetic type to another arithmetic type</span>
-<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyConverter</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-c1">// Maybe you need the output and input primes</span>
-<span class="tok-w">  </span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-n">outPrime</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-n">inPrime</span><span class="tok-p">;</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// The parent constructor requires the length of output and input which</span>
-<span class="tok-w">  </span><span class="tok-c1">// this Converter will handle.</span>
-<span class="tok-w">  </span><span class="tok-n">MyConverter</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-n">op</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-n">ip</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">),</span>
-<span class="tok-w">      </span><span class="tok-n">outPrime</span><span class="tok-p">(</span><span class="tok-n">op</span><span class="tok-p">),</span><span class="tok-w"> </span><span class="tok-n">inPrime</span><span class="tok-p">(</span><span class="tok-n">ip</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">convert</span><span class="tok-p">(</span>
-<span class="tok-w">      </span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out_wires</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in_wires</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-c1">// Your Code Here!</span>
-
-<span class="tok-w">    </span><span class="tok-c1">// out_wires has length this-&gt;outLength</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">out_wires</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-c1">// in_wires has the length this-&gt;inLength</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">in_wires</span><span class="tok-p">;</span>
-
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-nb">true</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span>
-
-<span class="tok-c1">// Subclass the Converter type to implement conversion.</span>
-<span class="tok-c1">// Due to the &lt;MyWire, BoolWire&gt; template fill, these converters goes from the</span>
-<span class="tok-c1">// boolean type to an arithmetic type</span>
-<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">ConverterFromBool</span>
-<span class="tok-w">  </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-cm">/*out*/</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-cm">/*in*/</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-c1">// The output prime is probably relevant, but it should be safe to assume</span>
-<span class="tok-w">  </span><span class="tok-c1">// the input prime is 2</span>
-<span class="tok-w">  </span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-n">outPrime</span><span class="tok-p">;</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// The parent constructor requires the length of output and input which</span>
-<span class="tok-w">  </span><span class="tok-c1">// this Converter will handle.</span>
-<span class="tok-w">  </span><span class="tok-n">ConverterFromBool</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-n">op</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">),</span><span class="tok-w"> </span><span class="tok-n">outPrime</span><span class="tok-p">(</span><span class="tok-n">op</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">convert</span><span class="tok-p">(</span>
-<span class="tok-w">      </span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out_wires</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in_wires</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-c1">// Your Code Here!</span>
-
-<span class="tok-w">    </span><span class="tok-c1">// out_wires has length this-&gt;outLength</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">out_wires</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-c1">// in_wires has the length this-&gt;inLength</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">in_wires</span><span class="tok-p">;</span>
-
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-nb">true</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span>
-
-<span class="tok-c1">// Subclass the Converter type to implement conversion.</span>
-<span class="tok-c1">// Due to the &lt;BoolWire, MyWire&gt; template fill, these converters goes from an</span>
-<span class="tok-c1">// arithmetic type to a boolean type</span>
-<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">ConverterToBool</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-cm">/*out*/</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-cm">/*in*/</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-c1">// The input prime is probably relevant, but it should be safe to assume</span>
-<span class="tok-w">  </span><span class="tok-c1">// the output prime is 2</span>
-<span class="tok-w">  </span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-n">inPrime</span><span class="tok-p">;</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// The parent constructor requires the length of output and input which</span>
-<span class="tok-w">  </span><span class="tok-c1">// this Converter will handle.</span>
-<span class="tok-w">  </span><span class="tok-n">ConverterToBool</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-w"> </span><span class="tok-n">ip</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-n">BoolWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">),</span><span class="tok-w"> </span><span class="tok-n">inPrime</span><span class="tok-p">(</span><span class="tok-n">ip</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">convert</span><span class="tok-p">(</span>
-<span class="tok-w">      </span><span class="tok-n">BoolWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out_wires</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in_wires</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-c1">// Your Code Here!</span>
-
-<span class="tok-w">    </span><span class="tok-c1">// out_wires has length this-&gt;outLength</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">out_wires</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-c1">// in_wires has the length this-&gt;inLength</span>
-<span class="tok-w">    </span><span class="tok-p">(</span><span class="tok-kt">void</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">in_wires</span><span class="tok-p">;</span>
-
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-nb">true</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span>
-
-<span class="tok-kt">int</span><span class="tok-w"> </span><span class="tok-nf">main</span><span class="tok-p">(</span><span class="tok-kt">int</span><span class="tok-w"> </span><span class="tok-n">argc</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">char</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">argv</span><span class="tok-p">[])</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">ParserOrganizer</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">irregular</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Number</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">;</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// Open and organize files</span>
-<span class="tok-w">  </span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">1</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">argc</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">open</span><span class="tok-p">(</span><span class="tok-n">argv</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">]))</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;failed to open %s</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">argv</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">]);</span>
-<span class="tok-w">      </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-mi">1</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-w"> </span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">organize</span><span class="tok-p">();</span>
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-o">::</span><span class="tok-n">failure</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;failed to organize inputs</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-mi">1</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// Create a nails interpreter</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">Interpreter</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">interpreter</span><span class="tok-p">(</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitName</span><span class="tok-p">);</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// Check for plugins, because they are not yet supported.</span>
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">()</span><span class="tok-w"> </span><span class="tok-o">!=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;plugins are not yet supported</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-mi">1</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// Create storage for backends, one backend for each type/field</span>
-<span class="tok-w">  </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">vector</span><span class="tok-o">&lt;</span><span class="tok-n">MyBackend</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">backends</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">vector</span><span class="tok-o">&lt;</span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">unique_ptr</span><span class="tok-o">&lt;</span><span class="tok-n">BoolBackend</span><span class="tok-o">&gt;&gt;</span><span class="tok-w"> </span><span class="tok-n">bool_backends</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-c1">// Reserve is necessary with non-pointer storage, otherwise additional</span>
-<span class="tok-w">  </span><span class="tok-c1">// fields (triggering vector growth) can invalidate prior pointers.</span>
-<span class="tok-w">  </span><span class="tok-n">backends</span><span class="tok-p">.</span><span class="tok-n">reserve</span><span class="tok-p">(</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">());</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// If it is necessary to access all backends from a single vector, then their</span>
-<span class="tok-w">  </span><span class="tok-c1">// type erased parent class may be used.</span>
-<span class="tok-w">  </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">vector</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TypeBackendEraser</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;*&gt;</span><span class="tok-w"> </span><span class="tok-n">all_backends</span><span class="tok-p">;</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// Create each type/field in the same order as required by the relation</span>
-<span class="tok-w">  </span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">circuit</span><span class="tok-o">::</span><span class="tok-n">TypeSpec</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">type</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">      </span><span class="tok-o">&amp;</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">];</span>
-
-<span class="tok-w">    </span><span class="tok-c1">// Check that its a field not a plugin type.</span>
-<span class="tok-w">    </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">type</span><span class="tok-o">-&gt;</span><span class="tok-n">variety</span><span class="tok-w"> </span><span class="tok-o">!=</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">circuit</span><span class="tok-o">::</span><span class="tok-n">TypeSpec</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;::</span><span class="tok-n">field</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;Type %zu is a plugin (not yet supported)</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-p">);</span>
-<span class="tok-w">      </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-mi">1</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">    </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">type</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-mi">2</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-c1">// construct a boolean backend with this prime</span>
-<span class="tok-w">      </span><span class="tok-n">bool_backends</span><span class="tok-p">.</span><span class="tok-n">emplace_back</span><span class="tok-p">(</span><span class="tok-k">new</span><span class="tok-w"> </span><span class="tok-n">BoolBackend</span><span class="tok-p">());</span>
-<span class="tok-w">      </span><span class="tok-c1">// Add the backend and its streams to the interpreter</span>
-<span class="tok-w">      </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addType</span><span class="tok-p">(</span><span class="tok-n">bool_backends</span><span class="tok-p">.</span><span class="tok-n">back</span><span class="tok-p">().</span><span class="tok-n">get</span><span class="tok-p">(),</span>
-<span class="tok-w">          </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitStreams</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">].</span><span class="tok-n">publicStream</span><span class="tok-p">,</span>
-<span class="tok-w">          </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitStreams</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">].</span><span class="tok-n">privateStream</span><span class="tok-p">);</span>
-
-<span class="tok-w">      </span><span class="tok-c1">// Add the backend to the all_backends tracker</span>
-<span class="tok-w">      </span><span class="tok-n">all_backends</span><span class="tok-p">.</span><span class="tok-n">push_back</span><span class="tok-p">(</span><span class="tok-n">bool_backends</span><span class="tok-p">.</span><span class="tok-n">back</span><span class="tok-p">().</span><span class="tok-n">get</span><span class="tok-p">());</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">    </span><span class="tok-k">else</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-c1">// construct another backend with this prime</span>
-<span class="tok-w">      </span><span class="tok-n">backends</span><span class="tok-p">.</span><span class="tok-n">emplace_back</span><span class="tok-p">(</span><span class="tok-n">type</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-p">);</span>
-<span class="tok-w">      </span><span class="tok-c1">// add the backend and its streams to the interpreter</span>
-<span class="tok-w">      </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addType</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">backends</span><span class="tok-p">.</span><span class="tok-n">back</span><span class="tok-p">(),</span>
-<span class="tok-w">          </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitStreams</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">].</span><span class="tok-n">publicStream</span><span class="tok-p">,</span>
-<span class="tok-w">          </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitStreams</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">].</span><span class="tok-n">privateStream</span><span class="tok-p">);</span>
-
-<span class="tok-w">      </span><span class="tok-c1">// Add the backend to the all_backends tracker</span>
-<span class="tok-w">      </span><span class="tok-n">all_backends</span><span class="tok-p">.</span><span class="tok-n">push_back</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">backends</span><span class="tok-p">.</span><span class="tok-n">back</span><span class="tok-p">());</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// Create a storage vector for converters, one for each ConversionSpec</span>
-<span class="tok-w">  </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">vector</span><span class="tok-o">&lt;</span><span class="tok-n">MyConverter</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">converters</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">vector</span><span class="tok-o">&lt;</span><span class="tok-n">ConverterToBool</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">to_bool_converters</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">vector</span><span class="tok-o">&lt;</span><span class="tok-n">ConverterFromBool</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">from_bool_converters</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-c1">// Reserve necessary space, otherwise vector growth will invalidate pointers</span>
-<span class="tok-w">  </span><span class="tok-n">converters</span><span class="tok-p">.</span><span class="tok-n">reserve</span><span class="tok-p">(</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">());</span>
-<span class="tok-w">  </span><span class="tok-n">to_bool_converters</span><span class="tok-p">.</span><span class="tok-n">reserve</span><span class="tok-p">(</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">());</span>
-<span class="tok-w">  </span><span class="tok-n">from_bool_converters</span><span class="tok-p">.</span><span class="tok-n">reserve</span><span class="tok-p">(</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">());</span>
-
-<span class="tok-w">  </span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-c1">// pointer to the conversion spec (outType, outLength, inType, inLength)</span>
-<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">circuit</span><span class="tok-o">::</span><span class="tok-n">ConversionSpec</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">spec</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">      </span><span class="tok-o">&amp;</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">];</span>
-
-<span class="tok-w">    </span><span class="tok-c1">// get the TypeSpecs corresponding to the out and input types.</span>
-<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">circuit</span><span class="tok-o">::</span><span class="tok-n">TypeSpec</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out_type</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">      </span><span class="tok-o">&amp;</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">[(</span><span class="tok-kt">size_t</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">spec</span><span class="tok-o">-&gt;</span><span class="tok-n">outType</span><span class="tok-p">];</span>
-<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">circuit</span><span class="tok-o">::</span><span class="tok-n">TypeSpec</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in_type</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">      </span><span class="tok-o">&amp;</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">[(</span><span class="tok-kt">size_t</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-n">spec</span><span class="tok-o">-&gt;</span><span class="tok-n">inType</span><span class="tok-p">];</span>
-
-<span class="tok-w">    </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">out_type</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-mi">2</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-c1">// construct a &quot;to bool&quot; converter</span>
-<span class="tok-w">      </span><span class="tok-n">to_bool_converters</span><span class="tok-p">.</span><span class="tok-n">emplace_back</span><span class="tok-p">(</span>
-<span class="tok-w">          </span><span class="tok-n">spec</span><span class="tok-o">-&gt;</span><span class="tok-n">outLength</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">spec</span><span class="tok-o">-&gt;</span><span class="tok-n">inLength</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_type</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-p">);</span>
-<span class="tok-w">      </span><span class="tok-c1">// add the converter to the inpterpreter</span>
-<span class="tok-w">      </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addConversion</span><span class="tok-p">(</span><span class="tok-n">spec</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">to_bool_converters</span><span class="tok-p">.</span><span class="tok-n">back</span><span class="tok-p">());</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">    </span><span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">in_type</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-mi">2</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-c1">// construct a &quot;from bool&quot; converter</span>
-<span class="tok-w">      </span><span class="tok-n">from_bool_converters</span><span class="tok-p">.</span><span class="tok-n">emplace_back</span><span class="tok-p">(</span>
-<span class="tok-w">          </span><span class="tok-n">spec</span><span class="tok-o">-&gt;</span><span class="tok-n">outLength</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">out_type</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">spec</span><span class="tok-o">-&gt;</span><span class="tok-n">inLength</span><span class="tok-p">);</span>
-<span class="tok-w">      </span><span class="tok-c1">// add the converter to the inpterpreter</span>
-<span class="tok-w">      </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addConversion</span><span class="tok-p">(</span><span class="tok-n">spec</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">from_bool_converters</span><span class="tok-p">.</span><span class="tok-n">back</span><span class="tok-p">());</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">    </span><span class="tok-k">else</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-c1">// call the constructor for our converter</span>
-<span class="tok-w">      </span><span class="tok-n">converters</span><span class="tok-p">.</span><span class="tok-n">emplace_back</span><span class="tok-p">(</span>
-<span class="tok-w">          </span><span class="tok-n">spec</span><span class="tok-o">-&gt;</span><span class="tok-n">outLength</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">out_type</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">spec</span><span class="tok-o">-&gt;</span><span class="tok-n">inLength</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_type</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-p">);</span>
-<span class="tok-w">      </span><span class="tok-c1">// add the converter to the interpreter</span>
-<span class="tok-w">      </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addConversion</span><span class="tok-p">(</span><span class="tok-n">spec</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">converters</span><span class="tok-p">.</span><span class="tok-n">back</span><span class="tok-p">());</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// Create the nails handler (accepts/directs gates from the parser)</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">GatesFunctionFactory</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">func_factory</span><span class="tok-p">;</span><span class="tok-w">        </span><span class="tok-c1">// boilerplate</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">PluginsManager</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">plugins_manager</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-c1">// boilerplate</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">Handler</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">handler</span><span class="tok-p">(</span>
-<span class="tok-w">      </span><span class="tok-o">&amp;</span><span class="tok-n">interpreter</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">func_factory</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">plugins_manager</span><span class="tok-p">);</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// parse the relation and pass each gate off through NAILS and into</span>
-<span class="tok-w">  </span><span class="tok-c1">// the backends.</span>
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">parse</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">handler</span><span class="tok-p">))</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;parser failure</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-mi">1</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-c1">// Check that all the fields succeeded</span>
-<span class="tok-w">  </span><span class="tok-kt">int</span><span class="tok-w"> </span><span class="tok-n">ret</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">backends</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">backends</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">].</span><span class="tok-n">check</span><span class="tok-p">())</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;failure in field %zu</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-p">);</span>
-<span class="tok-w">      </span><span class="tok-n">ret</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">1</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-
-<span class="tok-w">    </span><span class="tok-n">backends</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">].</span><span class="tok-n">finish</span><span class="tok-p">();</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-
-<span class="tok-w">  </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-n">ret</span><span class="tok-p">;</span>
-<span class="tok-p">}</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;cstddef&gt;</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;cstdio&gt;</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;vector&gt;</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;cstdint&gt;</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;memory&gt;</span>
+
+<span style="color: #00ff00">// Parsers</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/Parser.h&gt;                // top level API</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/circuit/Parser.h&gt;        // circuit IR API</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/circuit/Data.h&gt;          // structs used by the circuit parser API</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/irregular/Parser.h&gt;      // text parser implementation</span>
+
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/utils/ParserOrganizer.h&gt; // &quot;owner&quot;/&quot;organizer&quot; for parsers</span>
+
+<span style="color: #00ff00">// Backend API</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/TypeBackend.h&gt;           // per-field/type backend callback API</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/Converter.h&gt;             // field switching API</span>
+
+<span style="color: #00ff00">// NAILS Interpreter</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/nails/Interpreter.h&gt;     // main actor of the NAILS API</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/nails/Handler.h&gt;         // bridge between NAILS and the Parser</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/nails/Functions.h&gt;       // helpers for NAILS functions</span>
+
+<span style="color: #00ff00">// Plugin API (boilerplate in this example)</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/plugins/Plugin.h&gt;</span>
+
+<span style="color: #00ff00">// An unbounded (or big enough not to overflow) numeric type.</span>
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;gmpxx.h&gt;</span>
+<span style="color: #ff0000">using</span><span style="color: #dddddd"> Number = mpz_class;</span>
+<span style="color: #00ff00">// using Number = uint64_t; </span>
+
+<span style="color: #e5e5e5">#include</span><span style="color: #dddddd"> </span><span style="color: #00ff00">&lt;wtk/utils/NumUtils.gmp.h&gt; // GMP specific hacks</span>
+
+<span style="color: #00ff00">// Struct containing the data carried between gates (&quot;wires&quot;)</span>
+<span style="color: #00ff00">// We&#39;ll use this struct for arithmetic</span>
+<span style="color: #ff0000">struct</span><span style="color: #dddddd"> MyWire { };</span>
+<span style="color: #00ff00">// And for boolean, we&#39;ll bit-bang everything into a uint8</span>
+<span style="color: #ff0000">using</span><span style="color: #dddddd"> BoolWire = </span><span style="color: #ee82ee">uint8_t</span><span style="color: #dddddd">;</span>
+
+<span style="color: #00ff00">// This struct implements the TypeBackend callbacks for arithmetic types.</span>
+<span style="color: #ff0000">struct</span><span style="color: #dddddd"> MyBackend : wtk::TypeBackend&lt;Number, MyWire&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> assertFailure = false;</span>
+
+<span style="color: #dddddd">  MyBackend(Number p) : wtk::TypeBackend&lt;Number, MyWire&gt;(p) { }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $0 &lt;- &lt;0&gt;;</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> assign(MyWire* output, Number&amp;&amp; input_value) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_value;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $1 &lt;- $0;</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> copy(MyWire* output, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* input_wire) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_wire;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $2 &lt;- @add($0, $1);</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> addGate(MyWire* output,</span>
+<span style="color: #dddddd">      MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* left_input, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* right_input) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) left_input;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) right_input;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $3 &lt;- @add($1, $2);</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> mulGate(MyWire* output,</span>
+<span style="color: #dddddd">      MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* left_input, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* right_input) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) left_input;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) right_input;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $4 &lt;- @addc($3, &lt;1&gt;);</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> addcGate(MyWire* output,</span>
+<span style="color: #dddddd">      MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* left_input, Number&amp;&amp; right_input) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) left_input;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) right_input;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $4 &lt;- @addc($3, &lt;2&gt;);</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> mulcGate(MyWire* output,</span>
+<span style="color: #dddddd">      MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* left_input, Number&amp;&amp; right_input) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) left_input;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) right_input;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// @assert_zero($4);</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Failures may occur, but should get cached until the end when &quot;check()&quot;</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// is called</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> assertZero(MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* input_wire) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_wire;</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// check that the input wire == 0</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;assertFailure = false || </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;assertFailure;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $5 &lt;- @public_in();</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> publicIn(MyWire* output, Number&amp;&amp; input_value) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_value;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $5 &lt;- @private_in();</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> privateIn(MyWire* output, Number&amp;&amp; input_value) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_value;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// indicates if any failures occured.</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Normally true, false on failure.</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> check() </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> !</span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;assertFailure;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> finish() </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// optional cleanup tasks.</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span>
+
+<span style="color: #00ff00">// This struct implements the TypeBackend callbacks for the Boolean type.</span>
+<span style="color: #ff0000">struct</span><span style="color: #dddddd"> BoolBackend : wtk::TypeBackend&lt;Number, BoolWire&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> assertFailure = false;</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// We should be safe to default construct this and assume prime==2</span>
+<span style="color: #dddddd">  BoolBackend() : wtk::TypeBackend&lt;Number, BoolWire&gt;(2) { }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $0 &lt;- &lt;0&gt;;</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> assign(BoolWire* output, Number&amp;&amp; input_value) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_value;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $1 &lt;- $0;</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> copy(BoolWire* output, BoolWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* input_wire) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_wire;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $2 &lt;- @add($0, $1);</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> addGate(BoolWire* output,</span>
+<span style="color: #dddddd">      BoolWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* left_input, BoolWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* right_input) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) left_input;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) right_input;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $3 &lt;- @add($1, $2);</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> mulGate(BoolWire* output,</span>
+<span style="color: #dddddd">      BoolWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* left_input, BoolWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* right_input) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) left_input;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) right_input;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $4 &lt;- @addc($3, &lt;1&gt;);</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> addcGate(BoolWire* output,</span>
+<span style="color: #dddddd">      BoolWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* left_input, Number&amp;&amp; right_input) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) left_input;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) right_input;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $4 &lt;- @addc($3, &lt;2&gt;);</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> mulcGate(BoolWire* output,</span>
+<span style="color: #dddddd">      BoolWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* left_input, Number&amp;&amp; right_input) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) left_input;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) right_input;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// @assert_zero($4);</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Failures may occur, but should get cached until the end when &quot;check()&quot;</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// is called</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> assertZero(BoolWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* input_wire) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_wire;</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// check that the input wire == 0</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;assertFailure = false || </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;assertFailure;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $5 &lt;- @public_in();</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> publicIn(BoolWire* output, Number&amp;&amp; input_value) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_value;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// $5 &lt;- @private_in();</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> privateIn(BoolWire* output, Number&amp;&amp; input_value) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) output;</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) input_value;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// indicates if any failures occured.</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Normally true, false on failure.</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> check() </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> !</span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;assertFailure;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> finish() </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// optional cleanup tasks.</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span>
+
+<span style="color: #00ff00">// Subclass the Converter type to implement conversion.</span>
+<span style="color: #00ff00">// Due to the &lt;MyWire, MyWire&gt; template fill, these converters goes from one</span>
+<span style="color: #00ff00">// arithmetic type to another arithmetic type</span>
+<span style="color: #ff0000">struct</span><span style="color: #dddddd"> MyConverter : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::Converter&lt;MyWire, MyWire&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Maybe you need the output and input primes</span>
+<span style="color: #dddddd">  Number outPrime;</span>
+<span style="color: #dddddd">  Number inPrime;</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// The parent constructor requires the length of output and input which</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// this Converter will handle.</span>
+<span style="color: #dddddd">  MyConverter(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> out_len, Number op, </span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> in_len, Number ip)</span>
+<span style="color: #dddddd">    : wtk::Converter&lt;MyWire, MyWire&gt;(out_len, in_len),</span>
+<span style="color: #dddddd">      outPrime(op), inPrime(ip) { }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> convert(</span>
+<span style="color: #dddddd">      MyWire* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out_wires, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> in_wires) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// Your Code Here!</span>
+
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// out_wires has length this-&gt;outLength</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) out_wires;</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// in_wires has the length this-&gt;inLength</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) in_wires;</span>
+
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> true;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span>
+
+<span style="color: #00ff00">// Subclass the Converter type to implement conversion.</span>
+<span style="color: #00ff00">// Due to the &lt;MyWire, BoolWire&gt; template fill, these converters goes from the</span>
+<span style="color: #00ff00">// boolean type to an arithmetic type</span>
+<span style="color: #ff0000">struct</span><span style="color: #dddddd"> ConverterFromBool</span>
+<span style="color: #dddddd">  : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::Converter&lt;</span><span style="color: #00ff00">/*out*/</span><span style="color: #dddddd"> MyWire, </span><span style="color: #00ff00">/*in*/</span><span style="color: #dddddd"> BoolWire&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// The output prime is probably relevant, but it should be safe to assume</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// the input prime is 2</span>
+<span style="color: #dddddd">  Number outPrime;</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// The parent constructor requires the length of output and input which</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// this Converter will handle.</span>
+<span style="color: #dddddd">  ConverterFromBool(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> out_len, Number op, </span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> in_len)</span>
+<span style="color: #dddddd">    : wtk::Converter&lt;MyWire, BoolWire&gt;(out_len, in_len), outPrime(op) { }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> convert(</span>
+<span style="color: #dddddd">      MyWire* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out_wires, BoolWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> in_wires) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// Your Code Here!</span>
+
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// out_wires has length this-&gt;outLength</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) out_wires;</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// in_wires has the length this-&gt;inLength</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) in_wires;</span>
+
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> true;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span>
+
+<span style="color: #00ff00">// Subclass the Converter type to implement conversion.</span>
+<span style="color: #00ff00">// Due to the &lt;BoolWire, MyWire&gt; template fill, these converters goes from an</span>
+<span style="color: #00ff00">// arithmetic type to a boolean type</span>
+<span style="color: #ff0000">struct</span><span style="color: #dddddd"> ConverterToBool : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::Converter&lt;</span><span style="color: #00ff00">/*out*/</span><span style="color: #dddddd"> BoolWire, </span><span style="color: #00ff00">/*in*/</span><span style="color: #dddddd"> MyWire&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// The input prime is probably relevant, but it should be safe to assume</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// the output prime is 2</span>
+<span style="color: #dddddd">  Number inPrime;</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// The parent constructor requires the length of output and input which</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// this Converter will handle.</span>
+<span style="color: #dddddd">  ConverterToBool(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> out_len, </span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> in_len, Number ip)</span>
+<span style="color: #dddddd">    : wtk::Converter&lt;BoolWire, MyWire&gt;(out_len, in_len), inPrime(ip) { }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> convert(</span>
+<span style="color: #dddddd">      BoolWire* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out_wires, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> in_wires) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// Your Code Here!</span>
+
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// out_wires has length this-&gt;outLength</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) out_wires;</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// in_wires has the length this-&gt;inLength</span>
+<span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) in_wires;</span>
+
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> true;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span>
+
+<span style="color: #ee82ee">int</span><span style="color: #dddddd"> </span><span style="color: #ffff00">main</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">int</span><span style="color: #dddddd"> argc, </span><span style="color: #ee82ee">char</span><span style="color: #dddddd"> </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* argv[])</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  wtk::utils::ParserOrganizer&lt;wtk::irregular::Parser&lt;Number&gt;, Number&gt; organizer;</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Open and organize files</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 1; i &lt; (</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd">) argc; i++)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!organizer.open(argv[i]))</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      printf(</span><span style="color: #87ceeb">&quot;failed to open %s\n&quot;</span><span style="color: #dddddd">, argv[i]);</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> 1;</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  wtk::utils::Setting setting = organizer.organize();</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(setting == wtk::utils::Setting::failure)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    printf(</span><span style="color: #87ceeb">&quot;failed to organize inputs\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> 1;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Create a nails interpreter</span>
+<span style="color: #dddddd">  wtk::nails::Interpreter&lt;Number&gt; interpreter(organizer.circuitName);</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Check for plugins, because they are not yet supported.</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(organizer.circuitBodyParser-&gt;plugins.size() != 0)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    printf(</span><span style="color: #87ceeb">&quot;plugins are not yet supported\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> 1;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Create storage for backends, one backend for each type/field</span>
+<span style="color: #dddddd">  std::vector&lt;MyBackend&gt; backends;</span>
+<span style="color: #dddddd">  std::vector&lt;std::unique_ptr&lt;BoolBackend&gt;&gt; bool_backends;</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Reserve is necessary with non-pointer storage, otherwise additional</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// fields (triggering vector growth) can invalidate prior pointers.</span>
+<span style="color: #dddddd">  backends.reserve(organizer.circuitBodyParser-&gt;types.size());</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// If it is necessary to access all backends from a single vector, then their</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// type erased parent class may be used.</span>
+<span style="color: #dddddd">  std::vector&lt;wtk::TypeBackendEraser&lt;Number&gt;*&gt; all_backends;</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Create each type/field in the same order as required by the relation</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; organizer.circuitBodyParser-&gt;types.size(); i++)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    wtk::circuit::TypeSpec&lt;Number&gt;* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> type =</span>
+<span style="color: #dddddd">      &amp;organizer.circuitBodyParser-&gt;types[i];</span>
+
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// Check that its a field not a plugin type.</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(type-&gt;variety != wtk::circuit::TypeSpec&lt;Number&gt;::field)</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      printf(</span><span style="color: #87ceeb">&quot;Type %zu is a plugin (not yet supported)\n&quot;</span><span style="color: #dddddd">, i);</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> 1;</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(type-&gt;prime == 2)</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// construct a boolean backend with this prime</span>
+<span style="color: #dddddd">      bool_backends.emplace_back(</span><span style="color: #ff0000">new</span><span style="color: #dddddd"> BoolBackend());</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// Add the backend and its streams to the interpreter</span>
+<span style="color: #dddddd">      interpreter.addType(bool_backends.back().get(),</span>
+<span style="color: #dddddd">          organizer.circuitStreams[i].publicStream,</span>
+<span style="color: #dddddd">          organizer.circuitStreams[i].privateStream);</span>
+
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// Add the backend to the all_backends tracker</span>
+<span style="color: #dddddd">      all_backends.push_back(bool_backends.back().get());</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">else</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// construct another backend with this prime</span>
+<span style="color: #dddddd">      backends.emplace_back(type-&gt;prime);</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// add the backend and its streams to the interpreter</span>
+<span style="color: #dddddd">      interpreter.addType(&amp;backends.back(),</span>
+<span style="color: #dddddd">          organizer.circuitStreams[i].publicStream,</span>
+<span style="color: #dddddd">          organizer.circuitStreams[i].privateStream);</span>
+
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// Add the backend to the all_backends tracker</span>
+<span style="color: #dddddd">      all_backends.push_back(&amp;backends.back());</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Create a storage vector for converters, one for each ConversionSpec</span>
+<span style="color: #dddddd">  std::vector&lt;MyConverter&gt; converters;</span>
+<span style="color: #dddddd">  std::vector&lt;ConverterToBool&gt; to_bool_converters;</span>
+<span style="color: #dddddd">  std::vector&lt;ConverterFromBool&gt; from_bool_converters;</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Reserve necessary space, otherwise vector growth will invalidate pointers</span>
+<span style="color: #dddddd">  converters.reserve(organizer.circuitBodyParser-&gt;conversions.size());</span>
+<span style="color: #dddddd">  to_bool_converters.reserve(organizer.circuitBodyParser-&gt;conversions.size());</span>
+<span style="color: #dddddd">  from_bool_converters.reserve(organizer.circuitBodyParser-&gt;conversions.size());</span>
+
+<span style="color: #dddddd">  </span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; organizer.circuitBodyParser-&gt;conversions.size(); i++)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// pointer to the conversion spec (outType, outLength, inType, inLength)</span>
+<span style="color: #dddddd">    wtk::circuit::ConversionSpec* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> spec =</span>
+<span style="color: #dddddd">      &amp;organizer.circuitBodyParser-&gt;conversions[i];</span>
+
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// get the TypeSpecs corresponding to the out and input types.</span>
+<span style="color: #dddddd">    wtk::circuit::TypeSpec&lt;Number&gt;* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out_type =</span>
+<span style="color: #dddddd">      &amp;organizer.circuitBodyParser-&gt;types[(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd">) spec-&gt;outType];</span>
+<span style="color: #dddddd">    wtk::circuit::TypeSpec&lt;Number&gt;* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> in_type =</span>
+<span style="color: #dddddd">      &amp;organizer.circuitBodyParser-&gt;types[(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd">) spec-&gt;inType];</span>
+
+<span style="color: #dddddd">    </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(out_type-&gt;prime == 2)</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// construct a &quot;to bool&quot; converter</span>
+<span style="color: #dddddd">      to_bool_converters.emplace_back(</span>
+<span style="color: #dddddd">          spec-&gt;outLength, spec-&gt;inLength, in_type-&gt;prime);</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// add the converter to the inpterpreter</span>
+<span style="color: #dddddd">      interpreter.addConversion(spec, &amp;to_bool_converters.back());</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">else</span><span style="color: #dddddd"> </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(in_type-&gt;prime == 2)</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// construct a &quot;from bool&quot; converter</span>
+<span style="color: #dddddd">      from_bool_converters.emplace_back(</span>
+<span style="color: #dddddd">          spec-&gt;outLength, out_type-&gt;prime, spec-&gt;inLength);</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// add the converter to the inpterpreter</span>
+<span style="color: #dddddd">      interpreter.addConversion(spec, &amp;from_bool_converters.back());</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">else</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// call the constructor for our converter</span>
+<span style="color: #dddddd">      converters.emplace_back(</span>
+<span style="color: #dddddd">          spec-&gt;outLength, out_type-&gt;prime, spec-&gt;inLength, in_type-&gt;prime);</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// add the converter to the interpreter</span>
+<span style="color: #dddddd">      interpreter.addConversion(spec, &amp;converters.back());</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Create the nails handler (accepts/directs gates from the parser)</span>
+<span style="color: #dddddd">  wtk::nails::GatesFunctionFactory&lt;Number&gt; func_factory;        </span><span style="color: #00ff00">// boilerplate</span>
+<span style="color: #dddddd">  wtk::plugins::PluginsManager&lt;Number, MyWire, BoolWire&gt; plugins_manager; </span><span style="color: #00ff00">// boilerplate</span>
+<span style="color: #dddddd">  wtk::nails::Handler&lt;Number&gt; handler(</span>
+<span style="color: #dddddd">      &amp;interpreter, &amp;func_factory, &amp;plugins_manager);</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// parse the relation and pass each gate off through NAILS and into</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// the backends.</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!organizer.circuitBodyParser-&gt;parse(&amp;handler))</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    printf(</span><span style="color: #87ceeb">&quot;parser failure\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> 1;</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Check that all the fields succeeded</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">int</span><span style="color: #dddddd"> ret = 0;</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; backends.size(); i++)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!backends[i].check())</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      printf(</span><span style="color: #87ceeb">&quot;failure in field %zu\n&quot;</span><span style="color: #dddddd">, i);</span>
+<span style="color: #dddddd">      ret = 1;</span>
+<span style="color: #dddddd">    }</span>
+
+<span style="color: #dddddd">    backends[i].finish();</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> ret;</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

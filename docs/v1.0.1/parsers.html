@@ -17,7 +17,7 @@
     <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Parsing the IR | WizToolKit</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.2" />
 <meta property="og:title" content="Parsing the IR" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v1.0.1/parsers.html" />
@@ -170,9 +170,9 @@ Later in this page we will show the expected order approach.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">string</span><span class="tok-w"> </span><span class="tok-n">relation_name</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">std::string relation_name = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
 
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">irregular</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">(</span><span class="tok-n">relation_name</span><span class="tok-p">);</span></code></pre>
+<span style="color: #dddddd">wtk::irregular::Parser&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt; parser(relation_name);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -182,11 +182,11 @@ To check that it is a relation, the parser has a <code>resource</code> attribute
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">parseHdrResParams</span><span class="tok-p">()</span>
-<span class="tok-w">    </span><span class="tok-o">||</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">resource</span><span class="tok-w"> </span><span class="tok-o">!=</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Resource</span><span class="tok-o">::</span><span class="tok-n">relation</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-cm">/* handle errors */</span>
-<span class="tok-p">}</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!parser.parseHdrResParams()</span>
+<span style="color: #dddddd">    || parser.resource != wtk::Resource::relation)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* handle errors */</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -268,42 +268,42 @@ However, the streaming API cannot handle non-simple relations.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">string</span><span class="tok-w"> </span><span class="tok-n">instance_name</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">string</span><span class="tok-w"> </span><span class="tok-n">short_witness_name</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">irregular</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">instance_parser</span><span class="tok-p">(</span><span class="tok-n">instance_name</span><span class="tok-p">);</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">irregular</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">short_witness_parser</span><span class="tok-p">(</span><span class="tok-n">short_witness_name</span><span class="tok-p">);</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">std::string instance_name = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">std::string short_witness_name = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::irregular::Parser&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt; instance_parser(instance_name);</span>
+<span style="color: #dddddd">wtk::irregular::Parser&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt; short_witness_parser(short_witness_name);</span>
 
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">instance_parser</span><span class="tok-p">.</span><span class="tok-n">parseHdrResParams</span><span class="tok-p">()</span>
-<span class="tok-w">    </span><span class="tok-o">||</span><span class="tok-w"> </span><span class="tok-o">!</span><span class="tok-n">short_witness_parser</span><span class="tok-p">.</span><span class="tok-n">parseHdrResParams</span><span class="tok-p">()</span>
-<span class="tok-w">    </span><span class="tok-o">||</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">characteristic</span><span class="tok-w"> </span><span class="tok-o">!=</span><span class="tok-w"> </span><span class="tok-n">instance_parser</span><span class="tok-p">.</span><span class="tok-n">characteristic</span>
-<span class="tok-w">    </span><span class="tok-o">||</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">characteristic</span><span class="tok-w"> </span><span class="tok-o">!=</span><span class="tok-w"> </span><span class="tok-n">short_witness_parser</span><span class="tok-p">.</span><span class="tok-n">characteristic</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-cm">/* handle error */</span>
-<span class="tok-p">}</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(!instance_parser.parseHdrResParams()</span>
+<span style="color: #dddddd">    || !short_witness_parser.parseHdrResParams()</span>
+<span style="color: #dddddd">    || parser.characteristic != instance_parser.characteristic</span>
+<span style="color: #dddddd">    || parser.characteristic != short_witness_parser.characteristic)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* handle error */</span>
+<span style="color: #dddddd">}</span>
 
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">resource</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Resource</span><span class="tok-o">::</span><span class="tok-n">relation</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">gateSet</span><span class="tok-p">.</span><span class="tok-n">gateSet</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">GateSet</span><span class="tok-o">::</span><span class="tok-n">arithmetic</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-c1">// Parse arithmetic relation</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">AritmeticParser</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">arith_parser</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">arithmetic</span><span class="tok-p">();</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(parser.resource == wtk::Resource::relation)</span>
+<span style="color: #dddddd">  &amp;&amp; parser.gateSet.gateSet == wtk::GateSet::arithmetic)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Parse arithmetic relation</span>
+<span style="color: #dddddd">  wtk::AritmeticParser&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* arith_parser = parser.arithmetic();</span>
 
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">featureToggles</span><span class="tok-p">.</span><span class="tok-n">simple</span><span class="tok-p">())</span><span class="tok-w"> </span><span class="tok-c1">// select the streaming API</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-c1">// See <a href="#Streaming-API">Streaming API</a></span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">else</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-c1">// See <a href="#Syntax-Tree-API">Syntax Tree API</a></span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">}</span>
-<span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">resource</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Resource</span><span class="tok-o">::</span><span class="tok-n">relation</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-o">&amp;&amp;</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">gateSet</span><span class="tok-p">.</span><span class="tok-n">gateSet</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">GateSet</span><span class="tok-o">::</span><span class="tok-n">boolean</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-c1">// Parse boolean relation, Note that the template is dropped,</span>
-<span class="tok-w">  </span><span class="tok-c1">// because Boolean literals are always given as uint8_t.</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">BooleanParser</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">bool_parser</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">.</span><span class="tok-n">arithmetic</span><span class="tok-p">();</span>
-<span class="tok-w">  </span><span class="tok-cm">/* Omitted... */</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(parser.featureToggles.simple()) </span><span style="color: #00ff00">// select the streaming API</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// See <a href="#Streaming-API">Streaming API</a></span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">else</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// See <a href="#Syntax-Tree-API">Syntax Tree API</a></span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">}</span>
+<span style="color: #ff0000">else</span><span style="color: #dddddd"> </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(parser.resource == wtk::Resource::relation)</span>
+<span style="color: #dddddd">  &amp;&amp; parser.gateSet.gateSet == wtk::GateSet::boolean)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Parse boolean relation, Note that the template is dropped,</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// because Boolean literals are always given as uint8_t.</span>
+<span style="color: #dddddd">  wtk::BooleanParser* bool_parser = parser.arithmetic();</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* Omitted... */</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 </div>
@@ -320,14 +320,14 @@ WizToolKit handles these streams through the <a href="api/wtk/Parser.html#struct
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-c1">// Get an arithmetic parser for an instance</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">ArithmeticParser</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">a_ins_parser</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">instance_parser</span><span class="tok-p">.</span><span class="tok-n">arithmetic</span><span class="tok-p">();</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">a_ins</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">a_ins_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">instance</span><span class="tok-p">();</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #00ff00">// Get an arithmetic parser for an instance</span>
+<span style="color: #dddddd">wtk::ArithmeticParser&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* a_ins_parser = instance_parser.arithmetic();</span>
+<span style="color: #dddddd">wtk::InputStream&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* a_ins = a_ins_parser-&gt;instance();</span>
 
-<span class="tok-c1">// Similarly, for Boolean short witness (as an example; instance and short</span>
-<span class="tok-c1">// witness should have the same type).</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">BooleanParser</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">b_wit_parser</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">short_witness_parser</span><span class="tok-p">.</span><span class="tok-n">arithmetic</span><span class="tok-p">();</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">uint8_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">b_wit</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">b_wit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">shortWitness</span><span class="tok-p">();</span></code></pre>
+<span style="color: #00ff00">// Similarly, for Boolean short witness (as an example; instance and short</span>
+<span style="color: #00ff00">// witness should have the same type).</span>
+<span style="color: #dddddd">wtk::BooleanParser* b_wit_parser = short_witness_parser.arithmetic();</span>
+<span style="color: #dddddd">wtk::InputStream&lt;</span><span style="color: #ee82ee">uint8_t</span><span style="color: #dddddd">&gt;* b_wit = b_wit_parser-&gt;shortWitness();</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -336,10 +336,10 @@ The return type of <code>next(&#8230;&#8203;)</code> will indicate if it succeed
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-w"> </span><span class="tok-n">ins_val</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">StreamStatus</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">a_ins</span><span class="tok-o">-&gt;</span><span class="tok-n">next</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">ins_val</span><span class="tok-p">);</span>
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">StreamStatus</span><span class="tok-o">::</span><span class="tok-n">end</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* End of stream */</span><span class="tok-w"> </span><span class="tok-p">}</span>
-<span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">StreamStatus</span><span class="tok-o">::</span><span class="tok-n">error</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* mid-stream parser error */</span><span class="tok-w"> </span><span class="tok-p">}</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd"> ins_val = 0;</span>
+<span style="color: #dddddd">wtk::StreamStatus status = a_ins-&gt;next(&amp;ins_val);</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(status == wtk::StreamStatus::end) { </span><span style="color: #00ff00">/* End of stream */</span><span style="color: #dddddd"> }</span>
+<span style="color: #ff0000">else</span><span style="color: #dddddd"> </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(status == wtk::StreamStatus::error) { </span><span style="color: #00ff00">/* mid-stream parser error */</span><span style="color: #dddddd"> }</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -361,26 +361,26 @@ A brief example for Arithmetic is shown here.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">class</span><span class="tok-w"> </span><span class="tok-nc">UserArithmeticStreamHandler</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">ArithmeticStreamHandler</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">handleAdd</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-c1">// output wire-number</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">left_in</span><span class="tok-p">,</span><span class="tok-w">        </span><span class="tok-c1">// left input wire-number</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">right_in</span><span class="tok-p">)</span><span class="tok-w">       </span><span class="tok-c1">// right input wire-number</span>
-<span class="tok-w">    </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* omitted */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">class</span><span style="color: #dddddd"> UserArithmeticStreamHandler : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::ArithmeticStreamHandler&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">handleAdd</span><span style="color: #dddddd">(wtk::index_t </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out, </span><span style="color: #00ff00">// output wire-number</span>
+<span style="color: #dddddd">      wtk::index_t </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> left_in,        </span><span style="color: #00ff00">// left input wire-number</span>
+<span style="color: #dddddd">      wtk::index_t </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> right_in)       </span><span style="color: #00ff00">// right input wire-number</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* omitted */</span>
+<span style="color: #dddddd">  }</span>
 
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">handleMul</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-c1">// output wire-number</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">left_in</span><span class="tok-p">,</span><span class="tok-w">        </span><span class="tok-c1">// left input wire-number</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">right_in</span><span class="tok-p">)</span><span class="tok-w">       </span><span class="tok-c1">// right input wire-number</span>
-<span class="tok-w">    </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* omitted */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">handleMul</span><span style="color: #dddddd">(wtk::index_t </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out, </span><span style="color: #00ff00">// output wire-number</span>
+<span style="color: #dddddd">      wtk::index_t </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> left_in,        </span><span style="color: #00ff00">// left input wire-number</span>
+<span style="color: #dddddd">      wtk::index_t </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> right_in)       </span><span style="color: #00ff00">// right input wire-number</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* omitted */</span>
+<span style="color: #dddddd">  }</span>
 
-<span class="tok-w">  </span><span class="tok-cm">/* Remaining methods omitted... */</span>
-<span class="tok-p">};</span></code></pre>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* Remaining methods omitted... */</span>
+<span style="color: #dddddd">};</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -388,13 +388,13 @@ A brief example for Arithmetic is shown here.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-c1">// For an arithmetic simple relation</span>
-<span class="tok-n">UserArithmeticStreamHandler</span><span class="tok-w"> </span><span class="tok-n">handler</span><span class="tok-p">;</span>
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">arith_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parseStream</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">handler</span><span class="tok-p">))</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Parse Error */</span><span class="tok-w"> </span><span class="tok-p">}</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #00ff00">// For an arithmetic simple relation</span>
+<span style="color: #dddddd">UserArithmeticStreamHandler handler;</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(!arith_parser-&gt;parseStream(&amp;handler)) { </span><span style="color: #00ff00">/* Parse Error */</span><span style="color: #dddddd"> }</span>
 
-<span class="tok-c1">// For a Boolean simple relation</span>
-<span class="tok-n">UserBooleanStreamHandler</span><span class="tok-w"> </span><span class="tok-n">handler</span><span class="tok-p">;</span>
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">bool_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parseStream</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">handler</span><span class="tok-p">))</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Parse Error */</span><span class="tok-w"> </span><span class="tok-p">}</span></code></pre>
+<span style="color: #00ff00">// For a Boolean simple relation</span>
+<span style="color: #dddddd">UserBooleanStreamHandler handler;</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(!bool_parser-&gt;parseStream(&amp;handler)) { </span><span style="color: #00ff00">/* Parse Error */</span><span style="color: #dddddd"> }</span></code></pre>
 </div>
 </div>
 </div>
@@ -416,11 +416,11 @@ Each scope is a <a href="api/wtk/IRTree.html#struct_DirectiveList"><code>wtk::Di
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">IRTree</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">ir_tree</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">arith_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parseTree</span><span class="tok-p">();</span>
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">ir_tree</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-k">nullptr</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Parser error */</span><span class="tok-w"> </span><span class="tok-p">}</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::IRTree&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* ir_tree = arith_parser-&gt;parseTree();</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(ir_tree == </span><span style="color: #ff0000">nullptr</span><span style="color: #dddddd">) { </span><span style="color: #00ff00">/* Parser error */</span><span style="color: #dddddd"> }</span>
 
-<span class="tok-c1">// To be implemented by the user.</span>
-<span class="tok-n">process_ir_tree</span><span class="tok-p">(</span><span class="tok-n">ir_tree</span><span class="tok-p">);</span></code></pre>
+<span style="color: #00ff00">// To be implemented by the user.</span>
+<span style="color: #dddddd">process_ir_tree(ir_tree);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -430,13 +430,13 @@ The main body is just a <a href="api/wtk/IRTree.html#struct_DirectiveList"><code
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">process_ir_tree</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">IRTree</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">tree</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-c1">// See <a href="#Syntax-Tree-Functions">Syntax Tree API for Functions</a> for function-declarations.</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">process_ir_tree</span><span style="color: #dddddd">(wtk::IRTree&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* tree)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// See <a href="#Syntax-Tree-Functions">Syntax Tree API for Functions</a> for function-declarations.</span>
 
-<span class="tok-w">  </span><span class="tok-c1">// The circuit&#39;s entry point is its body.</span>
-<span class="tok-w">  </span><span class="tok-n">process_directive_list</span><span class="tok-p">(</span><span class="tok-n">tree</span><span class="tok-o">-&gt;</span><span class="tok-n">body</span><span class="tok-p">());</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// The circuit&#39;s entry point is its body.</span>
+<span style="color: #dddddd">  process_directive_list(tree-&gt;body());</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -445,56 +445,56 @@ Here is an example.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">process_directive_list</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">DirectiveList</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">dir_list</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-c1">// The DirectiveList is a tree type, leaf-nodes are typically gates</span>
-<span class="tok-w">  </span><span class="tok-c1">// (@and/@xor/@mul/etc.) with other nodes taking the form of higher</span>
-<span class="tok-w">  </span><span class="tok-c1">// level features.</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">process_directive_list</span><span style="color: #dddddd">(wtk::DirectiveList&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* dir_list)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// The DirectiveList is a tree type, leaf-nodes are typically gates</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// (@and/@xor/@mul/etc.) with other nodes taking the form of higher</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// level features.</span>
 
-<span class="tok-w">  </span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">dir_list</span><span class="tok-o">-&gt;</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-k">switch</span><span class="tok-p">(</span><span class="tok-n">dir_list</span><span class="tok-o">-&gt;</span><span class="tok-n">type</span><span class="tok-p">(</span><span class="tok-n">i</span><span class="tok-p">))</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">DirectiveList</span><span class="tok-o">&lt;</span><span class="tok-no">unsigned</span><span class="tok-w"> </span><span class="tok-no">long</span><span class="tok-o">&gt;::</span><span class="tok-no">BINARY_GATE</span><span class="tok-p">:</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-c1">// the &quot;binary&quot; (in signature, not value) gate describes</span>
-<span class="tok-w">      </span><span class="tok-c1">// @and/@xor/@mul/@add gates.</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">BinaryGate</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">gate</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">dir_list</span><span class="tok-o">-&gt;</span><span class="tok-n">binaryGate</span><span class="tok-p">(</span><span class="tok-n">i</span><span class="tok-p">);</span>
-<span class="tok-w">      </span><span class="tok-c1">// these are the input and output wire numbers of the gate</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-n">left_input_wire</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">gate</span><span class="tok-o">-&gt;</span><span class="tok-n">leftWire</span><span class="tok-p">();</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-n">right_input_wire</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">gate</span><span class="tok-o">-&gt;</span><span class="tok-n">rightWire</span><span class="tok-p">();</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-n">output_wire</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">gate</span><span class="tok-o">-&gt;</span><span class="tok-n">outputWire</span><span class="tok-p">();</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; dir_list-&gt;size(); i++)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">switch</span><span style="color: #dddddd">(dir_list-&gt;type(i))</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">DirectiveList</span><span style="color: #dddddd">&lt;</span><span style="color: #7fffd4">unsigned</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">long</span><span style="color: #dddddd">&gt;::</span><span style="color: #7fffd4">BINARY_GATE</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// the &quot;binary&quot; (in signature, not value) gate describes</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// @and/@xor/@mul/@add gates.</span>
+<span style="color: #dddddd">      wtk::BinaryGate* gate = dir_list-&gt;binaryGate(i);</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// these are the input and output wire numbers of the gate</span>
+<span style="color: #dddddd">      wtk::index_t left_input_wire = gate-&gt;leftWire();</span>
+<span style="color: #dddddd">      wtk::index_t right_input_wire = gate-&gt;rightWire();</span>
+<span style="color: #dddddd">      wtk::index_t output_wire = gate-&gt;outputWire();</span>
 
-<span class="tok-w">      </span><span class="tok-c1">// The gate&#39;s calculation is an enum</span>
-<span class="tok-w">      </span><span class="tok-k">switch</span><span class="tok-p">(</span><span class="tok-n">gate</span><span class="tok-o">-&gt;</span><span class="tok-n">calculation</span><span class="tok-p">())</span>
-<span class="tok-w">      </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">BinaryGate</span><span class="tok-o">::</span><span class="tok-no">AND</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-k">break</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-p">}</span>
-<span class="tok-w">      </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">BinaryGate</span><span class="tok-o">::</span><span class="tok-no">XOR</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-k">break</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-p">}</span>
-<span class="tok-w">      </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">BinaryGate</span><span class="tok-o">::</span><span class="tok-no">ADD</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-k">break</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-p">}</span>
-<span class="tok-w">      </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">BinaryGate</span><span class="tok-o">::</span><span class="tok-no">MUL</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-k">break</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-p">}</span>
-<span class="tok-w">      </span><span class="tok-p">}</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// The gate&#39;s calculation is an enum</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">switch</span><span style="color: #dddddd">(gate-&gt;calculation())</span>
+<span style="color: #dddddd">      {</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">BinaryGate</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">AND</span><span style="color: #dddddd">: { </span><span style="color: #ff0000">break</span><span style="color: #dddddd">; }</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">BinaryGate</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">XOR</span><span style="color: #dddddd">: { </span><span style="color: #ff0000">break</span><span style="color: #dddddd">; }</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">BinaryGate</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">ADD</span><span style="color: #dddddd">: { </span><span style="color: #ff0000">break</span><span style="color: #dddddd">; }</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">BinaryGate</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">MUL</span><span style="color: #dddddd">: { </span><span style="color: #ff0000">break</span><span style="color: #dddddd">; }</span>
+<span style="color: #dddddd">      }</span>
 
-<span class="tok-w">      </span><span class="tok-k">break</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">    </span><span class="tok-cm">/* other gate-types omitted for brevity */</span>
-<span class="tok-w">    </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">DirectiveList</span><span class="tok-o">&lt;</span><span class="tok-no">unsigned</span><span class="tok-w"> </span><span class="tok-no">long</span><span class="tok-o">&gt;::</span><span class="tok-no">ANON_FUNCTION</span><span class="tok-p">:</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">AnonFunction</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">anon_func</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">dir_list</span><span class="tok-o">-&gt;</span><span class="tok-n">anonFunction</span><span class="tok-p">(</span><span class="tok-n">i</span><span class="tok-p">);</span>
-<span class="tok-w">      </span><span class="tok-c1">// The signature of the function, along with its inputs/outputs</span>
-<span class="tok-w">      </span><span class="tok-c1">// is easily retrievable.</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">WireList</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">output_wires</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">anon_func</span><span class="tok-o">-&gt;</span><span class="tok-n">outputList</span><span class="tok-p">();</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">WireList</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">input_wires</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">anon_func</span><span class="tok-o">-&gt;</span><span class="tok-n">inputList</span><span class="tok-p">();</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-n">num_instance_vals</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">anon_func</span><span class="tok-o">-&gt;</span><span class="tok-n">instanceCount</span><span class="tok-p">();</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">index_t</span><span class="tok-w"> </span><span class="tok-n">num_witness_vals</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">anon_func</span><span class="tok-o">-&gt;</span><span class="tok-n">shortWitnessCount</span><span class="tok-p">();</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">break</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* other gate-types omitted for brevity */</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">DirectiveList</span><span style="color: #dddddd">&lt;</span><span style="color: #7fffd4">unsigned</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">long</span><span style="color: #dddddd">&gt;::</span><span style="color: #7fffd4">ANON_FUNCTION</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      wtk::AnonFunction&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* anon_func = dir_list-&gt;anonFunction(i);</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// The signature of the function, along with its inputs/outputs</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// is easily retrievable.</span>
+<span style="color: #dddddd">      wtk::WireList* output_wires = anon_func-&gt;outputList();</span>
+<span style="color: #dddddd">      wtk::WireList* input_wires = anon_func-&gt;inputList();</span>
+<span style="color: #dddddd">      wtk::index_t num_instance_vals = anon_func-&gt;instanceCount();</span>
+<span style="color: #dddddd">      wtk::index_t num_witness_vals = anon_func-&gt;shortWitnessCount();</span>
 
-<span class="tok-w">      </span><span class="tok-c1">// To process the body of the anonymous function, use recursion.</span>
-<span class="tok-w">      </span><span class="tok-n">process_directive_list</span><span class="tok-p">(</span><span class="tok-n">anon_func</span><span class="tok-o">-&gt;</span><span class="tok-n">body</span><span class="tok-p">());</span>
-<span class="tok-w">      </span><span class="tok-k">break</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">    </span><span class="tok-cm">/* Other feature-types omitted for brevity */</span>
-<span class="tok-w">    </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// To process the body of the anonymous function, use recursion.</span>
+<span style="color: #dddddd">      process_directive_list(anon_func-&gt;body());</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">break</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* Other feature-types omitted for brevity */</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -509,25 +509,25 @@ Correspondingly, the <a href="api/wtk/IRTree.html#struct_IRTree"><code>wtk::IRTr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-c1">// declare a map to hold them</span>
-<span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">map</span><span class="tok-o">&lt;</span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">string</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">FunctionDeclare</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*&gt;</span><span class="tok-w"> </span><span class="tok-n">functions_map</span><span class="tok-p">;</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #00ff00">// declare a map to hold them</span>
+<span style="color: #dddddd">std::map&lt;std::string, wtk::FunctionDeclare&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;*&gt; functions_map;</span>
 
-<span class="tok-w">  </span><span class="tok-c1">// enter each function-declaration into the map</span>
-<span class="tok-w">  </span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">tree</span><span class="tok-o">-&gt;</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">FunctionDeclare</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">function</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">tree</span><span class="tok-o">-&gt;</span><span class="tok-n">functionDeclare</span><span class="tok-p">(</span><span class="tok-n">i</span><span class="tok-p">);</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// enter each function-declaration into the map</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; tree-&gt;size(); i++)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    wtk::FunctionDeclare&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* function = tree-&gt;functionDeclare(i);</span>
 
-<span class="tok-w">    </span><span class="tok-c1">// function-&gt;name() is a char* while std::map works only with std::strings</span>
-<span class="tok-w">    </span><span class="tok-c1">// with c++17, it should be okay to use std::string_view so long as</span>
-<span class="tok-w">    </span><span class="tok-c1">// *tree outlives functions_map</span>
-<span class="tok-w">    </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">string</span><span class="tok-w"> </span><span class="tok-nf">name</span><span class="tok-p">(</span><span class="tok-n">function</span><span class="tok-o">-&gt;</span><span class="tok-n">name</span><span class="tok-p">());</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// function-&gt;name() is a char* while std::map works only with std::strings</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// with c++17, it should be okay to use std::string_view so long as</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// *tree outlives functions_map</span>
+<span style="color: #dddddd">    std::string </span><span style="color: #ffff00">name</span><span style="color: #dddddd">(function-&gt;name());</span>
 
-<span class="tok-w">    </span><span class="tok-c1">// check that the function wasn&#39;t previously declared</span>
-<span class="tok-w">    </span><span class="tok-k">auto</span><span class="tok-w"> </span><span class="tok-n">finder</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">functions_map</span><span class="tok-p">.</span><span class="tok-n">find</span><span class="tok-p">(</span><span class="tok-n">name</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">finder</span><span class="tok-w"> </span><span class="tok-o">!=</span><span class="tok-w"> </span><span class="tok-n">functions_map</span><span class="tok-p">.</span><span class="tok-n">end</span><span class="tok-p">())</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Error */</span><span class="tok-w"> </span><span class="tok-p">}</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// check that the function wasn&#39;t previously declared</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">auto</span><span style="color: #dddddd"> finder = functions_map.find(name);</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(finder != functions_map.end()) { </span><span style="color: #00ff00">/* Error */</span><span style="color: #dddddd"> }</span>
 
-<span class="tok-w">    </span><span class="tok-n">functions_map</span><span class="tok-p">[</span><span class="tok-n">name</span><span class="tok-p">]</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">function</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">    functions_map[name] = function;</span>
+<span style="color: #dddddd">  }</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -535,20 +535,20 @@ Correspondingly, the <a href="api/wtk/IRTree.html#struct_IRTree"><code>wtk::IRTr
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-w">    </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">DirectiveList</span><span class="tok-o">&lt;</span><span class="tok-no">unsigned</span><span class="tok-w"> </span><span class="tok-no">long</span><span class="tok-o">&gt;::</span><span class="tok-no">FUNCTION_INVOKE</span><span class="tok-p">:</span>
-<span class="tok-w">    </span><span class="tok-p">{</span>
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">FunctionInvoke</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-n">invoke</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">dir_list</span><span class="tok-o">-&gt;</span><span class="tok-n">functionInvoke</span><span class="tok-p">(</span><span class="tok-n">i</span><span class="tok-p">);</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">    </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">DirectiveList</span><span style="color: #dddddd">&lt;</span><span style="color: #7fffd4">unsigned</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">long</span><span style="color: #dddddd">&gt;::</span><span style="color: #7fffd4">FUNCTION_INVOKE</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      wtk::FunctionInvoke* invoke = dir_list-&gt;functionInvoke(i);</span>
 
-<span class="tok-w">      </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">string</span><span class="tok-w"> </span><span class="tok-nf">name</span><span class="tok-p">(</span><span class="tok-n">invoke</span><span class="tok-o">-&gt;</span><span class="tok-n">name</span><span class="tok-p">());</span>
-<span class="tok-w">      </span><span class="tok-k">auto</span><span class="tok-w"> </span><span class="tok-n">finder</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">functions_map</span><span class="tok-p">.</span><span class="tok-n">find</span><span class="tok-p">(</span><span class="tok-n">name</span><span class="tok-p">);</span>
-<span class="tok-w">      </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">finder</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">functions_map</span><span class="tok-p">.</span><span class="tok-n">end</span><span class="tok-p">())</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Error */</span><span class="tok-w"> </span><span class="tok-p">}</span>
+<span style="color: #dddddd">      std::string </span><span style="color: #ffff00">name</span><span style="color: #dddddd">(invoke-&gt;name());</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">auto</span><span style="color: #dddddd"> finder = functions_map.find(name);</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(finder == functions_map.end()) { </span><span style="color: #00ff00">/* Error */</span><span style="color: #dddddd"> }</span>
 
-<span class="tok-w">      </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">FunctionDeclare</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">declaration</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">finder</span><span class="tok-o">-&gt;</span><span class="tok-n">second</span><span class="tok-p">;</span>
+<span style="color: #dddddd">      wtk::FunctionDeclare&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* declaration = finder-&gt;second;</span>
 
-<span class="tok-w">      </span><span class="tok-c1">// To process the body of the function, use recursion.</span>
-<span class="tok-w">      </span><span class="tok-n">process_directive_list</span><span class="tok-p">(</span><span class="tok-n">declaration</span><span class="tok-o">-&gt;</span><span class="tok-n">body</span><span class="tok-p">());</span>
-<span class="tok-w">      </span><span class="tok-k">break</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// To process the body of the function, use recursion.</span>
+<span style="color: #dddddd">      process_directive_list(declaration-&gt;body());</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">break</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">    }</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

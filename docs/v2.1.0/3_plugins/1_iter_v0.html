@@ -17,7 +17,7 @@
     <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Iteration v0 Plugin | WizToolKit</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.2" />
 <meta property="og:title" content="Iteration v0 Plugin" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_iter_v0.html" />
@@ -441,14 +441,14 @@ Here is an example.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">Interpreter</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">interpreter</span><span class="tok-p">(</span><span class="tok-s">&quot;relation_file_name&quot;</span><span class="tok-p">);</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">PluginsManager</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">WireA</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">WireB</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">plugins_manager</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">MapOperation</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">map_operation</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">interpreter</span><span class="tok-p">);</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::nails::Interpreter&lt;Number&gt; interpreter(</span><span style="color: #87ceeb">&quot;relation_file_name&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">wtk::plugins::PluginsManager&lt;Number, WireA, WireB&gt; plugins_manager;</span>
+<span style="color: #dddddd">wtk::nails::MapOperation&lt;Number&gt; map_operation(&amp;interpreter);</span>
 
-<span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;iter_v0&quot;</span><span class="tok-p">,</span>
-<span class="tok-w">    </span><span class="tok-n">map_operation</span><span class="tok-p">.</span><span class="tok-n">makePlugin</span><span class="tok-o">&lt;</span><span class="tok-n">WireA</span><span class="tok-o">&gt;</span><span class="tok-p">());</span>
-<span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;iter_v0&quot;</span><span class="tok-p">,</span>
-<span class="tok-w">    </span><span class="tok-n">map_operation</span><span class="tok-p">.</span><span class="tok-n">makePlugin</span><span class="tok-o">&lt;</span><span class="tok-n">WireB</span><span class="tok-o">&gt;</span><span class="tok-p">());</span></code></pre>
+<span style="color: #dddddd">plugins_manager.addPlugin(</span><span style="color: #87ceeb">&quot;iter_v0&quot;</span><span style="color: #dddddd">,</span>
+<span style="color: #dddddd">    map_operation.makePlugin&lt;WireA&gt;());</span>
+<span style="color: #dddddd">plugins_manager.addPlugin(</span><span style="color: #87ceeb">&quot;iter_v0&quot;</span><span style="color: #dddddd">,</span>
+<span style="color: #dddddd">    map_operation.makePlugin&lt;WireB&gt;());</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

@@ -17,7 +17,7 @@
     <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>WizToolKit for Backends | WizToolKit</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.2" />
 <meta property="og:title" content="WizToolKit for Backends" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v1.0.1/backends.html" />
@@ -175,22 +175,22 @@ If an implementor can only handle one <em>Gate Set</em> it is acceptable to have
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">typedef</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-cm">/* something that is default-constructible */</span><span class="tok-p">;</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">typedef</span><span style="color: #dddddd"> MyWire </span><span style="color: #00ff00">/* something that is default-constructible */</span><span style="color: #dddddd">;</span>
 
-<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyBackend</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">Backend</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">addGate</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">left</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">right</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* implementation */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
+<span style="color: #ff0000">struct</span><span style="color: #dddddd"> MyBackend : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::bolt::Backend&lt;MyWire, </span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">addGate</span><span style="color: #dddddd">(MyWire* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> left, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> right) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* implementation */</span>
+<span style="color: #dddddd">  }</span>
 
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">mulGate</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">left</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">right</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* implementation */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">mulGate</span><span style="color: #dddddd">(MyWire* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> left, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> right) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* implementation */</span>
+<span style="color: #dddddd">  }</span>
 
-<span class="tok-w">  </span><span class="tok-cm">/* remaining methods omitted for brevity */</span>
-<span class="tok-p">};</span></code></pre>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* remaining methods omitted for brevity */</span>
+<span style="color: #dddddd">};</span></code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -203,17 +203,17 @@ Here is an example.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">failureCache</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-nb">false</span><span class="tok-p">;</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> failureCache = false;</span>
 
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">assertZero</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">wire</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">failureCache</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-o">!=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-o">||</span><span class="tok-w"> </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">failureCache</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">assertZero</span><span style="color: #dddddd">(MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> wire) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;failureCache = (MyWire != 0) || </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;failureCache;</span>
+<span style="color: #dddddd">  }</span>
 
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-nf">check</span><span class="tok-p">()</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">failureCache</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> </span><span style="color: #ffff00">check</span><span style="color: #dddddd">() </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;failureCache;</span>
+<span style="color: #dddddd">  }</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -232,11 +232,11 @@ The <code>selected_bit</code> output wire must be assigned <code>1</code> or <co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">caseSelect</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">selected_bit</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-kt">uint64_t</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">case_number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">select_wire</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-c1">// Implement this</span>
-<span class="tok-w">  </span><span class="tok-p">}</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">caseSelect</span><span style="color: #dddddd">(MyWire* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> selected_bit,</span>
+<span style="color: #dddddd">      </span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd"> </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> case_number, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> select_wire) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// Implement this</span>
+<span style="color: #dddddd">  }</span></code></pre>
 </div>
 </div>
 </div>
@@ -252,39 +252,39 @@ Here is an example.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-c1">// Collect these from the parser</span>
-<span class="tok-kt">uint64_t</span><span class="tok-w"> </span><span class="tok-n">characteristic</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">is_boolean</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">IRTree</span><span class="tok-o">&lt;</span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">relation</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">instance</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">witness</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #00ff00">// Collect these from the parser</span>
+<span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd"> characteristic = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #ee82ee">bool</span><span style="color: #dddddd"> is_boolean = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::IRTree&lt;</span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* relation = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::InputStream&lt;</span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* instance = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::InputStream&lt;</span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* witness = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
 
-<span class="tok-c1">// Build the relation. *bolt_relation has the same lifetime as builder</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">Builder</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">builder</span><span class="tok-p">(</span><span class="tok-n">characteristic</span><span class="tok-p">);</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">Bolt</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">bolt_relation</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">builder</span><span class="tok-p">.</span><span class="tok-n">build</span><span class="tok-p">(</span><span class="tok-n">relation</span><span class="tok-p">);</span>
+<span style="color: #00ff00">// Build the relation. *bolt_relation has the same lifetime as builder</span>
+<span style="color: #dddddd">wtk::bolt::Builder&lt;MyWire, </span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt; builder(characteristic);</span>
+<span style="color: #dddddd">wtk::bolt::Bolt&lt;MyWire, </span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* bolt_relation = builder.build(relation);</span>
 
-<span class="tok-c1">// Check that build succeeded and then evaluate.</span>
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">bolt_relation</span><span class="tok-w"> </span><span class="tok-o">!=</span><span class="tok-w"> </span><span class="tok-k">nullptr</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-c1">// Evaluate the relation</span>
-<span class="tok-w">  </span><span class="tok-n">MyBackend</span><span class="tok-w"> </span><span class="tok-nf">backend</span><span class="tok-p">(</span><span class="tok-n">characteristic</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">is_boolean</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">Evaluator</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">evaluator</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">backend</span><span class="tok-p">);</span>
+<span style="color: #00ff00">// Check that build succeeded and then evaluate.</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(bolt_relation != </span><span style="color: #ff0000">nullptr</span><span style="color: #dddddd">)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Evaluate the relation</span>
+<span style="color: #dddddd">  MyBackend </span><span style="color: #ffff00">backend</span><span style="color: #dddddd">(characteristic, is_boolean, </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">  wtk::bolt::Evaluator&lt;MyWire, </span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt; evaluator(&amp;backend);</span>
 
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">evaluator</span><span class="tok-p">.</span><span class="tok-n">evaluate</span><span class="tok-p">(</span><span class="tok-n">bolt_relation</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">instance</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">witness</span><span class="tok-p">))</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* Instance or witness is poorly formed */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">backend</span><span class="tok-p">.</span><span class="tok-n">check</span><span class="tok-p">())</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* an assert zero failed, or other things happened to invalidate the proof */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">else</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* success */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!evaluator.evaluate(bolt_relation, instance, witness))</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* Instance or witness is poorly formed */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">else</span><span style="color: #dddddd"> </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!backend.check())</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* an assert zero failed, or other things happened to invalidate the proof */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">else</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* success */</span>
+<span style="color: #dddddd">  }</span>
 
-<span class="tok-w">  </span><span class="tok-n">backend</span><span class="tok-p">.</span><span class="tok-n">finish</span><span class="tok-p">();</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">  backend.finish();</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -294,7 +294,7 @@ In this case, the evaluator will feed the backend zeroes in place of the witness
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">evaluator</span><span class="tok-p">.</span><span class="tok-n">evaluate</span><span class="tok-p">(</span><span class="tok-n">bolt_relation</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">instance</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-k">nullptr</span><span class="tok-p">))</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!evaluator.evaluate(bolt_relation, instance, </span><span style="color: #ff0000">nullptr</span><span style="color: #dddddd">))</span></code></pre>
 </div>
 </div>
 </div>
@@ -309,37 +309,37 @@ As with BOLT, PLASMASnooze indicates only failures of each individual resource, 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-c1">// Collect these from the parser</span>
-<span class="tok-kt">uint64_t</span><span class="tok-w"> </span><span class="tok-n">characteristic</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">is_boolean</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">IRTree</span><span class="tok-o">&lt;</span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">relation</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">instance</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">witness</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #00ff00">// Collect these from the parser</span>
+<span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd"> characteristic = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #ee82ee">bool</span><span style="color: #dddddd"> is_boolean = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::IRTree&lt;</span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* relation = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::InputStream&lt;</span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* instance = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::InputStream&lt;</span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* witness = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
 
-<span class="tok-c1">// Evaluate the relation</span>
-<span class="tok-n">MyBackend</span><span class="tok-w"> </span><span class="tok-nf">backend</span><span class="tok-p">(</span><span class="tok-n">characteristic</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">is_boolean</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">PLASMASnooze</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">snooze</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">backend</span><span class="tok-p">);</span>
+<span style="color: #00ff00">// Evaluate the relation</span>
+<span style="color: #dddddd">MyBackend </span><span style="color: #ffff00">backend</span><span style="color: #dddddd">(characteristic, is_boolean, </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">wtk::bolt::PLASMASnooze&lt;MyWire, </span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt; snooze(&amp;backend);</span>
 
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">PLASMASnoozeStatus</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">  </span><span class="tok-n">snooze</span><span class="tok-p">.</span><span class="tok-n">evaluate</span><span class="tok-p">(</span><span class="tok-n">relation</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">instance</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">witness</span><span class="tok-p">);</span>
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">PLASMASnoozeStatus</span><span class="tok-o">::</span><span class="tok-n">bad_relation</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-cm">/* Relation is poorly formed */</span>
-<span class="tok-p">}</span>
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">PLASMASnoozeStatus</span><span class="tok-o">::</span><span class="tok-n">bad_stream</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-cm">/* Instance or witness is poorly formed */</span>
-<span class="tok-p">}</span>
-<span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">backend</span><span class="tok-p">.</span><span class="tok-n">check</span><span class="tok-p">())</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-cm">/* an assert zero failed, or other things happened to invalidate the proof */</span>
-<span class="tok-p">}</span>
-<span class="tok-k">else</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-cm">/* success */</span>
-<span class="tok-p">}</span>
+<span style="color: #dddddd">wtk::bolt::PLASMASnoozeStatus status =</span>
+<span style="color: #dddddd">  snooze.evaluate(relation, instance, witness);</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(wtk::bolt::PLASMASnoozeStatus::bad_relation == status)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* Relation is poorly formed */</span>
+<span style="color: #dddddd">}</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(wtk::bolt::PLASMASnoozeStatus::bad_stream == status)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* Instance or witness is poorly formed */</span>
+<span style="color: #dddddd">}</span>
+<span style="color: #ff0000">else</span><span style="color: #dddddd"> </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!backend.check())</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* an assert zero failed, or other things happened to invalidate the proof */</span>
+<span style="color: #dddddd">}</span>
+<span style="color: #ff0000">else</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* success */</span>
+<span style="color: #dddddd">}</span>
 
-<span class="tok-n">backend</span><span class="tok-p">.</span><span class="tok-n">finish</span><span class="tok-p">();</span></code></pre>
+<span style="color: #dddddd">backend.finish();</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -347,8 +347,8 @@ As with BOLT, PLASMASnooze indicates only failures of each individual resource, 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">PLASMASnoozeStatus</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">  </span><span class="tok-n">snooze</span><span class="tok-p">.</span><span class="tok-n">evaluate</span><span class="tok-p">(</span><span class="tok-n">relation</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">instance</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-k">nullptr</span><span class="tok-p">);</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::bolt::PLASMASnoozeStatus status =</span>
+<span style="color: #dddddd">  snooze.evaluate(relation, instance, </span><span style="color: #ff0000">nullptr</span><span style="color: #dddddd">);</span></code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -363,43 +363,43 @@ The <a href="api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html#api_bolt_Arithmetic
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-c1">// Collect these from the parser</span>
-<span class="tok-kt">uint64_t</span><span class="tok-w"> </span><span class="tok-n">characteristic</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">is_boolean</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">ArithemticParser</span><span class="tok-o">&lt;</span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">relation_parser</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">instance</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">witness</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">;</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #00ff00">// Collect these from the parser</span>
+<span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd"> characteristic = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #ee82ee">bool</span><span style="color: #dddddd"> is_boolean = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::ArithemticParser&lt;</span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* relation_parser = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::InputStream&lt;</span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* instance = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">wtk::InputStream&lt;</span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt;* witness = </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">;</span>
 
-<span class="tok-c1">// Evaluate the relation</span>
-<span class="tok-n">MyBackend</span><span class="tok-w"> </span><span class="tok-nf">backend</span><span class="tok-p">(</span><span class="tok-n">characteristic</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">is_boolean</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">ArithmeticPLASMASnoozeHandler</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">snooze</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">backend</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">instance</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">witness</span><span class="tok-p">);</span>
+<span style="color: #00ff00">// Evaluate the relation</span>
+<span style="color: #dddddd">MyBackend </span><span style="color: #ffff00">backend</span><span style="color: #dddddd">(characteristic, is_boolean, </span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">wtk::bolt::ArithmeticPLASMASnoozeHandler&lt;MyWire, </span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt; snooze(&amp;backend, instance, witness);</span>
 
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">relation_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parseStream</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">snooze</span><span class="tok-p">))</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-cm">/* Syntax error */</span>
-<span class="tok-p">}</span>
-<span class="tok-k">else</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">PLASMASnoozeStatus</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">snooze</span><span class="tok-p">.</span><span class="tok-n">check</span><span class="tok-p">();</span>
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">PLASMASnoozeStatus</span><span class="tok-o">::</span><span class="tok-n">bad_relation</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* Relation is poorly formed */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">PLASMASnoozeStatus</span><span class="tok-o">::</span><span class="tok-n">bad_stream</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* Instance or witness is poorly formed */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">backend</span><span class="tok-p">.</span><span class="tok-n">check</span><span class="tok-p">())</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* an assert zero failed, or other things happened to invalidate the proof */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">else</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* success */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">}</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(!relation_parser-&gt;parseStream(&amp;snooze))</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* Syntax error */</span>
+<span style="color: #dddddd">}</span>
+<span style="color: #ff0000">else</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  wtk::bolt::PLASMASnoozeStatus status = snooze.check();</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(wtk::bolt::PLASMASnoozeStatus::bad_relation == status)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* Relation is poorly formed */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(wtk::bolt::PLASMASnoozeStatus::bad_stream == status)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* Instance or witness is poorly formed */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">else</span><span style="color: #dddddd"> </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!backend.check())</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* an assert zero failed, or other things happened to invalidate the proof */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">else</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* success */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">}</span>
 
-<span class="tok-n">backend</span><span class="tok-p">.</span><span class="tok-n">finish</span><span class="tok-p">();</span></code></pre>
+<span style="color: #dddddd">backend.finish();</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -407,7 +407,7 @@ The <a href="api/wtk/bolt/ArithmeticPLASMASnoozeHandler.html#api_bolt_Arithmetic
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">bolt</span><span class="tok-o">::</span><span class="tok-n">ArithmeticPLASMASnoozeHandler</span><span class="tok-o">&lt;</span><span class="tok-n">MyWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">uint64_t</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">snooze</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">backend</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">instance</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-k">nullptr</span><span class="tok-p">);</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::bolt::ArithmeticPLASMASnoozeHandler&lt;MyWire, </span><span style="color: #ee82ee">uint64_t</span><span style="color: #dddddd">&gt; snooze(&amp;backend, instance, </span><span style="color: #ff0000">nullptr</span><span style="color: #dddddd">);</span></code></pre>
 </div>
 </div>
 </div>

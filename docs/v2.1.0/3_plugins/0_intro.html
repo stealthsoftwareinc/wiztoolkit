@@ -17,7 +17,7 @@
     <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Plugins Intro | WizToolKit</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.2" />
 <meta property="og:title" content="Plugins Intro" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/0_intro.html" />
@@ -248,7 +248,7 @@ For this example, we&#8217;ll continue with the <code>Number</code>, <code>BoolW
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">PluginsManager</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">plugins_manager</span><span class="tok-p">;</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::plugins::PluginsManager&lt;Number, BoolWire, ArithWire&gt; plugins_manager;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -259,34 +259,34 @@ We have found a "loop and if" construct is most convenient for allocating plugin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-s">&quot;foo&quot;</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">])</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">unique_ptr</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">Plugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;&gt;</span><span class="tok-w"> </span><span class="tok-n">bool_foo</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">      </span><span class="tok-k">new</span><span class="tok-w"> </span><span class="tok-n">FooPlugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;foo&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">move</span><span class="tok-p">(</span><span class="tok-n">bool_foo</span><span class="tok-p">));</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; circuit_parser-&gt;plugins.size(); i++)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(</span><span style="color: #87ceeb">&quot;foo&quot;</span><span style="color: #dddddd"> == circuit_parser-&gt;plugins[i])</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    std::unique_ptr&lt;wtk::plugins::Plugin&lt;Number, BoolWire&gt;&gt; bool_foo =</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">new</span><span style="color: #dddddd"> FooPlugin&lt;Number, BoolWire&gt;(</span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">    plugins_manager.addPlugin(</span><span style="color: #87ceeb">&quot;foo&quot;</span><span style="color: #dddddd">, std::move(bool_foo));</span>
 
-<span class="tok-w">    </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">unique_ptr</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">Plugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;&gt;</span><span class="tok-w"> </span><span class="tok-n">arith_foo</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">      </span><span class="tok-k">new</span><span class="tok-w"> </span><span class="tok-n">FooPlugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;foo&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">move</span><span class="tok-p">(</span><span class="tok-n">arith_foo</span><span class="tok-p">));</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-s">&quot;bar&quot;</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">])</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">unique_ptr</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">Plugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;&gt;</span><span class="tok-w"> </span><span class="tok-n">bool_bar</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">      </span><span class="tok-k">new</span><span class="tok-w"> </span><span class="tok-n">BarPlugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;bar&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">move</span><span class="tok-p">(</span><span class="tok-n">bool_bar</span><span class="tok-p">));</span>
+<span style="color: #dddddd">    std::unique_ptr&lt;wtk::plugins::Plugin&lt;Number, ArithWire&gt;&gt; arith_foo =</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">new</span><span style="color: #dddddd"> FooPlugin&lt;Number, ArithWire&gt;(</span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">    plugins_manager.addPlugin(</span><span style="color: #87ceeb">&quot;foo&quot;</span><span style="color: #dddddd">, std::move(arith_foo));</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">else</span><span style="color: #dddddd"> </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(</span><span style="color: #87ceeb">&quot;bar&quot;</span><span style="color: #dddddd"> == circuit_parser-&gt;plugins[i])</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    std::unique_ptr&lt;wtk::plugins::Plugin&lt;Number, BoolWire&gt;&gt; bool_bar =</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">new</span><span style="color: #dddddd"> BarPlugin&lt;Number, BoolWire&gt;(</span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">    plugins_manager.addPlugin(</span><span style="color: #87ceeb">&quot;bar&quot;</span><span style="color: #dddddd">, std::move(bool_bar));</span>
 
-<span class="tok-w">    </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">unique_ptr</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">Plugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;&gt;</span><span class="tok-w"> </span><span class="tok-n">arith_bar</span><span class="tok-w"> </span><span class="tok-o">=</span>
-<span class="tok-w">      </span><span class="tok-k">new</span><span class="tok-w"> </span><span class="tok-n">BarPlugin</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-cm">/* ... */</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addPlugin</span><span class="tok-p">(</span><span class="tok-s">&quot;bar&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">std</span><span class="tok-o">::</span><span class="tok-n">move</span><span class="tok-p">(</span><span class="tok-n">arith_bar</span><span class="tok-p">));</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">else</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;unrecognized plugin %s</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">].</span><span class="tok-n">c_str</span><span class="tok-p">());</span>
-<span class="tok-w">    </span><span class="tok-n">exit</span><span class="tok-p">(</span><span class="tok-mi">1</span><span class="tok-p">);</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">    std::unique_ptr&lt;wtk::plugins::Plugin&lt;Number, ArithWire&gt;&gt; arith_bar =</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">new</span><span style="color: #dddddd"> BarPlugin&lt;Number, ArithWire&gt;(</span><span style="color: #00ff00">/* ... */</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">    plugins_manager.addPlugin(</span><span style="color: #87ceeb">&quot;bar&quot;</span><span style="color: #dddddd">, std::move(arith_bar));</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">else</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    printf(</span><span style="color: #87ceeb">&quot;unrecognized plugin %s\n&quot;</span><span style="color: #dddddd">, circuit_parser-&gt;plugins[i].c_str());</span>
+<span style="color: #dddddd">    exit(1);</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -294,13 +294,13 @@ We have found a "loop and if" construct is most convenient for allocating plugin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-cm">/* Create the appropriate backend and streams */</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; circuit_parser-&gt;types.size(); i++)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* Create the appropriate backend and streams */</span>
 
-<span class="tok-w">  </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addType</span><span class="tok-p">(</span><span class="tok-n">my_backend</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">public_in_stream</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">private_in_stream</span><span class="tok-p">);</span>
-<span class="tok-w">  </span><span class="tok-n">plugins_manager</span><span class="tok-p">.</span><span class="tok-n">addBackend</span><span class="tok-p">(</span><span class="tok-k">static_cast</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">type_idx</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-n">i</span><span class="tok-p">),</span><span class="tok-w"> </span><span class="tok-n">my_backend</span><span class="tok-p">);</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">  interpreter.addType(my_backend, public_in_stream, private_in_stream);</span>
+<span style="color: #dddddd">  plugins_manager.addBackend(</span><span style="color: #ff0000">static_cast</span><span style="color: #dddddd">&lt;wtk::type_idx&gt;(i), my_backend);</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

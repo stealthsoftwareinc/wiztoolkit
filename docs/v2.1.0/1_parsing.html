@@ -17,7 +17,7 @@
     <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Parsing the IR | WizToolKit</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.2" />
 <meta property="og:title" content="Parsing the IR" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/1_parsing.html" />
@@ -154,7 +154,7 @@ For example, some backends may require unlimited precision types, such as GMP&#8
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">ParserOrganizer</span><span class="tok-o">&lt;</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">irregular</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">;</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::utils::ParserOrganizer&lt;wtk::irregular::Parser&lt;mpz_class&gt;, mpz_class&gt; organizer;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -164,10 +164,10 @@ This is likely the case anyways, for example if you were to call <code>organizer
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">file_names</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">open</span><span class="tok-p">(</span><span class="tok-n">file_names</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">]);</span>
-<span class="tok-p">}</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; file_names.size(); i++)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  organizer.open(file_names[i]);</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -197,28 +197,28 @@ See <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//src/mai
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-w"> </span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">organize</span><span class="tok-p">();</span>
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-o">::</span><span class="tok-n">failure</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-k">return</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-p">}</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::utils::Setting setting = organizer.organize();</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(setting == wtk::utils::Setting::failure) { </span><span style="color: #ff0000">return</span><span style="color: #dddddd">; }</span>
 
-<span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-w"> </span><span class="tok-c1">// the parser for the circuit&#39;s body</span>
-<span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitName</span><span class="tok-w">       </span><span class="tok-c1">// the circuit&#39;s file name</span>
+<span style="color: #dddddd">organizer.circuitBodyParser </span><span style="color: #00ff00">// the parser for the circuit&#39;s body</span>
+<span style="color: #dddddd">organizer.circuitName       </span><span style="color: #00ff00">// the circuit&#39;s file name</span>
 
-<span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">circuitBodyParser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-o">::</span><span class="tok-n">verifier</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">publicStream</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-c1">// the input stream for the type&#39;s public_input</span>
-<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">publicName</span><span class="tok-p">;</span><span class="tok-w">   </span><span class="tok-c1">// the file name for the type&#39;s public_input</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">else</span><span class="tok-w"> </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-n">setting</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">utils</span><span class="tok-o">::</span><span class="tok-n">Setting</span><span class="tok-o">::</span><span class="tok-n">prover</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">publicStream</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-c1">// the input stream for the type&#39;s public_input</span>
-<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">publicName</span><span class="tok-p">;</span><span class="tok-w">   </span><span class="tok-c1">// the file name for the type&#39;s public_input</span>
+<span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; organizer.circuitBodyParser-&gt;types.size(); i++)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(setting == wtk::utils::Setting::verifier)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    organizer.publicStream; </span><span style="color: #00ff00">// the input stream for the type&#39;s public_input</span>
+<span style="color: #dddddd">    organizer.publicName;   </span><span style="color: #00ff00">// the file name for the type&#39;s public_input</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">else</span><span style="color: #dddddd"> </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(setting == wtk::utils::Setting::prover)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    organizer.publicStream; </span><span style="color: #00ff00">// the input stream for the type&#39;s public_input</span>
+<span style="color: #dddddd">    organizer.publicName;   </span><span style="color: #00ff00">// the file name for the type&#39;s public_input</span>
 
-<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">privateStream</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-c1">// the input stream for the type&#39;s private_input</span>
-<span class="tok-w">    </span><span class="tok-n">organizer</span><span class="tok-p">.</span><span class="tok-n">privateName</span><span class="tok-p">;</span><span class="tok-w">   </span><span class="tok-c1">// the file name for the type&#39;s private_input</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">    organizer.privateStream; </span><span style="color: #00ff00">// the input stream for the type&#39;s private_input</span>
+<span style="color: #dddddd">    organizer.privateName;   </span><span style="color: #00ff00">// the file name for the type&#39;s private_input</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -254,43 +254,43 @@ The <code>parser.parseHeader()</code> function will parse the header and then se
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">parser_function</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parseHeader</span><span class="tok-p">())</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">parser_function</span><span style="color: #dddddd">(wtk::Parser&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* parser)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!parser-&gt;parseHeader())</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    printf(</span><span style="color: #87ceeb">&quot;error\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">  }</span>
 
-<span class="tok-w">  </span><span class="tok-k">switch</span><span class="tok-p">(</span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">type</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">ResourceType</span><span class="tok-o">::</span><span class="tok-no">translation</span><span class="tok-p">:</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TranslationParser</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">translation_parser</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">translation</span><span class="tok-p">();</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">switch</span><span style="color: #dddddd">(parser-&gt;type)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">ResourceType</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">translation</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    wtk::TranslationParser&lt;Number_T&gt;* translation_parser = parser-&gt;translation();</span>
 
-<span class="tok-w">    </span><span class="tok-cm">/* Your Code Here */</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* Your Code Here */</span>
 
-<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">ResourceType</span><span class="tok-o">::</span><span class="tok-no">circuit</span><span class="tok-p">:</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">circuit</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">circuit</span><span class="tok-p">();</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">break</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">ResourceType</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">circuit</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    wtk::circuit::Parser&lt;Number_T&gt;* circuit_parser = parser-&gt;circuit();</span>
 
-<span class="tok-w">    </span><span class="tok-cm">/* Your Code Here */</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* Your Code Here */</span>
 
-<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">ResourceType</span><span class="tok-o">::</span><span class="tok-no">public_in</span><span class="tok-p">:</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">public_in_stram</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">publicIn</span><span class="tok-p">();</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">break</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">ResourceType</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">public_in</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    wtk::InputStream&lt;Number_T&gt; public_in_stram = parser-&gt;publicIn();</span>
 
-<span class="tok-w">    </span><span class="tok-cm">/* Your Code Here */</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* Your Code Here */</span>
 
-<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-cm">/* ... */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">break</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* ... */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -313,17 +313,17 @@ Use these attributes to prepare to encounter these items in the body of the circ
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parseCircuitHeader</span><span class="tok-p">())</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
-<span class="tok-w">  </span><span class="tok-k">return</span><span class="tok-p">;</span>
-<span class="tok-p">}</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!circuit_parser-&gt;parseCircuitHeader())</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  printf(</span><span style="color: #87ceeb">&quot;error\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">return</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">}</span>
 
-<span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">plugins</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Your Code Here */</span><span class="tok-w"> </span><span class="tok-p">}</span>
+<span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; circuit_parser-&gt;plugins.size(); i++) { </span><span style="color: #00ff00">/* Your Code Here */</span><span style="color: #dddddd"> }</span>
 
-<span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Your Code Here */</span><span class="tok-w"> </span><span class="tok-p">}</span>
+<span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; circuit_parser-&gt;types.size(); i++) { </span><span style="color: #00ff00">/* Your Code Here */</span><span style="color: #dddddd"> }</span>
 
-<span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-cm">/* Your Code Here */</span><span class="tok-w"> </span><span class="tok-p">}</span></code></pre>
+<span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; circuit_parser-&gt;conversions.size(); i++) { </span><span style="color: #00ff00">/* Your Code Here */</span><span style="color: #dddddd"> }</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -357,13 +357,13 @@ Note that the IR&#8217;s grammar forbids nested function declarations.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">CircuitHandlerChildClass</span><span class="tok-w"> </span><span class="tok-nf">handler</span><span class="tok-p">(</span><span class="tok-cm">/* Your Code Here */</span><span class="tok-p">);</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">CircuitHandlerChildClass </span><span style="color: #ffff00">handler</span><span style="color: #dddddd">(</span><span style="color: #00ff00">/* Your Code Here */</span><span style="color: #dddddd">);</span>
 
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">circuit_handler</span><span class="tok-o">-&gt;</span><span class="tok-n">parse</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">handler</span><span class="tok-p">))</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">print</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
-<span class="tok-w">  </span><span class="tok-k">return</span><span class="tok-p">;</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(!circuit_handler-&gt;parse(&amp;handler))</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  print(</span><span style="color: #87ceeb">&quot;error\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">return</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -394,40 +394,40 @@ Then consume items from the stream with <code>in_stream->next(&value)</code>.</p
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">InputStream</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in_stream</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">parser</span><span class="tok-o">-&gt;</span><span class="tok-n">publicIn</span><span class="tok-p">();</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::InputStream&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt;* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> in_stream = parser-&gt;publicIn();</span>
 
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">in_stream</span><span class="tok-o">-&gt;</span><span class="tok-n">parseStreamHeader</span><span class="tok-p">())</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
-<span class="tok-w">  </span><span class="tok-k">return</span><span class="tok-p">;</span>
-<span class="tok-p">}</span>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(!in_stream-&gt;parseStreamHeader())</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  printf(</span><span style="color: #87ceeb">&quot;error\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">return</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">}</span>
 
-<span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;stream prime: %lu&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_stream</span><span class="tok-o">-&gt;</span><span class="tok-n">prime</span><span class="tok-p">);</span>
+<span style="color: #dddddd">printf(</span><span style="color: #87ceeb">&quot;stream prime: %lu&quot;</span><span style="color: #dddddd">, in_stream-&gt;prime);</span>
 
-<span class="tok-nl">wtk</span><span class="tok-p">:</span><span class="tok-n">StreamStatus</span><span class="tok-w"> </span><span class="tok-n">status</span><span class="tok-p">;</span>
-<span class="tok-k">do</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-w"> </span><span class="tok-n">value</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-n">in_stream</span><span class="tok-o">-&gt;</span><span class="tok-n">next</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">value</span><span class="tok-p">);</span>
-<span class="tok-w">  </span><span class="tok-k">switch</span><span class="tok-p">(</span><span class="tok-n">status</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">StreamStatus</span><span class="tok-o">::</span><span class="tok-no">error</span><span class="tok-p">:</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">StreamStatus</span><span class="tok-o">::</span><span class="tok-no">end</span><span class="tok-p">:</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">print</span><span class="tok-p">(</span><span class="tok-s">&quot;end of stream</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-k">case</span><span class="tok-w"> </span><span class="tok-no">wtk</span><span class="tok-o">::</span><span class="tok-no">StreamStatus</span><span class="tok-o">::</span><span class="tok-no">success</span><span class="tok-p">:</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;line %zu, value %lu&quot;</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_stream</span><span class="tok-o">-&gt;</span><span class="tok-n">lineNum</span><span class="tok-p">(),</span><span class="tok-w"> </span><span class="tok-n">value</span><span class="tok-p">);</span>
-<span class="tok-w">    </span><span class="tok-k">break</span><span class="tok-p">;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">}</span><span class="tok-w"> </span><span class="tok-k">while</span><span class="tok-p">(</span><span class="tok-n">status</span><span class="tok-w"> </span><span class="tok-o">==</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">StreamStatus</span><span class="tok-o">::</span><span class="tok-n">success</span><span class="tok-p">);</span></code></pre>
+<span style="color: #dddddd">wtk:StreamStatus status;</span>
+<span style="color: #ff0000">do</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd"> value = 0;</span>
+<span style="color: #dddddd">  status = in_stream-&gt;next(&amp;value);</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">switch</span><span style="color: #dddddd">(status)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">StreamStatus</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">error</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    printf(</span><span style="color: #87ceeb">&quot;error\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">break</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">StreamStatus</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">end</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    print(</span><span style="color: #87ceeb">&quot;end of stream\n&quot;</span><span style="color: #dddddd">)</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">break</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">case</span><span style="color: #dddddd"> </span><span style="color: #7fffd4">wtk</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">StreamStatus</span><span style="color: #dddddd">::</span><span style="color: #7fffd4">success</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    printf(</span><span style="color: #87ceeb">&quot;line %zu, value %lu&quot;</span><span style="color: #dddddd">, in_stream-&gt;lineNum(), value);</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">break</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">} </span><span style="color: #ff0000">while</span><span style="color: #dddddd">(status == wtk::StreamStatus::success);</span></code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -456,13 +456,13 @@ Initialization is handled with a default constructor, then the <code>open(file_n
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">irregular</span><span class="tok-o">::</span><span class="tok-n">Parser</span><span class="tok-o">&lt;</span><span class="tok-kt">unsigned</span><span class="tok-w"> </span><span class="tok-kt">long</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">irregular_parser</span><span class="tok-p">;</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::irregular::Parser&lt;</span><span style="color: #ee82ee">unsigned</span><span style="color: #dddddd"> </span><span style="color: #ee82ee">long</span><span style="color: #dddddd">&gt; irregular_parser;</span>
 
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">irregular_parser</span><span class="tok-p">.</span><span class="tok-n">open</span><span class="tok-p">(</span><span class="tok-s">&quot;file_name&quot;</span><span class="tok-p">))</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;error</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">);</span>
-<span class="tok-w">  </span><span class="tok-k">return</span><span class="tok-p">;</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(!irregular_parser.open(</span><span style="color: #87ceeb">&quot;file_name&quot;</span><span style="color: #dddddd">))</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  printf(</span><span style="color: #87ceeb">&quot;error\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">return</span><span style="color: #dddddd">;</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 </div>

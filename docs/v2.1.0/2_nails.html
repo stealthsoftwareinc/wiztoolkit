@@ -17,7 +17,7 @@
     <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>NAILS Circuit-IR Interpreter | WizToolKit</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.2" />
 <meta property="og:title" content="NAILS Circuit-IR Interpreter" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/2_nails.html" />
@@ -111,18 +111,18 @@ the <code>Wire_T</code> template is representative of a wire or a field element 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">template</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Wire_T</span><span class="tok-o">&gt;</span>
-<span class="tok-k">class</span><span class="tok-w"> </span><span class="tok-nc">MyBackend</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TypeBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number_T</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Wire_T</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-k">public</span><span class="tok-o">:</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-n">mulGate</span><span class="tok-p">(</span><span class="tok-n">Element_T</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">Element_T</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">left_in</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">Element_T</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">right_in</span><span class="tok-p">)</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* Your Code Here */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">template</span><span style="color: #dddddd">&lt;Number_T, Wire_T&gt;</span>
+<span style="color: #ff0000">class</span><span style="color: #dddddd"> MyBackend : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::TypeBackend&lt;Number_T, Wire_T&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #ff0000">public</span><span style="color: #dddddd">:</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> mulGate(Element_T* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out,</span>
+<span style="color: #dddddd">      Element_T </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> left_in, Element_T </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> right_in)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* Your Code Here */</span>
+<span style="color: #dddddd">  }</span>
 
-<span class="tok-w">  </span><span class="tok-cm">/** Etc. */</span>
-<span class="tok-p">};</span></code></pre>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/** Etc. */</span>
+<span style="color: #dddddd">};</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -141,7 +141,7 @@ It is not templated with the backend&#8217;s <code>Wire_T</code> because it must
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">Interpreter</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">interpreter</span><span class="tok-p">(</span><span class="tok-s">&quot;circuit_file_name (for error reporting)&quot;</span><span class="tok-p">);</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::nails::Interpreter&lt;mpz_class&gt; interpreter(</span><span style="color: #87ceeb">&quot;circuit_file_name (for error reporting)&quot;</span><span style="color: #dddddd">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -152,12 +152,12 @@ As mentioned, the backend&#8217;s <code>Wire_T</code> template may differ on eac
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">types</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-cm">/* Create the appropriate backend and streams */</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; circuit_parser-&gt;types.size(); i++)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* Create the appropriate backend and streams */</span>
 
-<span class="tok-w">  </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addType</span><span class="tok-p">(</span><span class="tok-n">my_backend</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">public_in_stream</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">private_in_stream</span><span class="tok-p">);</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">  interpreter.addType(my_backend, public_in_stream, private_in_stream);</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -182,8 +182,8 @@ As mentioned, the backend&#8217;s <code>Wire_T</code> template may differ on eac
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">GatesFunctionFactory</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">function_factory</span><span class="tok-p">;</span>
-<span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">PluginsManager</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">BoolWire</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">ArithmeticWire</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">plugins_manager</span><span class="tok-p">;</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::nails::GatesFunctionFactory&lt;mpz_class&gt; function_factory;</span>
+<span style="color: #dddddd">wtk::plugins::PluginsManager&lt;mpz_class, BoolWire, ArithmeticWire&gt; plugins_manager;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -193,12 +193,12 @@ Find it in <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">nails</span><span class="tok-o">::</span><span class="tok-n">Handler</span><span class="tok-o">&lt;</span><span class="tok-n">mpz_class</span><span class="tok-o">&gt;</span><span class="tok-w"> </span><span class="tok-n">handler</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">interpreter</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">function_factory</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">plugins_manager</span><span class="tok-p">);</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #dddddd">wtk::nails::Handler&lt;mpz_class&gt; handler(&amp;interpreter, &amp;function_factory, &amp;plugins_manager);</span>
 
-<span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">parse</span><span class="tok-p">(</span><span class="tok-o">&amp;</span><span class="tok-n">handler</span><span class="tok-p">))</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;syntax error or poorly formed relation</span><span class="tok-se">\n</span><span class="tok-s">&quot;</span><span class="tok-p">)</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #ff0000">if</span><span style="color: #dddddd">(!circuit_parser-&gt;parse(&amp;handler))</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  printf(</span><span style="color: #87ceeb">&quot;syntax error or poorly formed relation\n&quot;</span><span style="color: #dddddd">)</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -206,13 +206,13 @@ Find it in <a href="https://github.com/stealthsoftwareinc/wiztoolkit/tree/main//
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">if</span><span class="tok-p">(</span><span class="tok-o">!</span><span class="tok-n">my_field</span><span class="tok-p">.</span><span class="tok-n">check</span><span class="tok-p">())</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;Something asserted non-zero&quot;</span><span class="tok-p">);</span>
-<span class="tok-p">}</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!my_field.check())</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  printf(</span><span style="color: #87ceeb">&quot;Something asserted non-zero&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">}</span>
 
-<span class="tok-c1">// if implemented by your backend</span>
-<span class="tok-n">my_field</span><span class="tok-p">.</span><span class="tok-n">finish</span><span class="tok-p">()</span></code></pre>
+<span style="color: #00ff00">// if implemented by your backend</span>
+<span style="color: #dddddd">my_field.finish()</span></code></pre>
 </div>
 </div>
 </div>
@@ -230,22 +230,22 @@ The constructor must set the <code>ouLength</code> and <code>inLength</code> par
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">class</span><span class="tok-w"> </span><span class="tok-nc">MyConversion</span><span class="tok-w"> </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-n">MyWireOut</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWireIn</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-c1">// constructor recieves in/out lengths</span>
-<span class="tok-w">  </span><span class="tok-n">MyConversion</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">Converter</span><span class="tok-o">&lt;</span><span class="tok-n">MyWireOut</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWireIn</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-n">out_len</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-p">{</span><span class="tok-w"> </span><span class="tok-p">}</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">class</span><span style="color: #dddddd"> MyConversion : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::Converter&lt;MyWireOut, MyWireIn&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// constructor recieves in/out lengths</span>
+<span style="color: #dddddd">  MyConversion(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> out_len, </span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> in_len)</span>
+<span style="color: #dddddd">    : wtk::Converter&lt;MyWireOut, MyWireIn&gt;(out_len, in_len) { }</span>
 
-<span class="tok-w">  </span><span class="tok-c1">// convert method recieves pointers of length outLength and inLength</span>
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">convert</span><span class="tok-p">(</span>
-<span class="tok-w">      </span><span class="tok-n">OutWire_T</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out_wires</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">InWire_T</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in_wires</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">out_len</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">outLength</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">in_len</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">inLength</span><span class="tok-p">;</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// convert method recieves pointers of length outLength and inLength</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> convert(</span>
+<span style="color: #dddddd">      OutWire_T* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out_wires, InWire_T </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> in_wires) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> out_len </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> = </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;outLength;</span>
+<span style="color: #dddddd">    </span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> in_len </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> = </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;inLength;</span>
 
-<span class="tok-w">    </span><span class="tok-cm">/* Your code here */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span></code></pre>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* Your code here */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -282,14 +282,14 @@ The appropriate <code>converter->convert(out_wires, in_wires)</code> method will
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">for</span><span class="tok-p">(</span><span class="tok-kt">size_t</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-mi">0</span><span class="tok-p">;</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">.</span><span class="tok-n">size</span><span class="tok-p">();</span><span class="tok-w"> </span><span class="tok-n">i</span><span class="tok-o">++</span><span class="tok-p">)</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">circuit</span><span class="tok-o">::</span><span class="tok-n">ConversionSpec</span><span class="tok-w"> </span><span class="tok-n">spec</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-o">&amp;</span><span class="tok-n">circuit_parser</span><span class="tok-o">-&gt;</span><span class="tok-n">conversions</span><span class="tok-p">[</span><span class="tok-n">i</span><span class="tok-p">];</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; circuit_parser-&gt;conversions.size(); i++)</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  wtk::circuit::ConversionSpec spec = &amp;circuit_parser-&gt;conversions[i];</span>
 
-<span class="tok-w">  </span><span class="tok-cm">/* Your code here */</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">/* Your code here */</span>
 
-<span class="tok-w">  </span><span class="tok-n">interpreter</span><span class="tok-p">.</span><span class="tok-n">addConversion</span><span class="tok-p">(</span><span class="tok-n">spec</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">my_converter</span><span class="tok-p">);</span>
-<span class="tok-p">}</span></code></pre>
+<span style="color: #dddddd">  interpreter.addConversion(spec, my_converter);</span>
+<span style="color: #dddddd">}</span></code></pre>
 </div>
 </div>
 </div>

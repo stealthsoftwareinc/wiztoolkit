@@ -17,7 +17,7 @@
     <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Installing WizToolKit | WizToolKit</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.2" />
 <meta property="og:title" content="Installing WizToolKit" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/7_install.html" />
@@ -122,24 +122,24 @@ Starting from a 'minimal installation', You will need to install these dependenc
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>yum<span class="tok-w"> </span>install<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>epel-release<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>yum-utils
-yum<span class="tok-w"> </span>config-manager<span class="tok-w"> </span>--set-enabled<span class="tok-w"> </span>powertools
-yum<span class="tok-w"> </span>install<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>git<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>tar<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>make<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>wget<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>unzip<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>cmake<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>gcc-c++<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>diffutils<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>which<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>python39<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>python3-numpy<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>openssl<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>openssl-devel</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>yum<span style="color: #dddddd"> </span>install<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>epel-release<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>yum-utils
+yum<span style="color: #dddddd"> </span>config-manager<span style="color: #dddddd"> </span>--set-enabled<span style="color: #dddddd"> </span>powertools
+yum<span style="color: #dddddd"> </span>install<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>git<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>tar<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>make<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>wget<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>unzip<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>cmake<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>gcc-c++<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>diffutils<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>which<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>python39<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>python3-numpy<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>openssl<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>openssl-devel</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -148,8 +148,8 @@ Keep in mind, that <code>make</code> will download additional dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>make
-make<span class="tok-w"> </span>install</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>make
+make<span style="color: #dddddd"> </span>install</code></pre>
 </div>
 </div>
 </div>
@@ -161,21 +161,21 @@ Starting with a 'minimal installation' You will need to install these dependenci
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>yum<span class="tok-w"> </span>install<span class="tok-w"> </span>epel-release
-yum<span class="tok-w"> </span>install<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>git<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>tar<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>make<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>wget<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>unzip<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>cmake3<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>gcc-c++<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>diffutils<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>which<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>python3<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>python3-numpy<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>openssl<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>openssl-devel</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>yum<span style="color: #dddddd"> </span>install<span style="color: #dddddd"> </span>epel-release
+yum<span style="color: #dddddd"> </span>install<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>git<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>tar<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>make<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>wget<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>unzip<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>cmake3<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>gcc-c++<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>diffutils<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>which<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>python3<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>python3-numpy<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>openssl<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>openssl-devel</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -184,8 +184,8 @@ Keep in mind, that <code>make</code> will download additional dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>make<span class="tok-w"> </span><span class="tok-nv">CMAKE_CMD</span><span class="tok-o">=</span>cmake3
-make<span class="tok-w"> </span>install</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>make<span style="color: #dddddd"> </span><span style="color: #eedd82">CMAKE_CMD</span><span style="color: #dddddd">=</span>cmake3
+make<span style="color: #dddddd"> </span>install</code></pre>
 </div>
 </div>
 </div>
@@ -196,17 +196,17 @@ make<span class="tok-w"> </span>install</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>apt-get<span class="tok-w"> </span>install<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>git<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>build-essential<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>make<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>wget<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>unzip<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>cmake<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>g++<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>python3<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>python3-numpy<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>libssl-dev</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>apt-get<span style="color: #dddddd"> </span>install<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>git<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>build-essential<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>make<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>wget<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>unzip<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>cmake<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>g++<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>python3<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>python3-numpy<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>libssl-dev</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -215,8 +215,8 @@ Keep in mind, that <code>make</code> will download additional dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>make
-make<span class="tok-w"> </span>install</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>make
+make<span style="color: #dddddd"> </span>install</code></pre>
 </div>
 </div>
 </div>
@@ -227,17 +227,17 @@ make<span class="tok-w"> </span>install</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>apt-get<span class="tok-w"> </span>install<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>git<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>build-essential<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>make<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>wget<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>unzip<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>cmake<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>g++<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>python3<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>python3-numpy<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>libssl-dev</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>apt-get<span style="color: #dddddd"> </span>install<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>git<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>build-essential<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>make<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>wget<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>unzip<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>cmake<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>g++<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>python3<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>python3-numpy<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>libssl-dev</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -246,8 +246,8 @@ Keep in mind, that <code>make</code> will download additional dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>make
-make<span class="tok-w"> </span>install</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>make
+make<span style="color: #dddddd"> </span>install</code></pre>
 </div>
 </div>
 </div>
@@ -270,17 +270,17 @@ After installing MSYS2, launch <em>"MSYS2 MinGW 64-bit"</em> from the "start-but
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>pacman<span class="tok-w"> </span>-S<span class="tok-w"> </span>--needed<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>tar<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>git<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>wget<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>make<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>unzip<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>diffutil<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>mingw-w64-x86_64-gcc<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>mingw-w64-x86_64-make<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>mingw-w64-x86_64-cmake<span class="tok-w"> </span><span class="tok-se">\</span>
-<span class="tok-w">  </span>mingw-w64-x86_64-openssl</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>pacman<span style="color: #dddddd"> </span>-S<span style="color: #dddddd"> </span>--needed<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>tar<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>git<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>wget<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>make<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>unzip<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>diffutil<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>mingw-w64-x86_64-gcc<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>mingw-w64-x86_64-make<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>mingw-w64-x86_64-cmake<span style="color: #dddddd"> </span><span style="color: #87ceeb">\</span>
+<span style="color: #dddddd">  </span>mingw-w64-x86_64-openssl</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -305,8 +305,8 @@ Keep in mind, that <code>make</code> will download additional dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>make<span class="tok-w"> </span><span class="tok-nv">MAKE_CMD</span><span class="tok-o">=</span>mingw32-make<span class="tok-w"> </span><span class="tok-nv">CMAKE_GENERATOR</span><span class="tok-o">=</span><span class="tok-s1">&#39;MinGW Makefiles&#39;</span><span class="tok-w"> </span><span class="tok-nv">CXX</span><span class="tok-o">=</span>/mingw64/bin/x86_64-w64-mingw32-g++.exe
-make<span class="tok-w"> </span><span class="tok-nv">MAKE_CMD</span><span class="tok-o">=</span>mingw32-make<span class="tok-w"> </span><span class="tok-nv">CMAKE_GENERATOR</span><span class="tok-o">=</span><span class="tok-s1">&#39;MinGW Makefiles&#39;</span><span class="tok-w"> </span><span class="tok-nv">CXX</span><span class="tok-o">=</span>/mingw64/bin/x86_64-w64-mingw32-g++.exe<span class="tok-w"> </span>install</code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>make<span style="color: #dddddd"> </span><span style="color: #eedd82">MAKE_CMD</span><span style="color: #dddddd">=</span>mingw32-make<span style="color: #dddddd"> </span><span style="color: #eedd82">CMAKE_GENERATOR</span><span style="color: #dddddd">=</span><span style="color: #87ceeb">&#39;MinGW Makefiles&#39;</span><span style="color: #dddddd"> </span><span style="color: #eedd82">CXX</span><span style="color: #dddddd">=</span>/mingw64/bin/x86_64-w64-mingw32-g++.exe
+make<span style="color: #dddddd"> </span><span style="color: #eedd82">MAKE_CMD</span><span style="color: #dddddd">=</span>mingw32-make<span style="color: #dddddd"> </span><span style="color: #eedd82">CMAKE_GENERATOR</span><span style="color: #dddddd">=</span><span style="color: #87ceeb">&#39;MinGW Makefiles&#39;</span><span style="color: #dddddd"> </span><span style="color: #eedd82">CXX</span><span style="color: #dddddd">=</span>/mingw64/bin/x86_64-w64-mingw32-g++.exe<span style="color: #dddddd"> </span>install</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -315,7 +315,7 @@ Then you can invoke <code>wtk-</code> commands by their absolute path (or add th
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="cmd"><span></span>PATH=%PATH%;C:\msys64\mingw64\bin;C:\msys64\mingw64\lib
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="cmd"><span></span>PATH=%PATH%;C:\msys64\mingw64\bin;C:\msys64\mingw64\lib
 C:\msys64\usr\local\bin\wtk-firealarm.exe</code></pre>
 </div>
 </div>
@@ -338,7 +338,7 @@ C:\msys64\usr\local\bin\wtk-firealarm.exe</code></pre>
 <p>CMake: for C++ build orchestration</p>
 </li>
 <li>
-<p>C++ Compiler (tested against <code>g++</code> and <code>clang++</code>)</p>
+<p>C++ Compiler (tested against <code>g+` and `clang+</code>)</p>
 </li>
 <li>
 <p><code>wget</code>: for downloading dependencies</p>
@@ -421,8 +421,8 @@ C:\msys64\usr\local\bin\wtk-firealarm.exe</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span></span>make
-make<span class="tok-w"> </span>install<span class="tok-w"> </span><span class="tok-c1"># as root</span></code></pre>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="bash"><span></span>make
+make<span style="color: #dddddd"> </span>install<span style="color: #dddddd"> </span><span style="color: #00ff00"># as root</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

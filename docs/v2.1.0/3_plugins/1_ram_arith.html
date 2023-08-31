@@ -17,7 +17,7 @@
     <link type="application/atom+xml" rel="alternate" href="https://stealthsoftwareinc.github.io/wiztoolkit/feed.xml" title="WizToolKit" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>RAM Arithmetic Plugin | WizToolKit</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.2" />
 <meta property="og:title" content="RAM Arithmetic Plugin" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://stealthsoftwareinc.github.io/wiztoolkit/docs/v2.1.0/3_plugins/1_ram_arith.html" />
@@ -338,22 +338,22 @@ You must provide a constructor with the wire&#8217;s type and backend, and imple
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyRAMBackend</span>
-<span class="tok-w">  </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">RAMBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-n">MyRAMBackend</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">type_idx</span><span class="tok-w"> </span><span class="tok-n">type</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">TypeBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;*</span><span class="tok-w"> </span><span class="tok-n">backend</span><span class="tok-p">)</span>
-<span class="tok-w">    </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">RAMBackend</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span><span class="tok-p">(</span><span class="tok-n">type</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">backend</span><span class="tok-p">);</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">struct</span><span style="color: #dddddd"> MyRAMBackend</span>
+<span style="color: #dddddd">  : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::plugins::RAMBackend&lt;Number, MyBuffer, MyWire&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  MyRAMBackend(wtk::type_idx type, wtk::TypeBackend&lt;Number, MyWire&gt;* backend)</span>
+<span style="color: #dddddd">    : wtk::plugins::RAMBackend&lt;Number, MyBuffer, MyWire&gt;(type, backend);</span>
 
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-n">failure</span><span class="tok-w"> </span><span class="tok-o">=</span><span class="tok-w"> </span><span class="tok-nb">false</span><span class="tok-p">;</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> failure = false;</span>
 
-<span class="tok-w">  </span><span class="tok-c1">// Returns false if any errors are encountered, true otherwise</span>
-<span class="tok-w">  </span><span class="tok-kt">bool</span><span class="tok-w"> </span><span class="tok-nf">check</span><span class="tok-p">()</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-k">return</span><span class="tok-w"> </span><span class="tok-o">!</span><span class="tok-k">this</span><span class="tok-o">-&gt;</span><span class="tok-n">failure</span><span class="tok-p">;</span>
-<span class="tok-w">    </span><span class="tok-c1">// alternatively, report failures through this-&gt;wireBackend-&gt;assertZero()</span>
-<span class="tok-w">    </span><span class="tok-c1">// and always return true;</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span></code></pre>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Returns false if any errors are encountered, true otherwise</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> </span><span style="color: #ffff00">check</span><span style="color: #dddddd">() </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> !</span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;failure;</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// alternatively, report failures through this-&gt;wireBackend-&gt;assertZero()</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">// and always return true;</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -362,38 +362,38 @@ These have convenient superclasses which handle signature and argument checking 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++"><span></span><span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyRAMInit</span>
-<span class="tok-w">  </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">RAMInitOperation</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">init</span><span class="tok-p">(</span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">wire_idx</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">size</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">MyBuffer</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">buffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">fill</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/**</span>
-<span class="tok-cm">     * Instantiate the buffer with the stated size. Then assign each</span>
-<span class="tok-cm">     * element the fill value</span>
-<span class="tok-cm">     */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span>
+<pre class="pygments highlight" style="background: #000000; color: #dddddd"><code data-lang="c++"><span></span><span style="color: #ff0000">struct</span><span style="color: #dddddd"> MyRAMInit</span>
+<span style="color: #dddddd">  : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::plugins::RAMInitOperation&lt;Number, MyBuffer, MyWire&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">init</span><span style="color: #dddddd">(wtk::wire_idx </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> size,</span>
+<span style="color: #dddddd">      MyBuffer* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> buffer, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> fill) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/**</span>
+<span style="color: #00ff00">     * Instantiate the buffer with the stated size. Then assign each</span>
+<span style="color: #00ff00">     * element the fill value</span>
+<span style="color: #00ff00">     */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span>
 
-<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyRAMRead</span>
-<span class="tok-w">  </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">RAMReadOperation</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">read</span><span class="tok-p">(</span><span class="tok-n">MyWire</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">out</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">MyBuffer</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">buffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">idx</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* implement: out = buffer[idx]; */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span>
+<span style="color: #ff0000">struct</span><span style="color: #dddddd"> MyRAMRead</span>
+<span style="color: #dddddd">  : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::plugins::RAMReadOperation&lt;Number, MyBuffer, MyWire&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">read</span><span style="color: #dddddd">(MyWire* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out,</span>
+<span style="color: #dddddd">      MyBuffer* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> buffer, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> idx) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* implement: out = buffer[idx]; */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span>
 
-<span class="tok-k">struct</span><span class="tok-w"> </span><span class="tok-nc">MyRAMWrite</span>
-<span class="tok-w">  </span><span class="tok-o">:</span><span class="tok-w"> </span><span class="tok-k">public</span><span class="tok-w"> </span><span class="tok-n">wtk</span><span class="tok-o">::</span><span class="tok-n">plugins</span><span class="tok-o">::</span><span class="tok-n">RAMReadOperation</span><span class="tok-o">&lt;</span><span class="tok-n">Number</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyBuffer</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-o">&gt;</span>
-<span class="tok-p">{</span>
-<span class="tok-w">  </span><span class="tok-kt">void</span><span class="tok-w"> </span><span class="tok-nf">write</span><span class="tok-p">(</span><span class="tok-n">MyBuffer</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">buffer</span><span class="tok-p">,</span>
-<span class="tok-w">      </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">idx</span><span class="tok-p">,</span><span class="tok-w"> </span><span class="tok-n">MyWire</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-o">*</span><span class="tok-w"> </span><span class="tok-k">const</span><span class="tok-w"> </span><span class="tok-n">in</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-k">override</span>
-<span class="tok-w">  </span><span class="tok-p">{</span>
-<span class="tok-w">    </span><span class="tok-cm">/* implement: obuffer[idx] = in; */</span>
-<span class="tok-w">  </span><span class="tok-p">}</span>
-<span class="tok-p">};</span></code></pre>
+<span style="color: #ff0000">struct</span><span style="color: #dddddd"> MyRAMWrite</span>
+<span style="color: #dddddd">  : </span><span style="color: #ff0000">public</span><span style="color: #dddddd"> wtk::plugins::RAMReadOperation&lt;Number, MyBuffer, MyWire&gt;</span>
+<span style="color: #dddddd">{</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> </span><span style="color: #ffff00">write</span><span style="color: #dddddd">(MyBuffer* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> buffer,</span>
+<span style="color: #dddddd">      MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> idx, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> in) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #00ff00">/* implement: obuffer[idx] = in; */</span>
+<span style="color: #dddddd">  }</span>
+<span style="color: #dddddd">};</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

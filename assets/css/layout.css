@@ -421,28 +421,23 @@ body>nav#docsNav a
 
 }
 
-body>nav#docsNav li.curr_page>a:first-child,
+body>nav#docsNav li.curr_page>a:first-child
 {
-  border-left: 1px solid #ed264c;
+  border-left: 2px solid #ed264c;
   background-color: #c4cde8;
   color: #101a34;
 }
 
+body>nav#docsNav li.curr_page>ul.sectlevel1
+{
+  background-color: #212b45;
+  border-left: 2px solid #ed264c;
+  border-bottom: 1px solid #ed264c;
+}
+
 body>nav#docsNav li.curr_page>ul.sectlevel1 a
 {
-  border-left: 1px solid #ed264c;
-}
-
-body>nav#docsNav li.curr_page>ul.sectlevel1:before
-{
-  content: "Page Contents";
-  margin-left: 1em;
-}
-
-body>nav#docsNav li.curr_page>ul:not(.sectlevel1):before
-{
-  content: "Sub Pages";
-  margin-left: 1em;
+  border: none;
 }
 
 body>nav#docsNav ul
