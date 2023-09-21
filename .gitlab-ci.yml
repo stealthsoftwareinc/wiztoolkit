@@ -8,6 +8,8 @@ test-ubuntu-18:
     - make clean
     - make BUILD_TYPE=CI CXX=clang++ test
     - make regression-test
+    - make install
+    - cd docs/6_sample_backends/ && make -j3 CXX=g++ && make clean && make -j3 CXX=clang++
 
 test-ubuntu-20:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/ubuntu:20.04
@@ -16,6 +18,8 @@ test-ubuntu-20:
     - make clean
     - make BUILD_TYPE=CI CXX=clang++ test
     - make regression-test
+    - make install
+    - cd docs/6_sample_backends/ && make -j3 CXX=g++ && make clean && make -j3 CXX=clang++
 
 test-centos-stream8:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/centos:stream8
@@ -24,6 +28,8 @@ test-centos-stream8:
     - make clean
     - make BUILD_TYPE=CI CXX=clang++ test
     - make regression-test
+    - make install
+    - cd docs/6_sample_backends/ && make -j3 CXX=g++ && make clean && make -j3 CXX=clang++
 
 test-rockylinux-8:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/rockylinux:8
@@ -32,6 +38,8 @@ test-rockylinux-8:
     - make clean
     - make BUILD_TYPE=CI CXX=clang++ test
     - make regression-test
+    - make install
+    - cd docs/6_sample_backends/ && make -j3 CXX=g++ && make clean && make -j3 CXX=clang++
 
 test-centos-7:
   image: registry.stealthsoftwareinc.com/stealth/builder-images/centos:7
