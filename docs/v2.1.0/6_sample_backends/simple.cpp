@@ -37,7 +37,9 @@ struct MyBackend : wtk::TypeBackend<Number, MyWire>
 {
   bool assertFailure = false;
 
-  MyBackend(Number p) : wtk::TypeBackend<Number, MyWire>(p) { }
+  // TypeSpec is a wrapper for the IR's types (field/ring/...)
+  MyBackend(wtk::circuit::TypeSpec<Number> const* t)
+    : wtk::TypeBackend<Number, MyWire>(t) { }
 
   // $0 <- <0>;
   void assign(MyWire* output, Number&& input_value) override
@@ -139,8 +141,8 @@ struct MyConverter : public wtk::Converter<MyWire, MyWire>
     : wtk::Converter<MyWire, MyWire>(out_len, in_len),
       outPrime(op), inPrime(ip) { }
 
-  bool convert(
-      MyWire* const out_wires, MyWire const* const in_wires) override
+  void convert(MyWire* const out_wires,
+      MyWire const* const in_wires, bool modulus) override
   {
     // Your Code Here!
 
@@ -149,8 +151,20 @@ struct MyConverter : public wtk::Converter<MyWire, MyWire>
     // in_wires has the length this->inLength
     (void) in_wires;
 
-    return true;
+    if(modulus)
+    {
+      // An overflowing conversion should behave modularly
+    }
+    else
+    {
+      // An overflowing conversion should fail
+      if(false/* an overflow occurred */) { this->success = false; }
+    }
   }
+
+  // The success or failure is cached until the user calls check at the end.
+  bool success = false;
+  bool check() override { return success; }
 };
 
 int main(int argc, char const* argv[])
@@ -204,8 +218,8 @@ int main(int argc, char const* argv[])
     }
     else
     {
-      // construct another backend with this prime
-      backends.emplace_back(type->prime);
+      // construct another backend with this type
+      backends.emplace_back(type);
       // add the backend and its streams to the interpreter
       interpreter.addType(&backends.back(),
           organizer.circuitStreams[i].publicStream,
@@ -262,6 +276,16 @@ int main(int argc, char const* argv[])
     }
 
     backends[i].finish();
+  }
+
+  // Check that all the conversions succeeded
+  for(size_t i = 0; i < converters.size(); i++)
+  {
+    if(!converters[i].check())
+    {
+      printf("failure during conversion\n");
+      ret = 1;
+    }
   }
 
   return ret;

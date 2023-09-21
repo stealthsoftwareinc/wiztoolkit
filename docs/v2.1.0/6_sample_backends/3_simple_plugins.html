@@ -129,7 +129,9 @@ Although the sample does demonstrate multiple fields and conversion (field switc
 <span style="color: #dddddd">{</span>
 <span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> assertFailure = false;</span>
 
-<span style="color: #dddddd">  MyBackend(Number p) : wtk::TypeBackend&lt;Number, MyWire&gt;(p) { }</span>
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// TypeSpec is a wrapper for the IR&#39;s types (field/ring/...)</span>
+<span style="color: #dddddd">  MyBackend(wtk::circuit::TypeSpec&lt;Number&gt; </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* t)</span>
+<span style="color: #dddddd">    : wtk::TypeBackend&lt;Number, MyWire&gt;(t) { }</span>
 
 <span style="color: #dddddd">  </span><span style="color: #00ff00">// $0 &lt;- &lt;0&gt;;</span>
 <span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> assign(MyWire* output, Number&amp;&amp; input_value) </span><span style="color: #ff0000">override</span>
@@ -231,8 +233,8 @@ Although the sample does demonstrate multiple fields and conversion (field switc
 <span style="color: #dddddd">    : wtk::Converter&lt;MyWire, MyWire&gt;(out_len, in_len),</span>
 <span style="color: #dddddd">      outPrime(op), inPrime(ip) { }</span>
 
-<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> convert(</span>
-<span style="color: #dddddd">      MyWire* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out_wires, MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> in_wires) </span><span style="color: #ff0000">override</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">void</span><span style="color: #dddddd"> convert(MyWire* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> out_wires,</span>
+<span style="color: #dddddd">      MyWire </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* </span><span style="color: #ff0000">const</span><span style="color: #dddddd"> in_wires, </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> modulus) </span><span style="color: #ff0000">override</span>
 <span style="color: #dddddd">  {</span>
 <span style="color: #dddddd">    </span><span style="color: #00ff00">// Your Code Here!</span>
 
@@ -241,8 +243,21 @@ Although the sample does demonstrate multiple fields and conversion (field switc
 <span style="color: #dddddd">    </span><span style="color: #00ff00">// in_wires has the length this-&gt;inLength</span>
 <span style="color: #dddddd">    (</span><span style="color: #ee82ee">void</span><span style="color: #dddddd">) in_wires;</span>
 
-<span style="color: #dddddd">    </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> true;</span>
+
+<span style="color: #dddddd">    </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(modulus)</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// An overflowing conversion should behave modularly</span>
+<span style="color: #dddddd">    }</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">else</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      </span><span style="color: #00ff00">// An overflowing conversion should fail</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(false</span><span style="color: #00ff00">/* an overflow occurred */</span><span style="color: #dddddd">) { </span><span style="color: #ff0000">this</span><span style="color: #dddddd">-&gt;success = false; }</span>
+<span style="color: #dddddd">    }</span>
 <span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// The success or failure is cached until the user calls check at the end.</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> success = false;</span>
+<span style="color: #dddddd">  </span><span style="color: #ee82ee">bool</span><span style="color: #dddddd"> </span><span style="color: #ffff00">check</span><span style="color: #dddddd">() </span><span style="color: #ff0000">override</span><span style="color: #dddddd"> { </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> success; }</span>
 <span style="color: #dddddd">};</span>
 
 <span style="color: #ee82ee">int</span><span style="color: #dddddd"> </span><span style="color: #ffff00">main</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">int</span><span style="color: #dddddd"> argc, </span><span style="color: #ee82ee">char</span><span style="color: #dddddd"> </span><span style="color: #ff0000">const</span><span style="color: #dddddd">* argv[])</span>
@@ -364,7 +379,7 @@ Although the sample does demonstrate multiple fields and conversion (field switc
 
 <span style="color: #dddddd">      </span><span style="color: #00ff00">// WizToolKit helper for getting the hintsfrom the type&#39;s plugin binding,</span>
 <span style="color: #dddddd">      </span><span style="color: #00ff00">// But only the v0 plugin has the hints.</span>
-<span style="color: #dddddd">      </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(has_alloc_hints &amp;&amp; !wtk::plugins::checkRAMType(</span>
+<span style="color: #dddddd">      </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(has_alloc_hints &amp;&amp; !wtk::plugins::checkRAMv0Type(</span>
 <span style="color: #dddddd">            type, &amp;type_index, &amp;num_allocs, &amp;total_allocs, &amp;max_alloc))</span>
 <span style="color: #dddddd">      {</span>
 <span style="color: #dddddd">        </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> 1;</span>
@@ -388,7 +403,7 @@ Although the sample does demonstrate multiple fields and conversion (field switc
 
 <span style="color: #dddddd">      </span><span style="color: #00ff00">// finally allocate and supply the backend</span>
 <span style="color: #dddddd">      ram_backends.emplace_back(</span>
-<span style="color: #dddddd">          type_index, &amp;backends[backend_place[(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd">) type_index]]);</span>
+<span style="color: #dddddd">          type, type_index, &amp;backends[backend_place[(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd">) type_index]]);</span>
 <span style="color: #dddddd">      interpreter.addType(&amp;ram_backends.back(), </span><span style="color: #ff0000">nullptr</span><span style="color: #dddddd">, </span><span style="color: #ff0000">nullptr</span><span style="color: #dddddd">);</span>
 <span style="color: #dddddd">      plugins_manager.addBackend((wtk::type_idx) i, &amp;ram_backends.back());</span>
 
@@ -404,7 +419,7 @@ Although the sample does demonstrate multiple fields and conversion (field switc
 <span style="color: #dddddd">    </span><span style="color: #ff0000">else</span>
 <span style="color: #dddddd">    {</span>
 <span style="color: #dddddd">      </span><span style="color: #00ff00">// construct another backend with this prime</span>
-<span style="color: #dddddd">      backends.emplace_back(type-&gt;prime);</span>
+<span style="color: #dddddd">      backends.emplace_back(type);</span>
 <span style="color: #dddddd">      </span><span style="color: #00ff00">// add the backend and its streams to the interpreter</span>
 <span style="color: #dddddd">      interpreter.addType(&amp;backends.back(),</span>
 <span style="color: #dddddd">          organizer.circuitStreams[i].publicStream,</span>
@@ -465,6 +480,16 @@ Although the sample does demonstrate multiple fields and conversion (field switc
 <span style="color: #dddddd">    }</span>
 
 <span style="color: #dddddd">    backends[i].finish();</span>
+<span style="color: #dddddd">  }</span>
+
+<span style="color: #dddddd">  </span><span style="color: #00ff00">// Check that all the conversions succeeded</span>
+<span style="color: #dddddd">  </span><span style="color: #ff0000">for</span><span style="color: #dddddd">(</span><span style="color: #ee82ee">size_t</span><span style="color: #dddddd"> i = 0; i &lt; converters.size(); i++)</span>
+<span style="color: #dddddd">  {</span>
+<span style="color: #dddddd">    </span><span style="color: #ff0000">if</span><span style="color: #dddddd">(!converters[i].check())</span>
+<span style="color: #dddddd">    {</span>
+<span style="color: #dddddd">      printf(</span><span style="color: #87ceeb">&quot;failure during conversion\n&quot;</span><span style="color: #dddddd">);</span>
+<span style="color: #dddddd">      ret = 1;</span>
+<span style="color: #dddddd">    }</span>
 <span style="color: #dddddd">  }</span>
 
 <span style="color: #dddddd">  </span><span style="color: #ff0000">return</span><span style="color: #dddddd"> ret;</span>

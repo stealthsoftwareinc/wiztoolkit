@@ -42,7 +42,9 @@ struct MyBackend : wtk::TypeBackend<Number, MyWire>
 {
   bool assertFailure = false;
 
-  MyBackend(Number p) : wtk::TypeBackend<Number, MyWire>(p) { }
+  // TypeSpec is a wrapper for the IR's types (field/ring/...)
+  MyBackend(wtk::circuit::TypeSpec<Number> const* t)
+    : wtk::TypeBackend<Number, MyWire>(t) { }
 
   // $0 <- <0>;
   void assign(MyWire* output, Number&& input_value) override
@@ -137,7 +139,8 @@ struct BoolBackend : wtk::TypeBackend<Number, BoolWire>
   bool assertFailure = false;
 
   // We should be safe to default construct this and assume prime==2
-  BoolBackend() : wtk::TypeBackend<Number, BoolWire>(2) { }
+  BoolBackend(wtk::circuit::TypeSpec<Number> const* t)
+    : wtk::TypeBackend<Number, BoolWire>(t) { }
 
   // $0 <- <0>;
   void assign(BoolWire* output, Number&& input_value) override
@@ -241,8 +244,8 @@ struct MyConverter : public wtk::Converter<MyWire, MyWire>
     : wtk::Converter<MyWire, MyWire>(out_len, in_len),
       outPrime(op), inPrime(ip) { }
 
-  bool convert(
-      MyWire* const out_wires, MyWire const* const in_wires) override
+  void convert(MyWire* const out_wires,
+      MyWire const* const in_wires, bool modulus) override
   {
     // Your Code Here!
 
@@ -251,8 +254,20 @@ struct MyConverter : public wtk::Converter<MyWire, MyWire>
     // in_wires has the length this->inLength
     (void) in_wires;
 
-    return true;
+    if(modulus)
+    {
+      // An overflowing conversion should behave modularly
+    }
+    else
+    {
+      // An overflowing conversion should fail
+      if(false/* an overflow occurred */) { this->success = false; }
+    }
   }
+
+  // The success or failure is cached until the user calls check at the end.
+  bool success = false;
+  bool check() override { return success; }
 };
 
 // Subclass the Converter type to implement conversion.
@@ -270,8 +285,8 @@ struct ConverterFromBool
   ConverterFromBool(size_t out_len, Number op, size_t in_len)
     : wtk::Converter<MyWire, BoolWire>(out_len, in_len), outPrime(op) { }
 
-  bool convert(
-      MyWire* const out_wires, BoolWire const* const in_wires) override
+  void convert(MyWire* const out_wires,
+      BoolWire const* const in_wires, bool modulus) override
   {
     // Your Code Here!
 
@@ -280,8 +295,20 @@ struct ConverterFromBool
     // in_wires has the length this->inLength
     (void) in_wires;
 
-    return true;
+    if(modulus)
+    {
+      // An overflowing conversion should behave modularly
+    }
+    else
+    {
+      // An overflowing conversion should fail
+      if(false/* an overflow occurred */) { this->success = false; }
+    }
   }
+
+  // The success or failure is cached until the user calls check at the end.
+  bool success = false;
+  bool check() override { return success; }
 };
 
 // Subclass the Converter type to implement conversion.
@@ -298,8 +325,8 @@ struct ConverterToBool : public wtk::Converter</*out*/ BoolWire, /*in*/ MyWire>
   ConverterToBool(size_t out_len, size_t in_len, Number ip)
     : wtk::Converter<BoolWire, MyWire>(out_len, in_len), inPrime(ip) { }
 
-  bool convert(
-      BoolWire* const out_wires, MyWire const* const in_wires) override
+  void convert(BoolWire* const out_wires,
+      MyWire const* const in_wires, bool modulus) override
   {
     // Your Code Here!
 
@@ -308,8 +335,20 @@ struct ConverterToBool : public wtk::Converter</*out*/ BoolWire, /*in*/ MyWire>
     // in_wires has the length this->inLength
     (void) in_wires;
 
-    return true;
+    if(modulus)
+    {
+      // An overflowing conversion should behave modularly
+    }
+    else
+    {
+      // An overflowing conversion should fail
+      if(false/* an overflow occurred */) { this->success = false; }
+    }
   }
+
+  // The success or failure is cached until the user calls check at the end.
+  bool success = false;
+  bool check() override { return success; }
 };
 
 int main(int argc, char const* argv[])
@@ -363,13 +402,13 @@ int main(int argc, char const* argv[])
     // Check that its a field not a plugin type.
     if(type->variety != wtk::circuit::TypeSpec<Number>::field)
     {
-      printf("Type %zu is a plugin (not yet supported)\n", i);
+      printf("Type %zu is not a prime field (not yet supported)\n", i);
       return 1;
     }
     if(type->prime == 2)
     {
       // construct a boolean backend with this prime
-      bool_backends.emplace_back(new BoolBackend());
+      bool_backends.emplace_back(new BoolBackend(type));
       // Add the backend and its streams to the interpreter
       interpreter.addType(bool_backends.back().get(),
           organizer.circuitStreams[i].publicStream,
@@ -381,7 +420,7 @@ int main(int argc, char const* argv[])
     else
     {
       // construct another backend with this prime
-      backends.emplace_back(type->prime);
+      backends.emplace_back(type);
       // add the backend and its streams to the interpreter
       interpreter.addType(&backends.back(),
           organizer.circuitStreams[i].publicStream,
@@ -464,6 +503,36 @@ int main(int argc, char const* argv[])
     }
 
     backends[i].finish();
+  }
+
+  // Check that all the conversions succeeded
+  for(size_t i = 0; i < converters.size(); i++)
+  {
+    if(!converters[i].check())
+    {
+      printf("failure during conversion\n");
+      ret = 1;
+    }
+  }
+
+  // Check that all the to-bool conversions succeeded
+  for(size_t i = 0; i < to_bool_converters.size(); i++)
+  {
+    if(!to_bool_converters[i].check())
+    {
+      printf("failure during conversion\n");
+      ret = 1;
+    }
+  }
+
+  // Check that all the from-bool conversions succeeded
+  for(size_t i = 0; i < from_bool_converters.size(); i++)
+  {
+    if(!from_bool_converters[i].check())
+    {
+      printf("failure during conversion\n");
+      ret = 1;
+    }
   }
 
   return ret;
